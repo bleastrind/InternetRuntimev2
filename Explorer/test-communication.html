@@ -1,0 +1,179 @@
+
+<script type="text/javascript"> 
+function InternetRuntime()
+{
+	var BaseUrl = "http://localhost:9000";
+	//var Status = ['Active', 'Background', 'Sleep'];
+	
+	function isNullOrEmpty(arr){
+		return (arr == null || arr.length == 0);
+	}
+	function join(objectarray){
+		var strings = [];
+		for (var o in objectarray)
+			strings.push( o + '=' + objectarray[o]);
+		return strings.join('&');
+	}
+	this.communication = new function()
+	{
+		function asyncHTTPPost(url, params, content, callbackfunc)
+		{
+		try
+		{
+			var request = new XMLHttpRequest();
+			if(!isNullOrEmpty(params))
+				url = url + "?" + join(params);
+			request.open("POST", url, false);
+			request.send(content);
+			request.onreadystatechange = function()
+			{
+				if (request.readyState==4 && request.status==200)
+						callbackfunc(request.responseText);				
+				else if (request.readyState==4 && request.status!=200)
+					alert("asyncHTTPGet Error!");
+			}
+		}catch (e)
+		{
+			alert(e);
+		}
+		}
+		function asyncHTTPGet(url, params, callbackfunc)
+		{
+		try
+		{
+			var request = new XMLHttpRequest();
+			if(!isNullOrEmpty(params))
+				url = url + "?" + join(params);
+			request.open("GET", url, false);
+			request.onreadystatechange = function()
+			{
+				if (request.readyState==4 && request.status==200)				
+					callbackfunc(request.responseText);				
+				else if (request.readyState==4 && request.status!=200)
+					alert("asyncHTTPGet Error!");
+			}
+			request.send();
+		}catch (e)
+		{
+			alert(e);
+		}
+		}
+		function HTTPGet(url, params)
+		{
+		try
+		{
+			var request = new XMLHttpRequest();
+			if(!isNullOrEmpty(params))
+				url = url + "?" + join(params);
+			request.open("GET", url, false);
+			request.send();
+			return request.responseText;
+		}catch (e)
+		{
+			alert(e);
+		}
+		}
+		this.login = function()
+		{¡¡
+			var username=prompt("Please enter your username","");
+			var password=prompt("Please enter your password","") 
+			var p = {};
+			p.username = username;
+			p.password = password;
+			var url = BaseUrl+ "/clients/login";
+			var response = HTTPGet(url, p);
+			if (response != '')
+				alert(response);
+			else
+			{
+				var lp = new longpolling(eventHandlers);
+				lp.Tick();
+			}
+		}
+		this.register = function()
+		{¡¡
+			var username=prompt("Please enter your username","");
+			var password=prompt("Please enter your password","") 
+			var p = {};
+			p.username = username;
+			p.password = password;
+			var url = BaseUrl+ "/clients/register";
+			var response = HTTPGet(url, p);
+			if (response != '')
+				alert(response);
+		}
+		function longpolling(callbackfuncsmap)
+		{
+			var status = 'Active';
+			var cid = null;
+			var url = BaseUrl+ "/clients/longpolling";
+			
+			this.Tick = tick;
+			function tick()			
+			{
+			try
+			{
+				var p = {};
+				if (cid != null)
+					p.cid = cid;
+				p.status = status;
+				asyncHTTPGet(url, p, handleLongpolling);
+			}
+			catch (e)
+			{
+			alert(e);
+			}
+			}
+			function handleLongpolling(rsp, msgId)
+			{
+				//alert(rsp);
+				var response = eval(rsp);
+				//alert(response.cid);
+				cid = response.cid;
+				
+				
+				if (response.data)
+					switch (response.type)
+					{
+					default:	callbackfuncsmap["default"](msgId, response.data);
+					}
+				
+				if (status == 'Active' || status == 'Background')
+				{
+					tick();
+				}
+			}
+		}
+		var eventHandlers = 
+		{
+			"default": function askByPrompt(msgId, data)
+			{
+				var r = prompt(data,"");
+				var url = BaseUrl+ "/clients/response";
+				asyncHTTPPost(url, {'msgID': msgId}, r);				
+			}
+		}
+		
+	}
+}
+window.InternetRuntime = new InternetRuntime();
+
+
+function testRegister()
+{
+	window.InternetRuntime.communication.register();
+}
+function testLogin()
+{
+	window.InternetRuntime.communication.login();
+}
+function testHttpGet()
+{
+	window.InternetRuntime.communication.HTTPGet("http://www.baidu.com");
+}
+</script>
+<button onclick = "testLogin()" >testLogin!!</button>
+<button onclick = "testRegister()" >testRegister!!</button>
+<button onclick = "testHttpGet()" >testHttpGet!!</button>
+<div id = 'box'; style="border: 1px solid #666666; height:100px; width:200px; left:0px; top:200px; position: absolute" >
+</div>
