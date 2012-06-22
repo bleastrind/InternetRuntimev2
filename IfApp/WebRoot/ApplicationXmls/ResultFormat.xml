@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<format>
+	<method>GET</method>
+	<sp> </sp>
+	<uri></uri>
+	<questionmark></questionmark>
+	<parameters>
+		<param content=""></param>
+	</parameters>
+	<sp> </sp>
+	<httpversion></httpversion>
+	<LF>
+	</LF>
+	<host></host>
+	<LF>
+	</LF>
+	<user-agent></user-agent>
+	<LF>
+	</LF>
+	<connection></connection>
+	<LF>
+	</LF>
+</format>

@@ -1,0 +1,42 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index
+
+# Signal Processing API
+GET		/signal/init/thirdpart/*signalname     org.internetrt.driver.SignalController.init(signalname:String,thirdpart)
+GET		/signal/init/client/*signalname     org.internetrt.driver.SignalController.init(signalname:String,client)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+# Client Communication API
+
+
+GET		/clients/longpollingjsonp	org.internetrt.driver.userinterface.Client.longpollingjsonp
+#maintain uid,cid
+GET		/clients/longpolling	org.internetrt.driver.userinterface.Client.longpolling
+#reponse a question
+GET		/clients/response		org.internetrt.driver.userinterface.Client.response
+#login
+GET		/clients/login			org.internetrt.driver.userinterface.BrowserBaseClientInputs.login
+#register
+GET		/clients/register		org.internetrt.driver.userinterface.BrowserBaseClientInputs.register
+#installApp
+GET		/clients/installapp		org.internetrt.driver.userinterface.BrowserBaseClientInputs.installRootApp
+
+GET		/clients/test				org.internetrt.driver.userinterface.Client.test
+
+#Configurition API 
+GET		/config/apps                           org.internetrt.driver.ConfigController.appsList
+GET		/config/apps/:id                       org.internetrt.driver.ConfigController.appDetail(id: String)
+GET		/config/installapp		org.internetrt.driver.ConfigController.installApplication
+
+#OAuth 
+GET		/oauth/authorize						org.internetrt.driver.OAuthAPI.authorize
+GET		/oauth/accesstoken						org.internetrt.driver.OAuthAPI.token
+
+#Auth
+GET		/auth/appregister		org.internetrt.driver.AppRegister.register
