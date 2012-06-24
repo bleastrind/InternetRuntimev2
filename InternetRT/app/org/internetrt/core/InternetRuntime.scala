@@ -83,6 +83,12 @@ abstract class InternetRuntime{
     val signal = initSignalFromUserInterface(userID,signalID,vars,options)
     signalSystem.initAction(signal,options)
   }
+  
+  def initActionOptionsFromUserinterface(userID:String,signalID:String,vars:Map[String,Seq[String]],options:Map[String,String]):Map[String,Seq[scala.xml.Node]]={
+    val signal = initSignalFromUserInterface(userID,signalID,vars,options)
+    signalSystem.initActionOptions(signal,options)
+  }
+  
   def triggerEventFromThirdPart(accessToken:String,signalID:String,vars:Map[String,Seq[String]],options:Map[String,String])={
     val signal = initSignalFromThirdPart(accessToken,signalID,vars,options)
     signalSystem.triggerEvent(signal)
@@ -94,6 +100,10 @@ abstract class InternetRuntime{
   def initActionFromThirdPart(accessToken:String,signalID:String,vars:Map[String,Seq[String]],options:Map[String,String])={
     val signal = initSignalFromThirdPart(accessToken,signalID,vars,options)
     signalSystem.initAction(signal,options)
+  }
+    def initActionOptionsFromThirdPart(accessToken:String,signalID:String,vars:Map[String,Seq[String]],options:Map[String,String]):Map[String,Seq[scala.xml.Node]]={
+    val signal = initSignalFromThirdPart(accessToken,signalID,vars,options)
+    signalSystem.initActionOptions(signal,options)
   }
   	  private def initSignalFromUserInterface(userID:String,signalID:String,vars:Map[String,Seq[String]],options:Map[String,String])={
 	    val appID = Signal.FROMUSERINTERFACE

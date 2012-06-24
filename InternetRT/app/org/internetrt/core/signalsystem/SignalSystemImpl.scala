@@ -18,7 +18,14 @@ import org.internetrt.core.model.RoutingInstance
       val signalID = s.from+s.user+s.id
       confSystem.getRoutingsBySignal(signalID)
     }
-    
+  
+  	def initActionOptions(s:Signal,options:Map[String,String]):Map[String,Seq[scala.xml.Node]]={
+		workflowEngine.checkStatus(getRouting(s),options) match {
+		  case OptionMissingState(s)=> s 
+		  case _ => Map.empty
+		}
+  	}
+  
     def initAction(s:Signal,options:Map[String,String]):SignalResponse ={
 	  try{
 		  val ins = workflowEngine.initWorkflow(s.user,getRouting(s),options)
@@ -30,6 +37,8 @@ import org.internetrt.core.model.RoutingInstance
     }
 	def triggerEvent(t:Signal)=null
 	def executeRequest(t:Signal)=null
+	
+	def checkRouting
 //    def handleSignal(s:Signal):SignalResponse={
 //      if(getRoutingInstance(s) == null){
 //        getRouting(s) match{

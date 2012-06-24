@@ -21,4 +21,32 @@ object SignalController extends Controller {
 	  }
 	  Ok(response.getResponse)
 	}
+	
+	def initOption(signalname:String, Type:String)= Action{
+	   request=>
+	  val response = Type match{
+	    case "thirdpart" => SiteInternetRuntime.initActionOptionsFromThirdPart(
+	        request.queryString.get(CONSTS.ACCESSTOKEN).getOrElse(Seq.empty).head,
+	        signalname,
+	        request.queryString,
+	        null);
+	    case "client" => SiteInternetRuntime.initActionOptionsFromUserinterface(
+	        request.session.get(CONSTS.SESSIONUID).get,
+	        signalname,
+	        request.queryString,
+	        null);
+	        
+	  }
+	  
+	  val resultxml = 
+	    <Options>
+		  {scala.xml.NodeSeq.fromSeq( 
+		    response.map(entry =>
+		    <entry><key>{entry._1}</key>
+		    	<value>{entry._2}</value>
+		    </entry>).toSeq)
+		  }	    
+		</Options>
+	  Ok(resultxml)
+	}
 }

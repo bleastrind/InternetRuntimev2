@@ -5,94 +5,165 @@ import org.internetrt.core.model.Routing
 import org.internetrt.core.model.RoutingInstance
 import org.internetrt.persistent.RoutingInstancePool
 import java.util.UUID
+import org.internetrt.exceptions.RoutingInstanceInitException
 
 abstract class WorkflowEngineImpl extends WorkflowEngine {
 
-  val routingInstancePool:RoutingInstancePool
+  val routingInstancePool: RoutingInstancePool
+
+  def initWorkflow(userID: String, routings: Seq[Routing], options: Map[String, String]): RoutingInstance = {
+    try {
+
+      val newinstance = generateInstanceByRouting(userID, routings, options)
+
+      routingInstancePool.put(newinstance.id, newinstance)
+      newinstance
+    } catch {
+      case e: RoutingInstanceInitException => null;
+    }
+  }
   
-  def initWorkflow(userID:String ,routings: Seq[Routing],options:Map[String,String]): RoutingInstance = { 
-    val newinstance = createInstanceByRouting(userID,routings)
-    routingInstancePool.put(newinstance.id,newinstance)
-    newinstance
- }
+  def checkStatus(routings: Seq[Routing], options: Map[String, String])={
+    val routingIndexedRequestListeners = routings
+    	.map(r => r.xml \\ "requestListener"  map (node => (r.xml \ "@id" text ,node)) 
+    	).flatten
 
- // def getRoutingInstance(s: Signal): RoutingInstance = { null }
+    if(routingIndexedRequestListeners.length == 1){
+      OkState(
+          routings.filter( 
+        		  r => (r.xml \ "@id" text) == routingIndexedRequestListeners.first._1
+          ).first
+          , 
+          routingIndexedRequestListeners.first._2 \\ "requestListener" \ "@id" text
+          )
+    }
+    else{
+      val conflicts = routingIndexedRequestListeners.map(pair=> 
+        <Choice>
+      		<RoutingId>{pair._1}</RoutingId>
+      		<RequestListenerId>{pair._2 \ "@id" text}</RequestListenerId>
+      		{pair._2}
+      	</Choice> 
+      )
+      OptionMissingState(Map("requestListenerIndex" -> conflicts.map(xml => xml)))
+    }
+  }
 
-  def getRoutingInstaceByworkflowID(workflowID: String): Option[RoutingInstance] = { 
+  def getRoutingInstaceByworkflowID(workflowID: String): Option[RoutingInstance] = {
     routingInstancePool.get(workflowID)
- }
+  }
 
-  def createInstanceByRouting(userID:String ,routings:Seq[Routing]):RoutingInstance = {
+  def dispatchEvents(workflowID:String, userID:String, routing:Seq[Routing]){
+    
+  }
+  def generateInstanceByRouting(userID: String, routings: Seq[Routing], options: Map[String, String]): RoutingInstance = {
+
+    val xmlrouting =
+      <Routing id = "fdsafs">
+        <Signal id="1" runat="client">
+          <from>client</from>
+          <user>u</user>
+          <name>share</name>
+          <vars>
+            <var><key>uri</key></var>
+            <var><key>uri2</key></var>
+          </vars>
+        </Signal>
+        <Adapter from="1" to="2">
+          <mapper>
+            <key from="uri" to="URI"/>
+            <value transformer="default"/>
+          </mapper>
+          <mapper>
+            <key from="uri2" to="URI2"/>
+            <value transformer="default"/>
+          </mapper>
+        </Adapter>
+        <Adapter from="1" to="3">
+          <mapper>
+            <key from="uri" to="URI"/>
+            <value transformer="default"/>
+          </mapper>
+          <mapper>
+            <key from="uri2" to="URI2"/>
+            <value transformer="default"/>
+          </mapper>
+        </Adapter>
+        <RequestListener id="2"  type="httpget" runat="appid" >
+    	  <description>hello</description>
+          <url>http://safs</url>
+          <params>
+            <param><key>URI</key><value><var/></value></param>
+          </params>
+          <headers>
+            <header><key>URI2</key><value><var/></value></header>
+            <header><key>routingInstanceID</key><value><ID/></value></header>
+          </headers>
+        </RequestListener>
+        <EventListener id="3"  type="httpget" runat="appid" >
+    	  <description>hello2</description>
+          <url>http://safs</url>
+          <params>
+            <param><key>URI</key><value><var/></value></param>
+          </params>
+          <headers>
+            <header><key>URI2</key><value><var/></value></header>
+            <header><key>routingInstanceID</key><value><ID/></value></header>
+          </headers>
+        </EventListener>
+      </Routing>
+      
+    val actualRoutings = Seq(Routing(xmlrouting))
+    val (requestRouting,requestListenerID) = checkStatus(actualRoutings, options) match{
+        case OkState(r,id) => (r,id)
+        case OptionMissingState(options) => throw new RoutingInstanceInitException(options)
+      }
+
     val workflowID = UUID.randomUUID().toString()
-    
-    val signalListeners = routings.map(r => r.xml \\ "signalListener")
-    val eventListeners = signalListeners.filter(node => node \ "@type" == "request")
-    
-    val xmlrouting = 
-    <Routing>
-    	<signal id="1" runat="client">
-         <from>client</from>
-         <user>u</user>
-         <name>share</name>
-         <vars>
-         	<var><key>uri</key></var>     
-         	<var><key>uri2</key></var>         
-         </vars>
-        </signal>
-        <adapter from="1" to="2">
-         <mapper>
-         <key from="uri" to="URI"/>
-         <value transformer="default"/>
-         </mapper>
-         <mapper>
-         <key from="uri2" to="URI2"/>
-         <value transformer="default"/>
-         </mapper>
-        </adapter>
-        <signalListener id="2" type="httpget" runat="app">
-         <url>http://safs</url>
-         <params>
-         	<param><key>URI</key><value><var/></value></param>
-         </params>
-    	 <headers>
-          	<header><key>URI2</key><value><var/></value></header>
+
+    val routingInstance = 
+      <RoutingInstance>
+      <id>{ workflowID } </id>
+      {requestRouting.xml \ "Signal"}
+      {requestRouting.xml \ "Adapter" filter ( node => (node \ "@to" text) == requestListenerID )}
+      {requestRouting.xml \ "RequestListener"}
+      
+    dispatchEvents(workflowID,userID, routing);
+      </RoutingInstance>
+/*    val xml =
+      <RoutingInstance>
+        <id>{ workflowID } </id>
+        <Signal id="1" runat="client">
+          <from>client</from>
+          <user>u</user>
+          <name>share</name>
+          <vars>
+            <var><key>uri</key></var>
+            <var><key>uri2</key></var>
+          </vars>
+        </Signal>
+        <Adapter from="1" to="2">
+          <mapper>
+            <key from="uri" to="URI"/>
+            <value transformer="default"/>
+          </mapper>
+          <mapper>
+            <key from="uri2" to="URI2"/>
+            <value transformer="default"/>
+          </mapper>
+        </Adapter>
+        <RequestListener id="2" type="httpget" runat="app">
+          <url>http://safs</url>
+          <params>
+            <param><key>URI</key><value><var/></value></param>
+          </params>
+          <headers>
+            <header><key>URI2</key><value><var/></value></header>
             <header><key>routingInstanceID</key><value><ID/></value></header>
-         </headers>
-        </signalListener>
-	</Routing>
-    val xml = 
-    <RoutingInstance>
-    	<id>{ workflowID } </id>
-    	<signal id="1" runat="client">
-         <from>client</from>
-         <user>u</user>
-         <name>share</name>
-         <vars>
-         	<var><key>uri</key></var>     
-         	<var><key>uri2</key></var>         
-         </vars>
-        </signal>
-        <adapter from="1" to="2">
-         <mapper>
-         <key from="uri" to="URI"/>
-         <value transformer="default"/>
-         </mapper>
-         <mapper>
-         <key from="uri2" to="URI2"/>
-         <value transformer="default"/>
-         </mapper>
-        </adapter>
-        <signalListener id="2" type="httpget" runat="app">
-         <url>http://safs</url>
-         <params>
-         	<param><key>URI</key><value><var/></value></param>
-         </params>
-    	 <headers>
-          	<header><key>URI2</key><value><var/></value></header>
-            <header><key>routingInstanceID</key><value><ID/></value></header>
-         </headers>
-        </signalListener>
-	</RoutingInstance>
-    new RoutingInstance(userID,xml)
+          </headers>
+        </RequestListener>
+      </RoutingInstance>
+      */
+    new RoutingInstance(userID, routingInstance)
   }
 }
