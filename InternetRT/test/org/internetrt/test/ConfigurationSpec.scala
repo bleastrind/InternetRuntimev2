@@ -80,7 +80,7 @@ class ConfigurationSpec extends Specification with Mockito {override def is =
     val code = TestEnvironment.getAuthcodeForServerFlow(appmarketid,"uid","http")
     val accessToken = TestEnvironment.getAccessTokenByAuthtoken(appmarketid,code,appmarketsecret)
 		 
-    TestEnvironment.installApplication(accessToken.value,"""<?xml version="1.0" encoding="UTF-8" ?><App><AppID>"""+normalid+"""</AppID><AppOwner>app</AppOwner></App>""")
+    TestEnvironment.installApplication(accessToken.value,"""<?xml version="1.0" encoding="UTF-8" ?><App><AccessRequest>getApplications</AccessRequest><AppID>"""+normalid+"""</AppID><AppOwner>app</AppOwner></App>""")
    
   }
   

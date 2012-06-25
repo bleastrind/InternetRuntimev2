@@ -38,7 +38,7 @@ import org.internetrt.core.model.RoutingInstance
 	def triggerEvent(t:Signal)=null
 	def executeRequest(t:Signal)=null
 	
-	def checkRouting
+//	def checkRouting
 //    def handleSignal(s:Signal):SignalResponse={
 //      if(getRoutingInstance(s) == null){
 //        getRouting(s) match{

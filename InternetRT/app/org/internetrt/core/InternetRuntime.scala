@@ -125,7 +125,7 @@ abstract class InternetRuntime{
     if(aclSystem.isRoot(userID,appID)){
 	    
 	    val app = Application(XML.loadString(xml))
-	    aclSystem.grantAccess(userID,app.id, Seq("getApplications"),false)
+	    aclSystem.grantAccess(userID,app.id, app.accessRequests ,false)
 	    confSystem.installApp(userID, app)
 	    true
     }else
