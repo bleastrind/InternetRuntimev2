@@ -49,4 +49,13 @@ object SignalController extends Controller {
 		</Options>
 	  Ok(resultxml)
 	}
+
+	def registerSignal(signalname:String)= Action{
+	  request=>
+	    Ok(SiteInternetRuntime.registerSignal(signalname,request.body.asXml.toString()).toString());
+	}
+	
+	def getSignalDef(signalname:String)= Action{
+	    Ok(SiteInternetRuntime.getSignalDefination(signalname));
+	}
 }

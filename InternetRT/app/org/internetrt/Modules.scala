@@ -55,6 +55,7 @@ trait MemorySignalSystem extends SignalSystemImpl {
   object workflowEngine extends WorkflowEngineImpl {
     object routingInstancePool extends StubRoutingInstancePool
   }
+  object signalDefinationPool extends StubSignalDefinationPool
 }
 trait MemoryAccessControlSystem extends AccessControlSystemImpl{
   object applicationAccessPool extends StubApplicationAccessPool
