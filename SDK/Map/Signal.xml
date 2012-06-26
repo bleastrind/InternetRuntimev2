@@ -1,0 +1,10 @@
+<Signal>
+	<name>share</name>
+	<type>httpget</type>
+	<vars>
+		<var><key>message</key></var>  
+		<var><key>message1</key></var>
+		<var><key>message2</key></var>
+		<var><key>message3</key></var>
+	</vars>
+</Signal>

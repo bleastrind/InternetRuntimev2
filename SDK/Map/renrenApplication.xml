@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<Application>
+		<Name>renren</Name>
+		<AppID>nceifqfafas</AppID>
+		<AppSecrect></AppSecrect>
+		<Signals>
+			<Request>
+				<Signalname>/signal/share</Signalname>
+				<Description>Share request. Response should share the signal to somewhere.</Description>
+				<Require>Response should share the signal to somewhere</Require>
+			</Request>
+			<Request>
+				<Signalname>/signal/open</Signalname>
+				<Description>Open Request.</Description>
+				<Require>Response should share the signal to somewhere</Require>
+			</Request>
+			<Request>
+				<Signalname>/signal/storage</Signalname>
+				<Description>Storage request.</Description>
+				<Require>Response should share the signal to somewhere</Require>
+			</Request>
+		</Signals>
+		<SignalHanlders>
+			<RequestListener type="http">
+				<Description>Share response.</Description>
+				<URL id="1">http://www.connect.renren.com/share/sharer</URL>
+				<Adapter>
+					<Signalname id="1">/signal/share</Signalname>
+					<params>
+						<param><key>message</key><value><var/></value></param>
+						<param><key>message2</key><value><var/></value></param>
+						<param><key>message3</key><value><var/></value></param>
+						<param><key>message4</key><value><var/></value></param>
+					</params>
+					<headers>
+						<header><key>URI2</key><value><var/></value></header>
+						<header><key>routingInstanceID</key><value><ID/></value></header>
+					</headers>
+				</Adapter>
+			</RequestListener>
+		</SignalHanlders>
+	</Application>

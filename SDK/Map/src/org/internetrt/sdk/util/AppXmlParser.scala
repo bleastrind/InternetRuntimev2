@@ -2,13 +2,14 @@ package org.internetrt.sdk.util
 import java.util.ArrayList
 
 
-class AppXmlParser {
-  val xmlFile = scala.xml.XML.loadFile("renrenApplication.txt");
+class AppXmlParser (xml:String){
+  //val xmlFile = scala.xml.XML.loadFile("renrenApplication.txt");
+  val xmlFile = scala.xml.XML.loadString(xml)
   def getUrl(signal:String): String= {
     var result = new String
     val RequestListener = xmlFile \ "SignalHanlders"
     RequestListener \ "RequestListener" foreach{(RequestListener)=>
-      if(matchSignal((RequestListener\"MatchRule"\"Signalname").text, signal) )
+      if(matchSignal((RequestListener\"Adapter"\"Signalname").text, signal) )
       {
     	  result = (RequestListener \ "URL").text
       }
@@ -21,23 +22,23 @@ class AppXmlParser {
    case _ => false
  }
   
-  def getMap (signal:String): java.util.Map[String, String] = {
-      val maps = scala.collection.mutable.Map.empty[String, String];
-       val RequestListener = xmlFile \ "SignalHanlders"
-        RequestListener \ "RequestListener" foreach{(RequestListener)=>
-      if(matchSignal((RequestListener\"MatchRule"\"Signalname").text, signal) )
-      {
-    	  val Adapter = RequestListener \ "Adapter"
-    	  val converter = Adapter \ "converter"
-    	  converter \ "map" foreach{(map)=>
-    	   val fromParam = map \ "@from"
-    	   val toParam = map \ "@to"
-    	   maps += (fromParam.toString() -> toParam.toString());
-    	    }
-    	  }
-      }
-       return scala.collection.JavaConversions.asMap(maps);
-  }
+//  def getMap (signal:String): java.util.Map[String, String] = {
+//      val maps = scala.collection.mutable.Map.empty[String, String];
+//       val RequestListener = xmlFile \ "SignalHanlders"
+//        RequestListener \ "RequestListener" foreach{(RequestListener)=>
+//      if(matchSignal((RequestListener\"MatchRule"\"Signalname").text, signal) )
+//      {
+//    	  val Adapter = RequestListener \ "Adapter"
+//    	  val converter = Adapter \ "converter"
+//    	  converter \ "map" foreach{(map)=>
+//    	   val fromParam = map \ "@from"
+//    	   val toParam = map \ "@to"
+//    	   maps += (fromParam.toString() -> toParam.toString());
+//    	    }
+//    	  }
+//      }
+//       return scala.collection.JavaConversions.asMap(maps);
+//  }
   
   def getAppName(): String = {
 		  (xmlFile \ "Name").text
