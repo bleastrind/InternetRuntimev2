@@ -25,27 +25,35 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
   
   def checkStatus(routings: Seq[Routing], options: Map[String, String])={
     val routingIndexedRequestListeners = routings
-    	.map(r => r.xml \\ "requestListener"  map (node => (r.xml \ "@id" text ,node)) 
+    	.map(r => r.xml \\ "RequestListener"  map (node => (r.xml \ "@id" text ,node)) 
     	).flatten
 
     if(routingIndexedRequestListeners.length == 1){
       OkState(
           routings.filter( 
-        		  r => (r.xml \ "@id" text) == routingIndexedRequestListeners.first._1
-          ).first
+        		  r => (r.xml \ "@id" text) == routingIndexedRequestListeners.head._1
+          ).head
           , 
-          routingIndexedRequestListeners.first._2 \\ "requestListener" \ "@id" text
+          routingIndexedRequestListeners.head._2 \\ "RequestListener" \ "@id" text
           )
     }
     else{
       val conflicts = routingIndexedRequestListeners.map(pair=> 
-        <Choice>
-      		<RoutingId>{pair._1}</RoutingId>
-      		<RequestListenerId>{pair._2 \ "@id" text}</RequestListenerId>
-      		{pair._2}
-      	</Choice> 
+        <Choice><RoutingId>{pair._1}</RoutingId><RequestListenerId>{pair._2 \ "@id" text}</RequestListenerId>{pair._2}</Choice> 
       )
-      OptionMissingState(Map("requestListenerIndex" -> conflicts.map(xml => xml)))
+      val conflictChoiece = scala.xml.XML.loadString(options.getOrElse("requestListenerIndex","<xml/>"))
+      val selectedChoice = conflicts.filter(node => 
+        (node \ "RoutingId") == (conflictChoiece \ "RoutingId") && 
+        (node \ "RequestListenerId") == (conflictChoiece \ "RequestListenerId"))
+      if(selectedChoice.size == 1)  {
+        OkState(routings
+            .filter( r=> (r.xml \ "@id" text) == (conflictChoiece \ "RoutingId" text))
+            .head
+            
+            ,  
+            conflictChoiece \ "RequestListenerId" text)
+      }else
+    	  OptionMissingState(Map("requestListenerIndex" -> conflicts.map(xml => xml)))
     }
   }
 

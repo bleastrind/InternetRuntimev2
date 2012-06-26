@@ -10,6 +10,8 @@ GET		/signal/init/thirdpart/*signalname     org.internetrt.driver.SignalControll
 GET		/signal/init/client/*signalname     org.internetrt.driver.SignalController.init(signalname:String,client)
 GET		/signal/initOption/thirdpart/*signalname     org.internetrt.driver.SignalController.initOption(signalname:String,thirdpart)
 GET		/signal/initOption/client/*signalname     org.internetrt.driver.SignalController.initOption(signalname:String,client)
+POST	/signal/register/*signalname     org.internetrt.driver.SignalController.registerSignal(signalname:String)
+GET		/signal/querydef/*signalname     org.internetrt.driver.SignalController.getSignalDef(signalname:String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
