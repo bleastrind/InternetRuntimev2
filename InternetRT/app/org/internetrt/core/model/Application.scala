@@ -4,7 +4,10 @@ import org.internetrt.core.signalsystem.Signal
 case class Application(xml:scala.xml.Elem){
   def id = (xml \\ "AppID").text
   def appOwner = (xml \\ "AppOwner").text
-  def accessRequests = Seq((xml \\ "AccessRequests").toString())
+  def accessRequests = (xml \\ "AccessRequest" map (node => node match {
+    case <AccessRequest>{text}</AccessRequest> => Some(text.text)
+    case _ => None 
+  })).flatten
 }
 //abstract class Application {
 //	def requests:Seq[Any]
