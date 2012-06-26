@@ -38,22 +38,28 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
           )
     }
     else{
+
       val conflicts = routingIndexedRequestListeners.map(pair=> 
         <Choice><RoutingId>{pair._1}</RoutingId><RequestListenerId>{pair._2 \ "@id" text}</RequestListenerId>{pair._2}</Choice> 
       )
-      val conflictChoiece = scala.xml.XML.loadString(options.getOrElse("requestListenerIndex","<xml/>"))
-      val selectedChoice = conflicts.filter(node => 
-        (node \ "RoutingId") == (conflictChoiece \ "RoutingId") && 
-        (node \ "RequestListenerId") == (conflictChoiece \ "RequestListenerId"))
-      if(selectedChoice.size == 1)  {
-        OkState(routings
-            .filter( r=> (r.xml \ "@id" text) == (conflictChoiece \ "RoutingId" text))
-            .head
-            
-            ,  
-            conflictChoiece \ "RequestListenerId" text)
-      }else
-    	  OptionMissingState(Map("requestListenerIndex" -> conflicts.map(xml => xml)))
+      
+      if(options == null || options.get("requestListenerIndex") == None)
+        OptionMissingState(Map("requestListenerIndex" -> conflicts));
+      else{
+	      val conflictChoiece = scala.xml.XML.loadString(options("requestListenerIndex"))
+	      val selectedChoice = conflicts.filter(node => 
+	        (node \ "RoutingId") == (conflictChoiece \ "RoutingId") && 
+	        (node \ "RequestListenerId") == (conflictChoiece \ "RequestListenerId"))
+	      if(selectedChoice.size == 1)  {
+	        OkState(routings
+	            .filter( r=> (r.xml \ "@id" text) == (conflictChoiece \ "RoutingId" text))
+	            .head
+	            
+	            ,  
+	            conflictChoiece \ "RequestListenerId" text)
+	      }else
+	    	  OptionMissingState(Map("requestListenerIndex" -> conflicts))
+      }
     }
   }
 
