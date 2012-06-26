@@ -27,36 +27,45 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
     val routingIndexedRequestListeners = routings
     	.map(r => r.xml \\ "RequestListener"  map (node => (r.xml \ "@id" text ,node)) 
     	).flatten
-
-    if(routingIndexedRequestListeners.length == 1){
-      OkState(
-          routings.filter( 
+    if(routingIndexedRequestListeners.length == 0)
+      new NoRequestListener()
+    else if(routingIndexedRequestListeners.length == 1){
+      val selectedRouting = routings.filter( 
         		  r => (r.xml \ "@id" text) == routingIndexedRequestListeners.head._1
           ).head
-          , 
-          routingIndexedRequestListeners.head._2 \\ "RequestListener" \ "@id" text
-          )
+      val selectedRequestID:String = routingIndexedRequestListeners.head._2 \\ "RequestListener" \ "@id" text;
+      OkState(selectedRouting , selectedRequestID )
     }
     else{
+
       val conflicts = routingIndexedRequestListeners.map(pair=> 
         <Choice><RoutingId>{pair._1}</RoutingId><RequestListenerId>{pair._2 \ "@id" text}</RequestListenerId>{pair._2}</Choice> 
       )
-      val conflictChoiece = scala.xml.XML.loadString(options.getOrElse("requestListenerIndex","<xml/>"))
-      val selectedChoice = conflicts.filter(node => 
-        (node \ "RoutingId") == (conflictChoiece \ "RoutingId") && 
-        (node \ "RequestListenerId") == (conflictChoiece \ "RequestListenerId"))
-      if(selectedChoice.size == 1)  {
-        OkState(routings
-            .filter( r=> (r.xml \ "@id" text) == (conflictChoiece \ "RoutingId" text))
-            .head
-            
-            ,  
-            conflictChoiece \ "RequestListenerId" text)
-      }else
-    	  OptionMissingState(Map("requestListenerIndex" -> conflicts.map(xml => xml)))
+      
+      if(options == null || options.get("requestListenerIndex") == None)
+        OptionMissingState(Map("requestListenerIndex" -> conflicts));
+      else{
+	      val conflictChoiece = scala.xml.XML.loadString(options("requestListenerIndex"))
+	      val selectedChoice = conflicts.filter(node => 
+	        (node \ "RoutingId") == (conflictChoiece \ "RoutingId") && 
+	        (node \ "RequestListenerId") == (conflictChoiece \ "RequestListenerId"))
+	      if(selectedChoice.size == 1)  {
+	        OkState(routings
+	            .filter( r=> (r.xml \ "@id" text) == (conflictChoiece \ "RoutingId" text))
+	            .head
+	            
+	            ,  
+	            conflictChoiece \ "RequestListenerId" text)
+	      }else
+	    	  OptionMissingState(Map("requestListenerIndex" -> conflicts))
+      }
     }
   }
 
+  def getOkState = {
+    
+  }
+  
   def getRoutingInstaceByworkflowID(workflowID: String): Option[RoutingInstance] = {
     routingInstancePool.get(workflowID)
   }
@@ -125,6 +134,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
     val (requestRouting,requestListenerID) = checkStatus(actualRoutings, options) match{
         case OkState(r,id) => (r,id)
         case OptionMissingState(options) => throw new RoutingInstanceInitException(options)
+        case _ => return null 
       }
 
     val workflowID = UUID.randomUUID().toString()

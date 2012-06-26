@@ -48,8 +48,8 @@ public class OAuthAPI extends Controller {
 		String appSecret = request().queryString().get("appSecret")[0];
 		AccessToken accesstoken = SiteInternetRuntime.getAccessTokenByAuthtoken(appID, authtoken, appSecret);
 		return ok("{access_token:\""+accesstoken.value()+
-				"\"\nexpires_in: "+accesstoken.expire()+
-				"\nrefresh_token=\""+accesstoken.refresh()+"\"}");
+				"\",expires_in: \""+accesstoken.expire()+"\""+
+				",refresh_token=\""+accesstoken.refresh()+"\"}");
 	}
 	
 	

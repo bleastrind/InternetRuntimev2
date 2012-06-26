@@ -4,7 +4,12 @@ import org.internetrt.SiteInternetRuntime
 import org.internetrt._;
 
 object SignalController extends Controller {
-	def init(signalname:String,Type:String)=Action{
+
+	def initfromthirdpart(signalname:String) = init(signalname,"thirdpart")
+	
+	def initfromclient(signalname:String) = init(signalname,"client")
+	
+	private def init(signalname:String,Type:String)=Action{
 	  request=>
 	  val response = Type match{
 	    case "thirdpart" => SiteInternetRuntime.initActionFromThirdPart(
@@ -22,7 +27,11 @@ object SignalController extends Controller {
 	  Ok(response.getResponse)
 	}
 	
-	def initOption(signalname:String, Type:String)= Action{
+	def initOptionfromthirdpart(signalname:String) = initOption(signalname,"thirdpart")
+	
+	def initOptionfromclient(signalname:String) = initOption(signalname,"client")
+	
+	private def initOption(signalname:String, Type:String)= Action{
 	   request=>
 	  val response = Type match{
 	    case "thirdpart" => SiteInternetRuntime.initActionOptionsFromThirdPart(
@@ -37,8 +46,8 @@ object SignalController extends Controller {
 	        null);
 	        
 	  }
-	  
-	  val resultxml = 
+	    
+	  val resultxml = scala.xml.Utility.trim(
 	    <Options>
 		  {scala.xml.NodeSeq.fromSeq( 
 		    response.map(entry =>
@@ -46,8 +55,17 @@ object SignalController extends Controller {
 		    	<value>{entry._2}</value>
 		    </entry>).toSeq)
 		  }	    
-		</Options>
-	  Ok(resultxml)
+		</Options>)
+	  
+	  if(request.queryString.get("format") match {
+	    case Some(list) => list.head == "json"
+	    case _ => false
+	  }){
+	    import net.liftweb.json._;
+	    import net.liftweb.json.JsonAST._;
+	    Ok(Printer.pretty(JsonAST.render(Xml.toJson(resultxml))))
+	  }else
+	     Ok(resultxml)
 	}
 
 	def registerSignal(signalname:String)= Action{

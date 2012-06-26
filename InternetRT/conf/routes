@@ -6,10 +6,10 @@
 GET     /                           controllers.Application.index
 
 # Signal Processing API
-GET		/signal/init/thirdpart/*signalname     org.internetrt.driver.SignalController.init(signalname:String,thirdpart)
-GET		/signal/init/client/*signalname     org.internetrt.driver.SignalController.init(signalname:String,client)
-GET		/signal/initOption/thirdpart/*signalname     org.internetrt.driver.SignalController.initOption(signalname:String,thirdpart)
-GET		/signal/initOption/client/*signalname     org.internetrt.driver.SignalController.initOption(signalname:String,client)
+GET		/signal/init/thirdpart/*signalname     org.internetrt.driver.SignalController.initfromthirdpart(signalname:String)
+GET		/signal/init/client/*signalname     org.internetrt.driver.SignalController.initfromclient(signalname:String)
+GET		/signal/initOption/thirdpart/*signalname     org.internetrt.driver.SignalController.initOptionfromthirdpart(signalname:String)
+GET		/signal/initOption/client/*signalname     org.internetrt.driver.SignalController.initOptionfromclient(signalname:String)
 POST	/signal/register/*signalname     org.internetrt.driver.SignalController.registerSignal(signalname:String)
 GET		/signal/querydef/*signalname     org.internetrt.driver.SignalController.getSignalDef(signalname:String)
 
@@ -41,6 +41,7 @@ GET		/config/installapp		org.internetrt.driver.ConfigController.installApplicati
 #OAuth 
 GET		/oauth/authorize						org.internetrt.driver.OAuthAPI.authorize
 GET		/oauth/accesstoken						org.internetrt.driver.OAuthAPI.token
+GET		/oauth/workflow							org.internetrt.driver.OAuthAPI.authorizebyworkflow
 
 #Auth
 GET		/auth/appregister		org.internetrt.driver.AppRegister.register
