@@ -12,7 +12,8 @@ object test {
     var requestType = routingXmlParser.getReqType()
     var requstfrom = routingXmlParser.getFrom()
     var requetTo = routingXmlParser.getTo()
-//    println(requetTo)
+    val paramsFormat = routingXmlParser.getParamsFormat()
+    println(paramsFormat)
     
     //test RoutingGenerator
     val signal = "share"
@@ -28,7 +29,7 @@ object test {
     val xmlFile = scala.xml.XML.loadFile("renrenApplication.xml").toString();
     val appXmlParser = new AppXmlParser(xmlFile)
     val urlApp = appXmlParser.getUrl("/signal/share")
-    println(urlApp)
+//    println(urlApp)
     
   }
 

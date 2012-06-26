@@ -26,6 +26,9 @@
 					<header><key>URI2</key><value><var/></value></header>
 					<header><key>routingInstanceID</key><value><ID/></value></header>
 				</headers>
+				<body>
+					<key>sfdsa</key><value><context/></value>
+				</body>
 			</Adapter>
         </RequestListener>
 		<EventListener id="3"  type="httpget" runat="appid" >
