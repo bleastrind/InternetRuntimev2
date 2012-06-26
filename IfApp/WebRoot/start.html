@@ -16,6 +16,7 @@ var result;
 var apps;
 var triggerChannel;
 var actionChannel; 
+var trigger;
 var signals = new Array();
 var appsByTri = [];
 
@@ -82,7 +83,7 @@ function choose_trigger()
 
 function choose_trigger_id(id)
 {
-	var trigger = signals[id].signalName;
+	trigger = signals[id].signalName;
 	getTriggerChannels(trigger);
 	render_triggerChannels();
 }
@@ -99,7 +100,7 @@ function getTriggerChannels(trigger){
 			request = signals[i].signalName;
 			if(request==trigger)
 			{
-				appsByTri.push(apps[j].appName);
+				appsByTri.push(apps[j]);
 			}
 		}
 	}
@@ -114,7 +115,7 @@ function render_triggerChannels()
 	{
 		
 		html += '<a onclick="choose_triggerChannel_id('+i+')">'
-						+'<img src="'+ "images/"+appsByTri[i]+"_logo.jpg" +'">'
+						+'<img src="'+ "images/"+appsByTri[i].appName+"_logo.jpg" +'">'
 					+'</a>';
 	}
 		$("#choose_triggerChannel").html(html);
@@ -122,7 +123,7 @@ function render_triggerChannels()
 
 function choose_triggerChannel_id(id)
 {
-	triggerChannel = appsByTri[id];
+	triggerChannel = appsByTri[id].appID;
 	alert(triggerChannel);
 	render_actionChannels();
 }
@@ -144,30 +145,32 @@ function render_actionChannels()
 
 function choose_actionChannel_id(id)
 {
-	actionChannel = apps[id].appName;
+	actionChannel = apps[id].appID;
 	alert(actionChannel);
-	submit_action();
+	genRouting();
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function submit_action()
-{
-	var url='submitaction';
+function genRouting() 
+{	
 	var params={
 			'trigger':trigger,
 			'triggerChannel':triggerChannel,
 			'actionChannel':actionChannel
 	}
+	$.ajax({
+		url:'servlet/GenRoutingServlet',
+		type: 'POST',
+		data: params,
+		dataType: 'json',
+		success : function()
+		{
+			alert("SUCCESS");
+		}
 	
-	$.post(url,params,postsuc);  
+	}
+			)
 }
-
-function postsuc(data)
-{
-}
-
-
 
 </script>
 

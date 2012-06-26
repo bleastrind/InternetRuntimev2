@@ -1,42 +1,56 @@
 package org.internetrt.sdk.util
+import java.util.ArrayList
 
-class AppXmlParser( xml:String) {
- 
-     val xmlFile = scala.xml.XML.loadString(xml) 
 
-    def getFrom(): String = {
-      val signal = xmlFile \ "signal";
-	  val from = (signal \ "from").text
-	  println(from);
-	  return from.toString();
+class AppXmlParser {
+  val xmlFile = scala.xml.XML.loadFile("renrenApplication.txt");
+  def getUrl(signal:String): String= {
+    var result = new String
+    val RequestListener = xmlFile \ "SignalHanlders"
+    RequestListener \ "RequestListener" foreach{(RequestListener)=>
+      if(matchSignal((RequestListener\"MatchRule"\"Signalname").text, signal) )
+      {
+    	  result = (RequestListener \ "URL").text
+      }
     }
-    
-    def getTo(): String = {
-	  val signalListener = xmlFile \ "signalListener"
-	  val requestType = signalListener \ "@runat";
-	  return requestType.toString();
-	}
-    
-	def getMap() : java.util.Map[String, String]= {
-	  val map = scala.collection.mutable.Map.empty[String, String];
-	  val adapter = xmlFile \ "adapter"
-	  val mapper = adapter \ "mapper"
-	  val key = mapper \ "key"
-	  val fromParam = key \ "@from"
-	  val toParam = key \ "@to"
-	  map += (fromParam.toString() -> toParam.toString());
-	  return scala.collection.JavaConversions.asMap(map);
-	}
-	
-	def getReqType(): String = {
-	  val signalListener = xmlFile \ "signalListener"
-	  val requestType = signalListener \ "@type";
-	  return requestType.toString();
-	}
-	
-	def getReqUrl(): String = {
-	  val signalListener = xmlFile \ "signalListener";
-	  val requestUrl = (signalListener \ "url").text;
-	  return requestUrl.toString();
-	}
+    return result
+  }
+  
+  def matchSignal(p:String, Name:String):Boolean = p match {
+   case Name => true
+   case _ => false
+ }
+  
+  def getMap (signal:String): java.util.Map[String, String] = {
+      val maps = scala.collection.mutable.Map.empty[String, String];
+       val RequestListener = xmlFile \ "SignalHanlders"
+        RequestListener \ "RequestListener" foreach{(RequestListener)=>
+      if(matchSignal((RequestListener\"MatchRule"\"Signalname").text, signal) )
+      {
+    	  val Adapter = RequestListener \ "Adapter"
+    	  val converter = Adapter \ "converter"
+    	  converter \ "map" foreach{(map)=>
+    	   val fromParam = map \ "@from"
+    	   val toParam = map \ "@to"
+    	   maps += (fromParam.toString() -> toParam.toString());
+    	    }
+    	  }
+      }
+       return scala.collection.JavaConversions.asMap(maps);
+  }
+  
+  def getAppName(): String = {
+		  (xmlFile \ "Name").text
+  }
+  
+  def getRequests(): java.util.List[Signal] = 
+  {
+    val Signals = xmlFile \ "Signals" \ "Request" map{(Request)=>
+      val Signalname = (Request \ "Signalname").text
+      val Description = (Request \ "Description").text
+      val Require = (Request \ "Require").text
+      Signal(Signalname, Description, Require)
+    }
+    scala.collection.JavaConversions.asList[Signal](Signals)
+  }
 }

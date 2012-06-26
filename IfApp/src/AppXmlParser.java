@@ -79,7 +79,7 @@ public class AppXmlParser
 	public static JSONObject ApplicationToJson(Application application)
 	{
 		String appName = application.getAppName();
-		System.out.println("APPNAME"+appName);
+		String appID = application.getAppId();
 		ArrayList<Signal> signals= application.getSignals();
 		JSONObject applicationObject = new JSONObject();
 		try {
@@ -94,7 +94,7 @@ public class AppXmlParser
 			
 			applicationObject.put("appName", appName);
 			applicationObject.put("signals", signalArray);
-			
+			applicationObject.put("appID",appID);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -86,8 +86,6 @@ public class accessTokenServlet extends HttpServlet {
 			
 			JSONObject appObject = AppXmlParser.ApplicationToJson(application);
 			
-			System.out.println("APPLICATIONJSON"+appObject.toString());
-			
 			applications.put(appObject);
 		}
 		

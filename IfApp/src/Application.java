@@ -15,7 +15,7 @@ import org.json.JSONObject;
 public class Application
 {
 	private String appName = null;
-	private long appId = 0;
+	private String appId = "feifei";
 	private  ArrayList<Signal> signals = new ArrayList();
 	
 	public String getAppName() {
@@ -25,10 +25,10 @@ public class Application
 	public ArrayList<Signal> getSignals() {
 		return signals;
 	}
-	public long getAppId() {
+	public String getAppId() {
 		return appId;
 	}
-	public void setAppId(long appId) {
+	public void setAppId(String appId) {
 		this.appId = appId;
 	}
 	public void setAppName(String appName) {
