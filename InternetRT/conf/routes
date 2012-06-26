@@ -37,6 +37,7 @@ GET		/config/installapp		org.internetrt.driver.ConfigController.installApplicati
 #OAuth 
 GET		/oauth/authorize						org.internetrt.driver.OAuthAPI.authorize
 GET		/oauth/accesstoken						org.internetrt.driver.OAuthAPI.token
+GET		/oauth/workflow							org.internetrt.driver.OAuthAPI.authorizebyworkflow
 
 #Auth
 GET		/auth/appregister		org.internetrt.driver.AppRegister.register
