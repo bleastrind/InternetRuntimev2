@@ -61,7 +61,9 @@ object SignalController extends Controller {
 	    case Some(list) => list.head == "json"
 	    case _ => false
 	  }){
-	    Ok(net.liftweb.json.Xml.toJson(resultxml).toString())
+	    import net.liftweb.json.Xml;
+	    import net.liftweb.json.JsonAST;
+	    Ok(JsonAST.render(Xml.toJson(resultxml)).toString())
 	  }else
 	     Ok(resultxml)
 	}

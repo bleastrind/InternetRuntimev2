@@ -3,6 +3,7 @@ import org.internetrt.core.model.Routing
 import org.internetrt.core.model.RoutingInstance
 import org.internetrt.core.signalsystem.Signal
 trait CheckedStatus{}
+class NoRequestListener extends CheckedStatus{}
 case class OkState(requestRouting:Routing, requestListenerID:String) extends CheckedStatus{}
 case class OptionMissingState(options:Map[String,Seq[scala.xml.Node]]) extends CheckedStatus{}
 

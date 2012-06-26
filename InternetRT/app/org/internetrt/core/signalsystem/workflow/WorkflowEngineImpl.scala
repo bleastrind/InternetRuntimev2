@@ -27,15 +27,14 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
     val routingIndexedRequestListeners = routings
     	.map(r => r.xml \\ "RequestListener"  map (node => (r.xml \ "@id" text ,node)) 
     	).flatten
-
-    if(routingIndexedRequestListeners.length == 1){
-      OkState(
-          routings.filter( 
+    if(routingIndexedRequestListeners.length == 0)
+      new NoRequestListener()
+    else if(routingIndexedRequestListeners.length == 1){
+      val selectedRouting = routings.filter( 
         		  r => (r.xml \ "@id" text) == routingIndexedRequestListeners.head._1
           ).head
-          , 
-          routingIndexedRequestListeners.head._2 \\ "RequestListener" \ "@id" text
-          )
+      val selectedRequestID:String = routingIndexedRequestListeners.head._2 \\ "RequestListener" \ "@id" text;
+      OkState(selectedRouting , selectedRequestID )
     }
     else{
 
@@ -63,6 +62,10 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
     }
   }
 
+  def getOkState = {
+    
+  }
+  
   def getRoutingInstaceByworkflowID(workflowID: String): Option[RoutingInstance] = {
     routingInstancePool.get(workflowID)
   }
