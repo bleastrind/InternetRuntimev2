@@ -37,7 +37,7 @@ object SignalController extends Controller {
 	        null);
 	        
 	  }
-	  
+	    
 	  val resultxml = 
 	    <Options>
 		  {scala.xml.NodeSeq.fromSeq( 
@@ -47,7 +47,14 @@ object SignalController extends Controller {
 		    </entry>).toSeq)
 		  }	    
 		</Options>
-	  Ok(resultxml)
+	  
+	  if(request.queryString.get("format") match {
+	    case Some(list) => list.head == "json"
+	    case _ => false
+	  }){
+	    Ok(net.liftweb.json.Xml.toJson(resultxml).toString())
+	  }else
+	     Ok(resultxml)
 	}
 
 	def registerSignal(signalname:String)= Action{
