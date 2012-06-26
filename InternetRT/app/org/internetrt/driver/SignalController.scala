@@ -47,7 +47,7 @@ object SignalController extends Controller {
 	        
 	  }
 	    
-	  val resultxml = 
+	  val resultxml = scala.xml.Utility.trim(
 	    <Options>
 		  {scala.xml.NodeSeq.fromSeq( 
 		    response.map(entry =>
@@ -55,7 +55,7 @@ object SignalController extends Controller {
 		    	<value>{entry._2}</value>
 		    </entry>).toSeq)
 		  }	    
-		</Options>
+		</Options>)
 	  
 	  if(request.queryString.get("format") match {
 	    case Some(list) => list.head == "json"
