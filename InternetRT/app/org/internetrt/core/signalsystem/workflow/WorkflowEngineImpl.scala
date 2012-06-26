@@ -134,6 +134,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
     val (requestRouting,requestListenerID) = checkStatus(actualRoutings, options) match{
         case OkState(r,id) => (r,id)
         case OptionMissingState(options) => throw new RoutingInstanceInitException(options)
+        case _ => return null 
       }
 
     val workflowID = UUID.randomUUID().toString()
