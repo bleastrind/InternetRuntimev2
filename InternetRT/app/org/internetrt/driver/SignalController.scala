@@ -4,7 +4,12 @@ import org.internetrt.SiteInternetRuntime
 import org.internetrt._;
 
 object SignalController extends Controller {
-	def init(signalname:String,Type:String)=Action{
+
+	def initfromthirdpart(signalname:String) = init(signalname,"thirdpart")
+	
+	def initfromclient(signalname:String) = init(signalname,"client")
+	
+	private def init(signalname:String,Type:String)=Action{
 	  request=>
 	  val response = Type match{
 	    case "thirdpart" => SiteInternetRuntime.initActionFromThirdPart(
@@ -22,7 +27,11 @@ object SignalController extends Controller {
 	  Ok(response.getResponse)
 	}
 	
-	def initOption(signalname:String, Type:String)= Action{
+	def initOptionfromthirdpart(signalname:String) = initOption(signalname,"thirdpart")
+	
+	def initOptionfromclient(signalname:String) = initOption(signalname,"client")
+	
+	private def initOption(signalname:String, Type:String)= Action{
 	   request=>
 	  val response = Type match{
 	    case "thirdpart" => SiteInternetRuntime.initActionOptionsFromThirdPart(
