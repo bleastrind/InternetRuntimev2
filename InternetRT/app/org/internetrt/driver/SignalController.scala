@@ -21,4 +21,5 @@ object SignalController extends Controller {
 	  }
 	  Ok(response.getResponse)
 	}
+	
 }
