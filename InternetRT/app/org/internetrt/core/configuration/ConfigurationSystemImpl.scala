@@ -12,7 +12,7 @@ abstract class ConfigurationSystemImpl extends AnyRef
   val appPool:AppPool
   val routingResourcePool:RoutingResourcePool
   
-  def confirmRouting(userID:String,r:Routing){
+  def confirmRouting(userID:String,r:Routing)={
     //val requests = r.xml \ "requests"
     routingResourcePool.saveRouting(r)
   }

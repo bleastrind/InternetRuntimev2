@@ -60,4 +60,11 @@ public class ConfigController extends Controller {
 		Boolean success = org.internetrt.SiteInternetRuntime.installApplication(accessToken,xml);
 		return ok(success.toString());
 	}
+	
+	public static Result confirmRouting(){
+		String accessToken = request().queryString().get("accessToken")[0];
+		String xml = request().queryString().get("xml")[0];
+		Boolean success = org.internetrt.SiteInternetRuntime.confirmRouting(accessToken,xml);
+		return ok(success.toString());		
+	}
 }

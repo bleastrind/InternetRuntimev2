@@ -23,6 +23,7 @@ import org.internetrt.core.security.AccessControlSystem
 import org.internetrt.CassandraAuthCenter
 import org.internetrt.CassandraConfigurationSystem
 import org.internetrt.CassandraSignalSystem
+import org.internetrt.core.model.Routing
 
 @RunWith(classOf[JUnitRunner])
 class SignalSpedification extends Specification with Mockito{ override def is =
@@ -31,6 +32,7 @@ class SignalSpedification extends Specification with Mockito{ override def is =
     "Preparation"																^
     	"""The application should registered as "appid" with secret "secret"  """  ! install1^
     	"""The application2 should registered as "appid2" with secret "secret2"  """  ! install2^
+    	"""A routing should be set between application and application2 """      ! setrouting^
                                                                                 p^
     "The sip type signal should"  ^
       "Given the sip request" ^ (request) ^
@@ -75,6 +77,11 @@ var appid2 = ""
       TestEnvironment.confSystem.installApp("user",Application(<AppID>{id}</AppID>))
       success
     }
+
+def setrouting = {
+  TestEnvironment.confSystem.confirmRouting("user",Routing("user", <Routing><Signal><name>signalname</name><from>{appid}</from></Signal><RequestListener id="1"/></Routing>))
+  success
+}
 
 	object request extends Given[SignalResponse]{
 		def extract(text: String):SignalResponse = {

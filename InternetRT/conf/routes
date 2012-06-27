@@ -37,6 +37,8 @@ GET		/clients/test				org.internetrt.driver.userinterface.Client.test
 GET		/config/apps                           org.internetrt.driver.ConfigController.appsList
 GET		/config/apps/:id                       org.internetrt.driver.ConfigController.appDetail(id: String)
 GET		/config/installapp		org.internetrt.driver.ConfigController.installApplication
+GET		/config/confirmrouting		org.internetrt.driver.ConfigController.confirmRouting
+
 
 #OAuth 
 GET		/oauth/authorize						org.internetrt.driver.OAuthAPI.authorize
