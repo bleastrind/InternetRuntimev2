@@ -146,8 +146,9 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
       {requestRouting.xml \ "Adapter" filter ( node => (node \ "@to" text) == requestListenerID )}
       {requestRouting.xml \ "RequestListener"}
       
-    dispatchEvents(workflowID,userID, routing);
       </RoutingInstance>
+      
+    dispatchEvents(workflowID,userID, routings);
 /*    val xml =
       <RoutingInstance>
         <id>{ workflowID } </id>

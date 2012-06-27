@@ -19,7 +19,7 @@ class AccessTokenCassandraPool(cluster:Cluster)
     def fromByteBuffer(buffer:ByteBuffer):(AccessToken,String,String)={
       val xml = scala.xml.XML.loadString(new String(buffer.array()))
       (AccessToken(xml \ "AccessToken" \ "value" text,
-          DateFormat.getInstance().parse(xml \ "AccessToken" \ "expire" text),
+          new Date((xml \ "AccessToken" \ "expire" text).toLong),
           xml \ "AccessToken" \ "refresh" text),
           xml \ "appid" text,
           xml \ "userid" text)
@@ -29,7 +29,7 @@ class AccessTokenCassandraPool(cluster:Cluster)
       val xml =scala.xml.Utility.trim(<v>
     	  <AccessToken>
       		<value>{value._1.value}</value>
-    	  	<expire>{value._1.expire}</expire>
+    	  	<expire>{value._1.expire.getTime()}</expire>
       		<refresh>{value._1.refresh}</refresh>
     	  </AccessToken>
       		<appid>{value._2}</appid>

@@ -21,8 +21,7 @@ abstract class ConfigurationSystemImpl extends AnyRef
   }
   
   def installApp(userID:String, app:Application):Boolean={
-    appPool.installApplication(userID, app.id,app)
-    app.id != null //check app format is right
+    appPool.installApplication(userID, app.id,app) //TODO check app format is right
   }
 
   def getAppIDs(userID:String):Seq[String]={

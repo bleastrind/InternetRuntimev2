@@ -24,6 +24,10 @@ import org.internetrt.core.io.userinterface.ClientDriver
 import org.internetrt.MemoryAccessControlSystem
 import org.internetrt.MemorySignalSystem
 import org.internetrt.MemoryConfigurationSystem
+import org.internetrt.CassandraAuthCenter
+import org.internetrt.CassandraSignalSystem
+import org.internetrt.CassandraConfigurationSystem
+import org.internetrt.CassandraAccessControlSystem
 
 @RunWith(classOf[JUnitRunner])
 class ConfigurationSpec extends Specification with Mockito {override def is =
@@ -35,11 +39,11 @@ class ConfigurationSpec extends Specification with Mockito {override def is =
  object TestEnvironment extends InternetRuntime {
   object authCenter extends {
     val global = TestEnvironment.this
-  } with MemoryAuthCenter
+  } with CassandraAuthCenter
 
   object signalSystem extends {
     val global = TestEnvironment.this
-  } with MemorySignalSystem
+  } with CassandraSignalSystem
 
   object ioManager extends {
     val global = TestEnvironment.this
@@ -47,11 +51,11 @@ class ConfigurationSpec extends Specification with Mockito {override def is =
 
   object confSystem extends {
     val global = TestEnvironment.this
-  } with MemoryConfigurationSystem
+  } with CassandraConfigurationSystem
   
   object aclSystem extends {
     val global = TestEnvironment.this
-  } with MemoryAccessControlSystem
+  } with CassandraAccessControlSystem
 
   }
   object TestUserInterface extends UserInterface {

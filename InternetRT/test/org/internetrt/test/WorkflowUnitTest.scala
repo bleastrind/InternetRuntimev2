@@ -7,13 +7,14 @@ import org.internetrt.core.signalsystem.workflow.OptionMissingState
 import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
 import org.internetrt.core.signalsystem.workflow.OkState
+import org.internetrt.Cassandra
 
 @RunWith(classOf[JUnitRunner])
 class WorkflowUnitTest extends Specification{
 	"The workflow initActionOption" should{
 	  "return missingOptions when multi route and no option" in {
 	    val workflowEngine = new WorkflowEngineImpl{
-	      val routingInstancePool = new StubRoutingInstancePool()
+	      val routingInstancePool = Cassandra.routingInstancePool
 	    }
 	    workflowEngine.checkStatus(Seq(rout1,rout2),Map.empty)
 	    match{
