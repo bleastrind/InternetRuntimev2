@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.internetrt.sdk.util.RoutingGenerator;
+
 
 public class GenRoutingServlet extends HttpServlet {
 
@@ -73,6 +75,14 @@ public class GenRoutingServlet extends HttpServlet {
 		System.out.println("TRIGGER: "+trigger);
 		System.out.println("TRIGGERCHANNEL: "+triggerChannel);
 		System.out.println("ACTIONCHANNEL: "+actionChannel);
+		
+		RoutingGenerator routingGenerator = new RoutingGenerator();
+		String routingXml = routingGenerator.generateRouting(trigger, triggerChannel, actionChannel);
+
+		PrintWriter out = response.getWriter();
+		out.write(routingXml);
+		out.flush();
+		out.close();
 	}
 
 	/**

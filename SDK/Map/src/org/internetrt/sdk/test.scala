@@ -19,10 +19,9 @@ object test {
     val signal = "share"
     val from = "weiAppID"
     val to = "renrenAppID"
-    val user = "userAccessToken" 
     
     val routingGenerator = new RoutingGenerator
-    val routingXml = routingGenerator.generateRouting(signal,from,to,user)
+    val routingXml = routingGenerator.generateRouting(signal,from,to)
     //println(routingXml)
     
     //test appXmlParser

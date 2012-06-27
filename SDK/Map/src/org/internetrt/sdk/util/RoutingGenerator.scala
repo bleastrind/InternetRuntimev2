@@ -4,26 +4,25 @@ import scala.xml.Node
 import scala.xml.NodeSeq
 
 class RoutingGenerator {
-	def generateRouting(signal:String, from:String, to:String, user: String) = {
+	def generateRouting(signal:String, from:String, to:String):String = {
 	  val signalNode =  generateSignalNode(signal, from, to)
 	  val RequestListenerNodes  =  generateRequestListenerNodes(from,to)
 
-	  <Routing>
+	  (<Routing>
 			{signalNode}
 	  		{RequestListenerNodes}
-	</Routing>
+	</Routing>).toString()
 	}
 	
 	def generateSignalNode(signalName:String, from:String, to:String): NodeSeq = 
 	{
-	  //  val xmlString= org.internetrt.driver.SignalController.getSignalDef(signalName)
+	 // val xmlString= org.internetrt.driver.SignalController.getSignalDef(signalName)
 	  val xmlString = scala.xml.XML.loadFile("Signal.xml").toString();
 	  val xml = scala.xml.XML.loadString(xmlString)
 	  val signalNode = 
 	    <signal>
-			  <from>from</from>
-			  <user></user>
-			  <name></name>
+			  <from>{from}</from>
+			  <name>{signalName}</name>
   			{  (xml \ "vars" )}
 		</signal>
 	 scala.xml.NodeSeq.fromSeq(signalNode)

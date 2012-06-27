@@ -163,9 +163,14 @@ function genRouting()
 		type: 'POST',
 		data: params,
 		dataType: 'json',
-		success : function()
+		success : function(data)
 		{
 			alert("SUCCESS");
+			var r = confirm(data);
+			if(r == true)
+			{
+				document.write(此项配置已经保存);
+			}
 		}
 	
 	}

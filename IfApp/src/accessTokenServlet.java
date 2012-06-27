@@ -1,4 +1,4 @@
-import java.awt.List;
+import java.util.List;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.internetrt.sdk.util.AppXmlParser;
+import org.internetrt.sdk.util.Application;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,18 +75,20 @@ public class accessTokenServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		String accessToken = request.getParameter("accessToken");
 		InternetRuntime rt = new InternetRuntime();
-		ArrayList<String> appXmls  = rt.getApps(accessToken);
+		String accessToken = rt.getAccessToken();
+		List<String> appIDList  = rt.getApps(accessToken);
 		
 		JSONArray applications= new JSONArray();
 		JSONObject appsObject = new JSONObject();
 		
-		for(String str: appXmls)
+		for(String str: appIDList)
 		{
-			Application application  = AppXmlParser.createApplication(str);
+			String xmlString = rt.getAppDetail(str, accessToken);
+			AppXmlParser appXmlParser = new AppXmlParser(xmlString);
+			Application application  = appXmlParser.createApplication();
 			
-			JSONObject appObject = AppXmlParser.ApplicationToJson(application);
+			JSONObject appObject = TermToJson.ApplicationToJson(application);
 			
 			applications.put(appObject);
 		}
