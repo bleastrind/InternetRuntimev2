@@ -156,7 +156,7 @@ abstract class InternetRuntime {
 
     if (aclSystem.isRoot(userID, appID)) {
 
-      confSystem.confirmRouting(userID, Routing(scala.xml.XML.load(xml)))
+      confSystem.confirmRouting(userID, Routing(userID,scala.xml.XML.load(xml)))
     }
   }
 
@@ -171,7 +171,10 @@ abstract class InternetRuntime {
   def getApplicationDetail(id: String, accessToken: String) = {
     val (userID, appID) = authCenter.getUserIDAppIDPair(accessToken)
     aclSystem.checkAccess(userID, appID, "getApplications");
-    confSystem.getApp(userID, id)
+    confSystem.getApp(userID, id) match {
+      case Some(app) => app
+      case _ => null
+    }
   }
 }
 

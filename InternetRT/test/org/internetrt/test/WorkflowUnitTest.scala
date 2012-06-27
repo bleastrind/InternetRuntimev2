@@ -64,7 +64,7 @@ class WorkflowUnitTest extends Specification{
 	}
 	
 	
-	val rout1 = Routing(<Routing id = "fdsafs">
+	val rout1 = Routing("u", <Routing id = "fdsafs">
         <Signal id="1" runat="client">
           <from>client</from>
           <user>u</user>
@@ -118,7 +118,7 @@ class WorkflowUnitTest extends Specification{
         </EventListener>
       </Routing>)
       
-      val rout2=Routing(<Routing id = "12">
+      val rout2=Routing("u", <Routing id = "12">
         <Signal id="1" runat="client">
           <from>client</from>
           <user>u</user>

@@ -69,8 +69,7 @@ abstract class SignalSystemImpl extends SignalSystem {
   }
 
   private def getRouting(s: Signal) = {
-    val signalID = s.from + s.user + s.id
-    confSystem.getRoutingsBySignal(signalID)
+    confSystem.getRoutingsBySignal(s)
   }
 
 } 

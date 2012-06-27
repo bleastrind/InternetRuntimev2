@@ -130,7 +130,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
         </EventListener>
       </Routing>
       
-    val actualRoutings = Seq(Routing(xmlrouting))
+    val actualRoutings = Seq(Routing(userID,xmlrouting))
     val (requestRouting,requestListenerID) = checkStatus(actualRoutings, options) match{
         case OkState(r,id) => (r,id)
         case OptionMissingState(options) => throw new RoutingInstanceInitException(options)
