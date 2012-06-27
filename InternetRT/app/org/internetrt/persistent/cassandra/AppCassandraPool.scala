@@ -16,7 +16,26 @@ import me.prettyprint.cassandra.service.template.ThriftColumnFamilyTemplate
 class AppCassandraPool(cluster: Cluster) extends AppPool {
   val keyspacename = "InternetRT_Personal"
   val cfname = "App"
-  val keyspaceDef = cluster.describeKeyspace(keyspacename);
+  var template: ThriftColumnFamilyTemplate[String, String] = null
+  init()
+  
+  def init() {
+    try {
+      val keyspaceDef = cluster.describeKeyspace(keyspacename);
+      if (keyspaceDef == null)
+        createSchema()
+
+      val keyspace = HFactory.createKeyspace(keyspacename, cluster);
+
+      template = new ThriftColumnFamilyTemplate[String, String](keyspace,
+        cfname,
+        StringSerializer.get(),
+        StringSerializer.get());
+    } catch {
+      case e: Exception => System.out.println(e)
+    }
+  }
+
   def createSchema() {
     val cfDef = HFactory.createColumnFamilyDefinition(keyspacename,
       cfname,
@@ -30,14 +49,8 @@ class AppCassandraPool(cluster: Cluster) extends AppPool {
     // "true" as the second param means that Hector will block until all nodes see the change.
     cluster.addKeyspace(newKeyspace, true);
   }
-
-  val keyspace = HFactory.createKeyspace(keyspacename, cluster);
-
-  val template = new ThriftColumnFamilyTemplate[String, String](keyspace,
-    cfname,
-    StringSerializer.get(),
-    StringSerializer.get());
-
+  
+  
   def installApplication(userID: String, id: String, app: Application) = {
     val updater = template.createUpdater(userID)
     updater.setValue(id, app, ApplicationSerializer)
@@ -45,7 +58,10 @@ class AppCassandraPool(cluster: Cluster) extends AppPool {
       template.update(updater)
       true
     } catch {
-      case e: HectorException => false //TODO handle exception ...
+      case e: HectorException => {
+        e.printStackTrace()
+        false //TODO handle exception ...
+      }
       case _ => false
     }
   }

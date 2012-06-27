@@ -24,7 +24,7 @@ class ApplicationAccessCassandraPool(cluster:Cluster)
     def toByteBuffer(value:(Seq[String],Boolean)):ByteBuffer={
       val xml =scala.xml.Utility.trim(<v>
     	  <AccessRequests>
-      		{NodeSeq.fromSeq(value._1 map (str => <access>str</access>))}
+      		{NodeSeq.fromSeq(value._1 map (str => <access>{str}</access>))}
     	  </AccessRequests>
       		<root>{value._2}</root>
       	</v>)

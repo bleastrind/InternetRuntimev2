@@ -15,9 +15,25 @@ abstract class KeyValueCassandraPool[K, V](cluster: Cluster, keyspacename: Strin
   def KeySerializer: Serializer[K]
   def ValueSerializer: Serializer[V]
 
-  val keyspaceDef = cluster.describeKeyspace(keyspacename);
-  if (keyspaceDef == null)
-    createSchema()
+  var template: ThriftColumnFamilyTemplate[K, String] = null
+  init()
+
+  def init() {
+    try {
+      val keyspaceDef = cluster.describeKeyspace(keyspacename);
+      if (keyspaceDef == null)
+        createSchema()
+
+      val keyspace = HFactory.createKeyspace(keyspacename, cluster);
+
+      template = new ThriftColumnFamilyTemplate[K, String](keyspace,
+        cfname,
+        KeySerializer,
+        StringSerializer.get());
+    } catch {
+      case e: Exception => System.out.println(e)
+    }
+  }
 
   def createSchema() {
     val cfDef = HFactory.createColumnFamilyDefinition(keyspacename,
@@ -32,14 +48,6 @@ abstract class KeyValueCassandraPool[K, V](cluster: Cluster, keyspacename: Strin
     // "true" as the second param means that Hector will block until all nodes see the change.
     cluster.addKeyspace(newKeyspace, true);
   }
-
-  val keyspace = HFactory.createKeyspace(keyspacename, cluster);
-
-  val template = new ThriftColumnFamilyTemplate[K, String](keyspace,
-    cfname,
-    KeySerializer,
-    StringSerializer.get());
-
   def put(k: K, v: V) = {
     val updater = template.createUpdater(k);
     updater.setValue("value", v, ValueSerializer);

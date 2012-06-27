@@ -20,6 +20,9 @@ import org.specs2.runner.JUnitRunner
 import org.internetrt.MemoryConfigurationSystem
 import org.internetrt.core.model.Application
 import org.internetrt.core.security.AccessControlSystem
+import org.internetrt.CassandraAuthCenter
+import org.internetrt.CassandraConfigurationSystem
+import org.internetrt.CassandraSignalSystem
 
 @RunWith(classOf[JUnitRunner])
 class SignalSpedification extends Specification with Mockito{ override def is =
@@ -40,16 +43,16 @@ class SignalSpedification extends Specification with Mockito{ override def is =
 	object TestEnvironment extends InternetRuntime{
 		object signalSystem extends{
 			val global = TestEnvironment.this
-		}with MemorySignalSystem
+		}with CassandraSignalSystem
 		
 		object authCenter extends{
 			val global = TestEnvironment.this
 
-		}with MemoryAuthCenter
+		}with CassandraAuthCenter
 		
 		object confSystem extends{
 			val global = TestEnvironment.this 
-		}with MemoryConfigurationSystem
+		}with CassandraConfigurationSystem
 		
 		val ioManager= mock[IOManager]
 		val aclSystem = mock[AccessControlSystem]

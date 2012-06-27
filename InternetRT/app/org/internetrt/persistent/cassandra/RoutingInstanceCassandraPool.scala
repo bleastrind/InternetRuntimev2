@@ -19,7 +19,7 @@ class RoutingInstanceCassandraPool(cluster:Cluster)
     
     def fromByteBuffer(buffer:ByteBuffer):RoutingInstance={
       val xml = scala.xml.XML.loadString(new String(buffer.array()));
-      RoutingInstance(xml \ "userID" text, scala.xml.XML.load(xml \ "xml" toString))
+      RoutingInstance(xml \ "userID" text, scala.xml.XML.loadString(xml \ "xml" toString))
     }
     
     def toByteBuffer(value:RoutingInstance):ByteBuffer={
