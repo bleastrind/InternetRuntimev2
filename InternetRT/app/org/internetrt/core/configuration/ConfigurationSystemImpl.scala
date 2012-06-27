@@ -2,6 +2,7 @@ package org.internetrt.core.configuration
 import org.internetrt.persistent.AppPool
 import org.internetrt.core.model._
 import org.internetrt.persistent.RoutingResourcePool
+import org.internetrt.core.signalsystem.Signal
 
 abstract class ConfigurationSystemImpl extends AnyRef 
   with ConfigurationSystem{
@@ -15,8 +16,8 @@ abstract class ConfigurationSystemImpl extends AnyRef
     //val requests = r.xml \ "requests"
     routingResourcePool.saveRouting(r)
   }
-  def getRoutingsBySignal(signalID:String)={
-    routingResourcePool.getRoutingsBySignal(signalID)
+  def getRoutingsBySignal(signal:Signal)={
+    routingResourcePool.getRoutingsBySignal(signal)
   }
   
   def installApp(userID:String, app:Application):Boolean={
@@ -27,7 +28,7 @@ abstract class ConfigurationSystemImpl extends AnyRef
   def getAppIDs(userID:String):Seq[String]={
     appPool.getAppIDsByUserID(userID)
   }
-  def getApp(userID:String, id:String):Application ={
+  def getApp(userID:String, id:String):Option[Application] ={
     appPool.getApp(userID, id)
   }
 }

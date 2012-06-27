@@ -12,6 +12,9 @@ import org.internetrt.core.signalsystem.Signal
 import org.internetrt.core.signalsystem.workflow.WorkflowEngineImpl
 import org.internetrt.core.configuration.ConfigurationSystemImpl
 import org.internetrt.core.io.userinterface.UserInterface
+import me.prettyprint.hector.api.Cluster
+import me.prettyprint.hector.api.factory.HFactory
+import org.internetrt.persistent.cassandra._
 
 /**
  * This object control all the connections in the website
@@ -61,6 +64,41 @@ trait MemoryAccessControlSystem extends AccessControlSystemImpl{
   object applicationAccessPool extends StubApplicationAccessPool
 }
 
+trait CassandraConfigurationSystem extends ConfigurationSystemImpl {
+  val appPool = Cassandra.appPool
+  val routingResourcePool = Cassandra.routingPool
+}
+
+trait CassandraAuthCenter extends AuthCenterImpl {
+  val internalUserPool = Cassandra.internalUserPool
+  val accessTokenPool = Cassandra.accessTokenPool
+  val authCodePool = Cassandra.authCodePool
+  val appOwnerPool = Cassandra.appOwnerPool
+}
+
+trait CassandraSignalSystem extends SignalSystemImpl {
+  object workflowEngine extends WorkflowEngineImpl {
+    val routingInstancePool = Cassandra.routingInstancePool
+  }
+  val signalDefinationPool = Cassandra.signalDefinationPool
+}
+trait CassandraAccessControlSystem extends AccessControlSystemImpl{
+  val applicationAccessPool = Cassandra.applicationAccessPool
+}
+
+object Cassandra{
+	val testCluster = HFactory.getOrCreateCluster("Test Cluster", "127.0.0.1:9170")
+	
+	val accessTokenPool = new AccessTokenCassandraPool(testCluster)
+	val applicationAccessPool = new ApplicationAccessCassandraPool(testCluster)
+	val appOwnerPool = new AppOwnerCassandraPool(testCluster)
+	val appPool = new AppCassandraPool(testCluster)
+	val authCodePool = new AuthCodeCassandraPool(testCluster)
+	val internalUserPool = new InternalUserCassandraPool(testCluster)
+	val routingPool = new RoutingCassandraPool(testCluster)
+	val routingInstancePool = new RoutingInstanceCassandraPool(testCluster)
+	val signalDefinationPool = new SignalDefinationCassandraPool(testCluster)
+}
 
 object SiteUserInterface extends UserInterface {
   val global = SiteInternetRuntime

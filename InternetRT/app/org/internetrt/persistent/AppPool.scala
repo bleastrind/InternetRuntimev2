@@ -3,8 +3,8 @@ import org.internetrt.core.model.Application
 
 trait AppPool {
     def installApplication(userID:String, id:String, app:Application)
-	def getAppOwnerByID(userID:String, id:String):String
-	def getApp(userID:String, id:String):Application
+	//def getAppOwnerByID(userID:String, id:String):String
+	def getApp(userID:String, id:String):Option[Application]
 	def getAppIDsByUserID(userID:String):Seq[String]
 }
 
@@ -19,14 +19,11 @@ class StubAppPool extends AppPool{
   def getAppOwnerByID(userID:String, id:String)={
 	  System.out.println(userID);
 	  System.out.println(id);
-	  getApp(userID, id).appOwner
+	  getApp(userID, id).get.appOwner
   }
   
   def getApp(userID:String, id:String) = {
-      innerMap.get(id) match{
-      case Some(app) => app
-      case None => null
-    }
+      innerMap.get(id) 
   }
   
   def getAppIDsByUserID(userID:String):Seq[String] = {
