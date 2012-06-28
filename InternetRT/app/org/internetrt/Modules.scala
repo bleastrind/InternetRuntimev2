@@ -23,11 +23,11 @@ object SiteInternetRuntime extends InternetRuntime {
 
   object authCenter extends {
     val global = SiteInternetRuntime.this
-  } with MemoryAuthCenter
+  } with CassandraAuthCenter
 
   object signalSystem extends {
     val global = SiteInternetRuntime.this
-  } with MemorySignalSystem
+  } with CassandraSignalSystem
 
   object ioManager extends {
     val global = SiteInternetRuntime.this
@@ -35,11 +35,11 @@ object SiteInternetRuntime extends InternetRuntime {
 
   object confSystem extends {
     val global = SiteInternetRuntime.this
-  } with MemoryConfigurationSystem
+  } with CassandraConfigurationSystem
   
   object aclSystem extends {
     val global = SiteInternetRuntime.this
-  } with MemoryAccessControlSystem
+  } with CassandraAccessControlSystem
 
 }
 trait MemoryConfigurationSystem extends ConfigurationSystemImpl {
