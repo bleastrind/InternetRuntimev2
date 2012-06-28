@@ -24,6 +24,10 @@ import org.internetrt.core.io.userinterface.ClientDriver
 import org.internetrt.MemoryAccessControlSystem
 import org.internetrt.MemorySignalSystem
 import org.internetrt.MemoryConfigurationSystem
+import org.internetrt.CassandraAuthCenter
+import org.internetrt.CassandraSignalSystem
+import org.internetrt.CassandraConfigurationSystem
+import org.internetrt.CassandraAccessControlSystem
 
 @RunWith(classOf[JUnitRunner])
 class ConfigurationSpec extends Specification with Mockito {override def is =
@@ -35,11 +39,11 @@ class ConfigurationSpec extends Specification with Mockito {override def is =
  object TestEnvironment extends InternetRuntime {
   object authCenter extends {
     val global = TestEnvironment.this
-  } with MemoryAuthCenter
+  } with CassandraAuthCenter
 
   object signalSystem extends {
     val global = TestEnvironment.this
-  } with MemorySignalSystem
+  } with CassandraSignalSystem
 
   object ioManager extends {
     val global = TestEnvironment.this
@@ -47,11 +51,11 @@ class ConfigurationSpec extends Specification with Mockito {override def is =
 
   object confSystem extends {
     val global = TestEnvironment.this
-  } with MemoryConfigurationSystem
+  } with CassandraConfigurationSystem
   
   object aclSystem extends {
     val global = TestEnvironment.this
-  } with MemoryAccessControlSystem
+  } with CassandraAccessControlSystem
 
   }
   object TestUserInterface extends UserInterface {
@@ -65,7 +69,7 @@ class ConfigurationSpec extends Specification with Mockito {override def is =
     val (id,secret) = TestEnvironment.registerApp("a@market.com");
     appmarketid = id
     appmarketsecret = secret
-    TestUserInterface.installRootApp("uid","<App><AppID>"+appmarketid+"</AppID><AppOwner>market</AppOwner></App>");
+    TestUserInterface.installRootApp("uid","""<Application><Name>ScriptEditor</Name><AppID>"""+appmarketid+"""</AppID><AccessRequests><AccessRequest>getApplications</AccessRequest></AccessRequests></Application>""");
     
   }
   
@@ -77,15 +81,14 @@ class ConfigurationSpec extends Specification with Mockito {override def is =
         normalid = id
     normalsec = secret
     //From market
-    val code = TestEnvironment.getAuthcodeForServerFlow(appmarketid,"uid","http")
+    val code = TestUserInterface.getAuthcodeForServerFlow(appmarketid,"uid","http")
     val accessToken = TestEnvironment.getAccessTokenByAuthtoken(appmarketid,code,appmarketsecret)
 		 
-    TestEnvironment.installApplication(accessToken.value,"""<?xml version="1.0" encoding="UTF-8" ?><App><AppID>"""+normalid+"""</AppID><AppOwner>app</AppOwner></App>""")
-   
+    TestEnvironment.installApplication(accessToken.value,"""<?xml version="1.0" encoding="UTF-8" ?><App><AccessRequest>getApplications</AccessRequest><AppID>"""+normalid+"""</AppID><AppOwner>app</AppOwner></App>""")
   }
   
   def query = {
-    val code = TestEnvironment.getAuthcodeForServerFlow(normalid,"uid","http")
+    val code = TestUserInterface.getAuthcodeForServerFlow(normalid,"uid","http")
     val accessToken = TestEnvironment.getAccessTokenByAuthtoken(normalid,code,normalsec)
 	
     val apps = TestEnvironment.getApplications(accessToken.value)

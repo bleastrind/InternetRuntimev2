@@ -20,6 +20,11 @@ import org.specs2.runner.JUnitRunner
 import org.internetrt.MemoryConfigurationSystem
 import org.internetrt.core.model.Application
 import org.internetrt.core.security.AccessControlSystem
+import org.internetrt.CassandraAuthCenter
+import org.internetrt.CassandraConfigurationSystem
+import org.internetrt.CassandraSignalSystem
+import org.internetrt.core.model.Routing
+import org.internetrt.core.io.userinterface.UserInterface
 
 @RunWith(classOf[JUnitRunner])
 class SignalSpedification extends Specification with Mockito{ override def is =
@@ -28,6 +33,7 @@ class SignalSpedification extends Specification with Mockito{ override def is =
     "Preparation"																^
     	"""The application should registered as "appid" with secret "secret"  """  ! install1^
     	"""The application2 should registered as "appid2" with secret "secret2"  """  ! install2^
+    	"""A routing should be set between application and application2 """      ! setrouting^
                                                                                 p^
     "The sip type signal should"  ^
       "Given the sip request" ^ (request) ^
@@ -40,20 +46,25 @@ class SignalSpedification extends Specification with Mockito{ override def is =
 	object TestEnvironment extends InternetRuntime{
 		object signalSystem extends{
 			val global = TestEnvironment.this
-		}with MemorySignalSystem
+		}with CassandraSignalSystem
 		
 		object authCenter extends{
 			val global = TestEnvironment.this
 
-		}with MemoryAuthCenter
+		}with CassandraAuthCenter
 		
 		object confSystem extends{
 			val global = TestEnvironment.this 
-		}with MemoryConfigurationSystem
+		}with CassandraConfigurationSystem
 		
 		val ioManager= mock[IOManager]
 		val aclSystem = mock[AccessControlSystem]
 	}
+	
+	object TestUserInterface extends UserInterface{
+	  val global = TestEnvironment
+	}
+
 var appid = ""
   var appsec = ""
     def install1 = {
@@ -73,9 +84,14 @@ var appid2 = ""
       success
     }
 
+def setrouting = {
+  TestEnvironment.confSystem.confirmRouting("user",Routing("user", <Routing><Signal><name>signalname</name><from>{appid}</from></Signal><RequestListener id="1"/></Routing>))
+  success
+}
+
 	object request extends Given[SignalResponse]{
 		def extract(text: String):SignalResponse = {
-		  val code = TestEnvironment.getAuthcodeForServerFlow(appid,"user","http")
+		  val code = TestUserInterface.getAuthcodeForServerFlow(appid,"user","http")
 		  val accessToken = TestEnvironment.getAccessTokenByAuthtoken(appid,code,appsec)
 		  TestEnvironment.initActionFromThirdPart(accessToken.value,"signalname",null,null) // head response return the routing
 

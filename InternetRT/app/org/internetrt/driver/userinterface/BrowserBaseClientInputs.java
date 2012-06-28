@@ -20,7 +20,6 @@ public class BrowserBaseClientInputs extends Controller{
 		
 		try{
 			String uid = SiteUserInterface.login(username,password);
-
 			session().put(CONSTS.SESSIONUID(), uid);
 			return ok(uid);
 		}catch(Exception e){

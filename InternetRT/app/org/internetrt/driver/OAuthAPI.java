@@ -12,21 +12,21 @@ import play.mvc.Controller;
 public class OAuthAPI extends Controller {
 	
 	/**
-	 * The API for Web Server Flow
+	 * The API for Web Server Flow is moved to package userinterface
 	 * @param appID
 	 * @param response_type
 	 * @param redirect_uri
 	 * @return
 	 */
-	public static Result authorize(){
-		String userID = session(CONSTS.SESSIONUID());
-		String appID = request().queryString().get("appID")[0];
-		String redirect_uri = request().queryString().get("redirect_uri")[0];
-		System.out.print(redirect_uri);
-		String code= org.internetrt.SiteInternetRuntime.getAuthcodeForServerFlow(appID,userID,redirect_uri);
-		System.out.print(code);
-		return redirect(redirect_uri+"?code="+code);
-	}
+//	public static Result authorize(){
+//		String userID = session(CONSTS.SESSIONUID());
+//		String appID = request().queryString().get("appID")[0];
+//		String redirect_uri = request().queryString().get("redirect_uri")[0];
+//		System.out.print(redirect_uri);
+//		String code= org.internetrt.SiteInternetRuntime.getAuthcodeForServerFlow(appID,userID,redirect_uri);
+//		System.out.print(code);
+//		return redirect(redirect_uri+"?code="+code);
+//	}
 	/**
 	 * The API for global workflow type auth
 	 * @param appSecret
@@ -48,8 +48,8 @@ public class OAuthAPI extends Controller {
 		String appSecret = request().queryString().get("appSecret")[0];
 		AccessToken accesstoken = SiteInternetRuntime.getAccessTokenByAuthtoken(appID, authtoken, appSecret);
 		return ok("{access_token:\""+accesstoken.value()+
-				"\"\nexpires_in: "+accesstoken.expire()+
-				"\nrefresh_token=\""+accesstoken.refresh()+"\"}");
+				"\",expires_in: \""+accesstoken.expire()+"\""+
+				",refresh_token=\""+accesstoken.refresh()+"\"}");
 	}
 	
 	
