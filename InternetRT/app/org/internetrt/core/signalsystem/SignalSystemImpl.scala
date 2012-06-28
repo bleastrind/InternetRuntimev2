@@ -36,7 +36,7 @@ abstract class SignalSystemImpl extends SignalSystem {
     try {
       val ins = workflowEngine.initWorkflow(s.user, getRouting(s), options)
 
-      return new ObjectResponse(ins)
+      return new ObjectResponse(ins.xml)
     } catch {
       case _ => return new RejectResponse(I18n.REJECT)
     }
