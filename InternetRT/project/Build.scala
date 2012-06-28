@@ -11,7 +11,7 @@ object ApplicationBuild extends Build {
       // Add your project dependencies here,
       "org.mockito" % "mockito-all" % "1.9.0" % "test",
       "commons-httpclient" % "commons-httpclient" % "3.1",
-      "org.apache.cassandra" % "cassandra-all" % "1.1.1",
+      "me.prettyprint" % "hector-core" % "1.0-5",
       "net.liftweb" %% "lift-json" % "2.4"
     )
 

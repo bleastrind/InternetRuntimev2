@@ -6,12 +6,11 @@
     <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
     <meta http-equiv="description" content="this is my page">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <script type="text/javascript" src="js/jquery/jquery-1.6.1.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
     
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
     
 <script>
-var accessToken = "FEIFEI";
 var result;
 var apps;
 var triggerChannel;
@@ -20,15 +19,12 @@ var trigger;
 var signals = new Array();
 var appsByTri = [];
 
-function submit_accessToken()
+function accessToken()
 {
-	var params={
-			'accessToken':accessToken
-	}
+	alert("START");
 	$.ajax({
-		url:'servlet/accessTokenServlet',
-		type: 'POST',
-		data: params,
+		url:'GetAppsServlet',
+		type: 'GET',
 		dataType: 'json',
 		success : function(data)
 		{
@@ -113,7 +109,7 @@ function render_triggerChannels()
 	
 	for(var i = 0; i< appsByTri.length; i++)
 	{
-		
+	
 		html += '<a onclick="choose_triggerChannel_id('+i+')">'
 						+'<img src="'+ "images/"+appsByTri[i].appName+"_logo.jpg" +'">'
 					+'</a>';
@@ -134,7 +130,6 @@ function render_actionChannels()
 	
 	for(var i = 0; i< apps.length; i++)
 	{
-		
 		html += '<a onclick="choose_actionChannel_id('+i+')">'
 						+'<img src="'+ "images/"+apps[i].appName+"_logo.jpg" +'">'
 					+'</a>';
@@ -153,13 +148,38 @@ function choose_actionChannel_id(id)
 
 function genRouting() 
 {	
+	alert("SUBMIT")
 	var params={
 			'trigger':trigger,
 			'triggerChannel':triggerChannel,
 			'actionChannel':actionChannel
 	}
 	$.ajax({
-		url:'servlet/GenRoutingServlet',
+		url:'GenRoutingServlet',
+		type: 'POST',
+		data: params,
+		dataType: 'json',
+		success : function(data)
+		{
+			alert("SUCCESS");
+			var r = confirm(data);
+			if(r == true)
+			{
+				restoreRouting(data);
+			}
+		}
+	
+	}
+			)
+}
+
+function restoreRouting(data)
+{
+	var params={
+			'routing':data,
+	}
+	$.ajax({
+		url:'RestoreRoutingServlet',
 		type: 'POST',
 		data: params,
 		dataType: 'json',
@@ -171,14 +191,10 @@ function genRouting()
 	}
 			)
 }
-
 </script>
 
 </head>
-<body>
-	<div id="submitButton">
-		<input type="button" name="Click here to start" value="Submit" onclick="submit_accessToken()">
-	</div>
+<body onload = accessToken()>
 	
 	<div id = "choose_trigger">	
 	</div>

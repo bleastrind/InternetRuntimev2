@@ -51,10 +51,6 @@ abstract class InternetRuntime {
   def getAuthcodeForActionFlow(appID: String, appSecret: String, workflowID: String) = {
     authCenter.genAuthCode(appID, appSecret, workflowID)
   }
-  def getAuthcodeForServerFlow(appID: String, userID: String, redirect_uri: String): String = {
-    authCenter.genAuthCode(appID, userID);
-
-  }
   def getAccessTokenByAuthtoken(appID: String, authtoken: String, appSecret: String): AccessToken = {
     authCenter.genAccessTokenByAuthToken(authtoken, appID, appSecret)
   }
@@ -88,24 +84,6 @@ abstract class InternetRuntime {
     signalSystem.getSignalDefination(name).toString
   }
 
-  def triggerEventFromUserInterface(userID: String, signalID: String, vars: Map[String, Seq[String]], options: Map[String, String]) = {
-    val signal = initSignalFromUserInterface(userID, signalID, vars, options)
-    signalSystem.triggerEvent(signal)
-  }
-  def executeRequestFromUserInterface(userID: String, signalID: String, vars: Map[String, Seq[String]], options: Map[String, String]) = {
-    val signal = initSignalFromUserInterface(userID, signalID, vars, options)
-    signalSystem.executeRequest(signal)
-  }
-  def initActionFromUserinterface(userID: String, signalID: String, vars: Map[String, Seq[String]], options: Map[String, String]) = {
-    val signal = initSignalFromUserInterface(userID, signalID, vars, options)
-    signalSystem.initAction(signal, options)
-  }
-
-  def initActionOptionsFromUserinterface(userID: String, signalID: String, vars: Map[String, Seq[String]], options: Map[String, String]): Map[String, Seq[scala.xml.Node]] = {
-    val signal = initSignalFromUserInterface(userID, signalID, vars, options)
-    signalSystem.initActionOptions(signal, options)
-  }
-
   def triggerEventFromThirdPart(accessToken: String, signalID: String, vars: Map[String, Seq[String]], options: Map[String, String]) = {
     val signal = initSignalFromThirdPart(accessToken, signalID, vars, options)
     signalSystem.triggerEvent(signal)
@@ -122,10 +100,7 @@ abstract class InternetRuntime {
     val signal = initSignalFromThirdPart(accessToken, signalID, vars, options)
     signalSystem.initActionOptions(signal, options)
   }
-  private def initSignalFromUserInterface(userID: String, signalID: String, vars: Map[String, Seq[String]], options: Map[String, String]) = {
-    val appID = Signal.FROMUSERINTERFACE
-    Signal(signalID, userID, appID, vars)
-  }
+
   private def initSignalFromThirdPart(accessToken: String, signalID: String, vars: Map[String, Seq[String]], options: Map[String, String]) = {
     val (userID, appID) = authCenter.getUserIDAppIDPair(accessToken)
     Signal(signalID, userID, appID, vars)
@@ -151,13 +126,13 @@ abstract class InternetRuntime {
       false
   }
 
-  def confirmRouting(accessToken: String, xml: String) = {
+  def confirmRouting(accessToken: String, xml: String):Boolean = {
     val (userID, appID) = authCenter.getUserIDAppIDPair(accessToken)
 
     if (aclSystem.isRoot(userID, appID)) {
-
-      confSystem.confirmRouting(userID, Routing(scala.xml.XML.load(xml)))
-    }
+      confSystem.confirmRouting(userID, Routing(userID,scala.xml.XML.load(xml)))
+    }else
+      false
   }
 
   def getApplications(accessToken: String) = {
@@ -171,7 +146,10 @@ abstract class InternetRuntime {
   def getApplicationDetail(id: String, accessToken: String) = {
     val (userID, appID) = authCenter.getUserIDAppIDPair(accessToken)
     aclSystem.checkAccess(userID, appID, "getApplications");
-    confSystem.getApp(userID, id)
+    confSystem.getApp(userID, id) match {
+      case Some(app) => app
+      case _ => null
+    }
   }
 }
 
