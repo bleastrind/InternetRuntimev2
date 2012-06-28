@@ -17,7 +17,7 @@ object SignalController extends Controller {
 	        signalname,
 	        request.queryString,
 	        null);
-	    case "client" => SiteInternetRuntime.initActionFromUserinterface(
+	    case "client" => SiteUserInterface.initActionFromUserinterface(  //TODO  move to interface
 	        request.session.get(CONSTS.SESSIONUID).get,
 	        signalname,
 	        request.queryString,
@@ -39,7 +39,7 @@ object SignalController extends Controller {
 	        signalname,
 	        request.queryString,
 	        null);
-	    case "client" => SiteInternetRuntime.initActionOptionsFromUserinterface(
+	    case "client" => SiteUserInterface.initActionOptionsFromUserinterface(//TODO  move to interface
 	        request.session.get(CONSTS.SESSIONUID).get,
 	        signalname,
 	        request.queryString,
