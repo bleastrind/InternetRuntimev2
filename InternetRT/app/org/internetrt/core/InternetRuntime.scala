@@ -151,13 +151,13 @@ abstract class InternetRuntime {
       false
   }
 
-  def confirmRouting(accessToken: String, xml: String) = {
+  def confirmRouting(accessToken: String, xml: String):Boolean = {
     val (userID, appID) = authCenter.getUserIDAppIDPair(accessToken)
 
     if (aclSystem.isRoot(userID, appID)) {
-
       confSystem.confirmRouting(userID, Routing(userID,scala.xml.XML.load(xml)))
-    }
+    }else
+      false
   }
 
   def getApplications(accessToken: String) = {

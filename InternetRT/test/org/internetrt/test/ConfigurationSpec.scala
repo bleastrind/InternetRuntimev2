@@ -69,7 +69,7 @@ class ConfigurationSpec extends Specification with Mockito {override def is =
     val (id,secret) = TestEnvironment.registerApp("a@market.com");
     appmarketid = id
     appmarketsecret = secret
-    TestUserInterface.installRootApp("uid","<App><AppID>"+appmarketid+"</AppID><AppOwner>market</AppOwner></App>");
+    TestUserInterface.installRootApp("uid","""<Application><Name>ScriptEditor</Name><AppID>"""+appmarketid+"""</AppID><AccessRequests><AccessRequest>getApplications</AccessRequest></AccessRequests></Application>""");
     
   }
   

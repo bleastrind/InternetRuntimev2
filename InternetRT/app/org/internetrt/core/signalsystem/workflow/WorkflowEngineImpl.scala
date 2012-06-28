@@ -75,62 +75,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
   }
   def generateInstanceByRouting(userID: String, routings: Seq[Routing], options: Map[String, String]): RoutingInstance = {
 
-    val xmlrouting =
-      <Routing id = "fdsafs">
-        <Signal id="1" runat="client">
-          <from>client</from>
-          <user>u</user>
-          <name>share</name>
-          <vars>
-            <var><key>uri</key></var>
-            <var><key>uri2</key></var>
-          </vars>
-        </Signal>
-        <Adapter from="1" to="2">
-          <mapper>
-            <key from="uri" to="URI"/>
-            <value transformer="default"/>
-          </mapper>
-          <mapper>
-            <key from="uri2" to="URI2"/>
-            <value transformer="default"/>
-          </mapper>
-        </Adapter>
-        <Adapter from="1" to="3">
-          <mapper>
-            <key from="uri" to="URI"/>
-            <value transformer="default"/>
-          </mapper>
-          <mapper>
-            <key from="uri2" to="URI2"/>
-            <value transformer="default"/>
-          </mapper>
-        </Adapter>
-        <RequestListener id="2"  type="httpget" runat="appid" >
-    	  <description>hello</description>
-          <url>http://safs</url>
-          <params>
-            <param><key>URI</key><value><var/></value></param>
-          </params>
-          <headers>
-            <header><key>URI2</key><value><var/></value></header>
-            <header><key>routingInstanceID</key><value><ID/></value></header>
-          </headers>
-        </RequestListener>
-        <EventListener id="3"  type="httpget" runat="appid" >
-    	  <description>hello2</description>
-          <url>http://safs</url>
-          <params>
-            <param><key>URI</key><value><var/></value></param>
-          </params>
-          <headers>
-            <header><key>URI2</key><value><var/></value></header>
-            <header><key>routingInstanceID</key><value><ID/></value></header>
-          </headers>
-        </EventListener>
-      </Routing>
-      
-    val actualRoutings = Seq(Routing(userID,xmlrouting))
+    val actualRoutings = if( routings == null ) Seq.empty else routings
     val (requestRouting,requestListenerID) = checkStatus(actualRoutings, options) match{
         case OkState(r,id) => (r,id)
         case OptionMissingState(options) => throw new RoutingInstanceInitException(options)
@@ -149,40 +94,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
       </RoutingInstance>
       
     dispatchEvents(workflowID,userID, routings);
-/*    val xml =
-      <RoutingInstance>
-        <id>{ workflowID } </id>
-        <Signal id="1" runat="client">
-          <from>client</from>
-          <user>u</user>
-          <name>share</name>
-          <vars>
-            <var><key>uri</key></var>
-            <var><key>uri2</key></var>
-          </vars>
-        </Signal>
-        <Adapter from="1" to="2">
-          <mapper>
-            <key from="uri" to="URI"/>
-            <value transformer="default"/>
-          </mapper>
-          <mapper>
-            <key from="uri2" to="URI2"/>
-            <value transformer="default"/>
-          </mapper>
-        </Adapter>
-        <RequestListener id="2" type="httpget" runat="app">
-          <url>http://safs</url>
-          <params>
-            <param><key>URI</key><value><var/></value></param>
-          </params>
-          <headers>
-            <header><key>URI2</key><value><var/></value></header>
-            <header><key>routingInstanceID</key><value><ID/></value></header>
-          </headers>
-        </RequestListener>
-      </RoutingInstance>
-      */
+
     new RoutingInstance(userID, routingInstance)
   }
 }
