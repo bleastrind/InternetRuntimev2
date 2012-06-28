@@ -19,9 +19,11 @@ public class BrowserBaseClientInputs extends Controller{
 		String password = request().queryString().get("password")[0];
 		
 		try{
+			System.out.println("111111111111111111111111111111111");
 			String uid = SiteUserInterface.login(username,password);
-
+			System.out.println("2222222222222222222222222222222222");
 			session().put(CONSTS.SESSIONUID(), uid);
+			System.out.println("33333333333333333333333333333333333");
 			return ok(uid);
 		}catch(Exception e){
 			return ok(e.getMessage());

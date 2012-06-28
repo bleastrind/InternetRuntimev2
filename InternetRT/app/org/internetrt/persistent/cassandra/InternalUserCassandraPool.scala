@@ -15,12 +15,12 @@ class InternalUserCassandraPool(cluster:Cluster)
     def fromByteBuffer(buffer:ByteBuffer):(String,String)={
       val xml = scala.xml.XML.loadString(new String(buffer.array()));
 
-      (xml \ "username" text,xml \ "password" text)
+      (xml \ "uid" text,xml \ "password" text)
     }
     
     def toByteBuffer(value:(String,String)):ByteBuffer={
       val xml =scala.xml.Utility.trim(<v>
-    	  <username>{value._1}</username>
+    	  <uid>{value._1}</uid>
       	  <password>{value._2}</password>
       	</v>)
       ByteBuffer.wrap(xml.toString.getBytes())
