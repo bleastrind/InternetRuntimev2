@@ -5,6 +5,7 @@ import org.internetrt.core.InternetRuntime
 import java.util.UUID
 import org.internetrt.core.model.Application
 import scala.xml.XML
+import org.internetrt.core.signalsystem.Signal
 
 abstract class UserInterface {
   
@@ -12,6 +13,7 @@ abstract class UserInterface {
   import global.authCenter
   import global.aclSystem
   import global.confSystem
+  import global.signalSystem
   
   val clientManager = ClientsManager
   
@@ -35,5 +37,34 @@ abstract class UserInterface {
 
   def join(uid: String, driver: ClientDriver) = {
     clientManager.join(uid, driver)
+  }
+  
+  def getAuthcodeForServerFlow(appID: String, userID: String, redirect_uri: String): String = {
+    if(confSystem.getApp(userID,appID) != None)
+    	authCenter.genAuthCode(appID, userID);
+    else
+      null;
+  }  
+  
+  def triggerEventFromUserInterface(userID: String, signalID: String, vars: Map[String, Seq[String]], options: Map[String, String]) = {
+    val signal = initSignalFromUserInterface(userID, signalID, vars, options)
+    signalSystem.triggerEvent(signal)
+  }
+  def executeRequestFromUserInterface(userID: String, signalID: String, vars: Map[String, Seq[String]], options: Map[String, String]) = {
+    val signal = initSignalFromUserInterface(userID, signalID, vars, options)
+    signalSystem.executeRequest(signal)
+  }
+  def initActionFromUserinterface(userID: String, signalID: String, vars: Map[String, Seq[String]], options: Map[String, String]) = {
+    val signal = initSignalFromUserInterface(userID, signalID, vars, options)
+    signalSystem.initAction(signal, options)
+  }
+
+  def initActionOptionsFromUserinterface(userID: String, signalID: String, vars: Map[String, Seq[String]], options: Map[String, String]): Map[String, Seq[scala.xml.Node]] = {
+    val signal = initSignalFromUserInterface(userID, signalID, vars, options)
+    signalSystem.initActionOptions(signal, options)
+  }
+  private def initSignalFromUserInterface(userID: String, signalID: String, vars: Map[String, Seq[String]], options: Map[String, String]) = {
+    val appID = Signal.FROMUSERINTERFACE
+    Signal(signalID, userID, appID, vars)
   }
 }

@@ -24,6 +24,7 @@ import org.internetrt.CassandraAuthCenter
 import org.internetrt.CassandraConfigurationSystem
 import org.internetrt.CassandraSignalSystem
 import org.internetrt.core.model.Routing
+import org.internetrt.core.io.userinterface.UserInterface
 
 @RunWith(classOf[JUnitRunner])
 class SignalSpedification extends Specification with Mockito{ override def is =
@@ -59,6 +60,11 @@ class SignalSpedification extends Specification with Mockito{ override def is =
 		val ioManager= mock[IOManager]
 		val aclSystem = mock[AccessControlSystem]
 	}
+	
+	object TestUserInterface extends UserInterface{
+	  val global = TestEnvironment
+	}
+
 var appid = ""
   var appsec = ""
     def install1 = {
@@ -85,7 +91,7 @@ def setrouting = {
 
 	object request extends Given[SignalResponse]{
 		def extract(text: String):SignalResponse = {
-		  val code = TestEnvironment.getAuthcodeForServerFlow(appid,"user","http")
+		  val code = TestUserInterface.getAuthcodeForServerFlow(appid,"user","http")
 		  val accessToken = TestEnvironment.getAccessTokenByAuthtoken(appid,code,appsec)
 		  TestEnvironment.initActionFromThirdPart(accessToken.value,"signalname",null,null) // head response return the routing
 
