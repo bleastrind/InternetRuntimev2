@@ -13,13 +13,9 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import sun.awt.RepaintArea;
 
 import com.sun.java_cup.internal.internal_error;
+import com.sun.org.apache.bcel.internal.classfile.Code;
 
 public class InternetRuntime {
-	
-	public String getAccessToken ()
-	{
-		return null;
-	}
 	
 	private byte[] httpClientForRT(String requestUrl)
 	{
@@ -79,5 +75,16 @@ public class InternetRuntime {
 		byte[]responseBody = httpClientForRT(requestUrl);
 		String xmlDetail = new String(responseBody);
 		return xmlDetail;
+	}
+	
+	public String getAccessToken (String code,String appID, String appSecret)
+	{
+		String requestUrl = "http://localhost:9000/oauth/accesstoken?authtoken="+code+"&appID="+appID+"&appSecret="+appSecret;
+		byte[]responseBody = httpClientForRT(requestUrl);
+		String result = new String(responseBody);
+		String[] aa = result.split(",");
+		String[] a = aa[0].split(":");
+		String b = a[1].substring(1,a[1].length()-1);
+		return b;
 	}
 }
