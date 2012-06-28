@@ -46,7 +46,7 @@ public class InternetRuntime {
 	private List<String> parserXmlsIDString (String str)
 	{
 		List<String> applicationsIDList = new ArrayList<String>();
-		int start = str.indexOf(':');
+		int start = str.indexOf(':')+1;
 		int end = str.length() - 1;
 		String subString = str.substring(start,end);
 		String[] tempStrings =subString.split(",");
@@ -61,7 +61,7 @@ public class InternetRuntime {
 	{
 		String param = "accessToken="+accessToken;
 		List<String> applicationsIDList = new ArrayList<String>();
-		String requestUrl = "http://localhost:9000//config/apps"+"?"+param;
+		String requestUrl = "http://localhost:9000/config/apps"+"?"+param;
 		byte[]responseBody = httpClientForRT(requestUrl);
 		String xmlsID = new String(responseBody);
 		applicationsIDList = parserXmlsIDString(xmlsID);
@@ -71,10 +71,16 @@ public class InternetRuntime {
 	public String getAppDetail (String appID, String accessToken)
 	{
 		String param = "accessToken="+accessToken;
-		String requestUrl = "http://localhost:9000//config/apps/"+appID+"?"+param;
+		
+		String requestUrl = "http://localhost:9000/config/apps/"+appID+"?"+param;
 		byte[]responseBody = httpClientForRT(requestUrl);
-		String xmlDetail = new String(responseBody);
-		return xmlDetail;
+		String result = new String(responseBody);
+		
+		int i = result.indexOf("appDetail:")+("appDetail:").length()+1;
+		
+		String xmlString = result.substring(i,result.length()-2);
+		
+		return xmlString;
 	}
 	
 	public String getAccessToken (String code,String appID, String appSecret)
@@ -86,5 +92,17 @@ public class InternetRuntime {
 		String[] a = aa[0].split(":");
 		String b = a[1].substring(1,a[1].length()-1);
 		return b;
+	}
+	
+	public String getSignalDefination(String signalName){
+		String requestUrl = "http://localhost:9000/signal/querydef/"+signalName;
+		byte[]responseBody = httpClientForRT(requestUrl);
+		String result = new String(responseBody);
+		return result;
+	}
+	
+	public void ConfirmRouting(String accessToken, String routing){
+		String requestUrl = "http://localhost:9000/config/confirmrouting?"+"accessToken="+accessToken+"&"+"routing="+routing;
+		byte[]responseBody = httpClientForRT(requestUrl);
 	}
 }

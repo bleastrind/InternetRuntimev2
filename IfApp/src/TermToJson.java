@@ -81,9 +81,11 @@ public class TermToJson
 	
 	public static JSONObject ApplicationToJson(Application application)
 	{
+		
 		String appName = application.name();
 		String appID = application.ID();
 		List<Signal> signals= application.signals();
+		
 		JSONObject applicationObject = new JSONObject();
 		try {
 			applicationObject.put("appName", appName);

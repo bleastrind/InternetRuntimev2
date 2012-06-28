@@ -5,6 +5,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.internetrt.sdk.util.RoutingGenerator;
 
@@ -76,7 +77,15 @@ public class GenRoutingServlet extends HttpServlet {
 		System.out.println("TRIGGERCHANNEL: "+triggerChannel);
 		System.out.println("ACTIONCHANNEL: "+actionChannel);
 		
-		RoutingGenerator routingGenerator = new RoutingGenerator();
+		InternetRuntime rt = new InternetRuntime();
+		
+		HttpSession session = request.getSession();
+		String accessToken = session.getAttribute("accessToken").toString();
+		
+		String signalXml = rt.getSignalDefination(trigger);
+		String appXml = rt.getAppDetail(actionChannel, accessToken);
+		
+		RoutingGenerator routingGenerator = new RoutingGenerator(signalXml,appXml);
 		String routingXml = routingGenerator.generateRouting(trigger, triggerChannel, actionChannel);
 
 		PrintWriter out = response.getWriter();

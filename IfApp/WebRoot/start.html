@@ -23,7 +23,7 @@ function accessToken()
 {
 	alert("START");
 	$.ajax({
-		url:'/servlet/GetAppsServlet',
+		url:'GetAppsServlet',
 		type: 'GET',
 		dataType: 'json',
 		success : function(data)
@@ -109,7 +109,7 @@ function render_triggerChannels()
 	
 	for(var i = 0; i< appsByTri.length; i++)
 	{
-		
+	
 		html += '<a onclick="choose_triggerChannel_id('+i+')">'
 						+'<img src="'+ "images/"+appsByTri[i].appName+"_logo.jpg" +'">'
 					+'</a>';
@@ -130,7 +130,6 @@ function render_actionChannels()
 	
 	for(var i = 0; i< apps.length; i++)
 	{
-		
 		html += '<a onclick="choose_actionChannel_id('+i+')">'
 						+'<img src="'+ "images/"+apps[i].appName+"_logo.jpg" +'">'
 					+'</a>';
@@ -149,13 +148,14 @@ function choose_actionChannel_id(id)
 
 function genRouting() 
 {	
+	alert("SUBMIT")
 	var params={
 			'trigger':trigger,
 			'triggerChannel':triggerChannel,
 			'actionChannel':actionChannel
 	}
 	$.ajax({
-		url:'servlet/GenRoutingServlet',
+		url:'GenRoutingServlet',
 		type: 'POST',
 		data: params,
 		dataType: 'json',
@@ -165,7 +165,7 @@ function genRouting()
 			var r = confirm(data);
 			if(r == true)
 			{
-				document.write(此项配置已经保存);
+				restoreRouting(data);
 			}
 		}
 	
@@ -173,6 +173,24 @@ function genRouting()
 			)
 }
 
+function restoreRouting(data)
+{
+	var params={
+			'routing':data,
+	}
+	$.ajax({
+		url:'RestoreRoutingServlet',
+		type: 'POST',
+		data: params,
+		dataType: 'json',
+		success : function()
+		{
+			alert("SUCCESS");
+		}
+	
+	}
+			)
+}
 </script>
 
 </head>
