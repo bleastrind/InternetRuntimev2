@@ -70,7 +70,8 @@ object SignalController extends Controller {
 
 	def registerSignal(signalname:String)= Action{
 	  request=>
-	    Ok(SiteInternetRuntime.registerSignal(signalname,request.body.asXml.toString()).toString());
+	    System.out.println("RequestBody: "+request.body)
+	    Ok(SiteInternetRuntime.registerSignal(signalname,request.body.asText.toString()).toString());
 	}
 	
 	def getSignalDef(signalname:String)= Action{
