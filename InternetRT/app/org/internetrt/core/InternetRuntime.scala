@@ -74,7 +74,9 @@ abstract class InternetRuntime {
    */
   def registerSignal(name: String, xml: String): Boolean = {
     try {
-      signalSystem.registerSignal(name, scala.xml.XML.loadString(xml))
+      val xmlFile = scala.xml.XML.loadString(xml)
+      System.out.println(xmlFile)
+      signalSystem.registerSignal(name, xmlFile)
     } catch {
       case _ => false
     }
