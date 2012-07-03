@@ -1,0 +1,49 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index
+
+# Signal Processing API
+GET		/signal/init/thirdpart/*signalname     org.internetrt.driver.SignalController.initfromthirdpart(signalname:String)
+GET		/signal/init/client/*signalname     org.internetrt.driver.SignalController.initfromclient(signalname:String)
+GET		/signal/initOption/thirdpart/*signalname     org.internetrt.driver.SignalController.initOptionfromthirdpart(signalname:String)
+GET		/signal/initOption/client/*signalname     org.internetrt.driver.SignalController.initOptionfromclient(signalname:String)
+POST	/signal/register/*signalname     org.internetrt.driver.SignalController.registerSignal(signalname:String)
+GET		/signal/querydef/*signalname     org.internetrt.driver.SignalController.getSignalDef(signalname:String)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+# Client Communication API
+
+
+GET		/clients/longpollingjsonp	org.internetrt.driver.userinterface.Client.longpollingjsonp
+#maintain uid,cid
+GET		/clients/longpolling	org.internetrt.driver.userinterface.Client.longpolling
+#reponse a question
+GET		/clients/response		org.internetrt.driver.userinterface.Client.response
+#login
+GET		/clients/login			org.internetrt.driver.userinterface.BrowserBaseClientInputs.login
+#register
+GET		/clients/register		org.internetrt.driver.userinterface.BrowserBaseClientInputs.register
+#installApp
+GET		/clients/installapp		org.internetrt.driver.userinterface.BrowserBaseClientInputs.installRootApp
+
+GET		/clients/test				org.internetrt.driver.userinterface.Client.test
+
+#Configurition API 
+GET		/config/apps                           org.internetrt.driver.ConfigController.appsList
+GET		/config/apps/:id                       org.internetrt.driver.ConfigController.appDetail(id: String)
+GET		/config/installapp		org.internetrt.driver.ConfigController.installApplication
+GET		/config/confirmrouting		org.internetrt.driver.ConfigController.confirmRouting
+
+
+#OAuth 
+GET		/oauth/authorize						org.internetrt.driver.userinterface.OAuthAPI.authorize
+GET		/oauth/accesstoken						org.internetrt.driver.OAuthAPI.token
+GET		/oauth/workflow							org.internetrt.driver.OAuthAPI.authorizebyworkflow
+
+#Auth
+GET		/auth/appregister		org.internetrt.driver.AppRegister.register
