@@ -83,7 +83,7 @@ abstract class InternetRuntime {
   }
   
   def getSignalDefination(name:String):String = {
-    signalSystem.getSignalDefination(name).toString
+    signalSystem.getSignalDefination(name).head.toString()
   }
 
   def triggerEventFromThirdPart(accessToken: String, signalID: String, vars: Map[String, Seq[String]], options: Map[String, String]) = {
@@ -132,7 +132,7 @@ abstract class InternetRuntime {
     val (userID, appID) = authCenter.getUserIDAppIDPair(accessToken)
 
     if (aclSystem.isRoot(userID, appID)) {
-      confSystem.confirmRouting(userID, Routing(userID,scala.xml.XML.load(xml)))
+      confSystem.confirmRouting(userID, Routing(userID,scala.xml.XML.loadString(xml)))
     }else
       false
   }

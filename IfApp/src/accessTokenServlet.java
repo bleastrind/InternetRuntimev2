@@ -51,11 +51,11 @@ public class accessTokenServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		String code = null;
-		String appID = "ba62b541-d52a-4cf8-bd18-3a0dc0febb41";
-		String appSecret = "68858da2-ce2b-450f-abf6-7e136e624777";
+		String appID = "6735ee88-7e0c-4adc-8a30-76138b89a17c";
+		String appSecret = "91ff02fd-c2c9-48e9-8f0f-6c91fb45d8e7";
 		
 		if(request.getParameter("code") == null){
-			response.sendRedirect("http://localhost:9000/oauth/authorize?appID=ba62b541-d52a-4cf8-bd18-3a0dc0febb41&redirect_uri=http://localhost:8080/IfApp/servlet/accessTokenServlet");
+			response.sendRedirect("http://localhost:9000/oauth/authorize?appID=6735ee88-7e0c-4adc-8a30-76138b89a17c&redirect_uri=http://localhost:8080/IfApp/servlet/accessTokenServlet");
 		}
 		else {
 			code = request.getParameter("code");
