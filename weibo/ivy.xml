@@ -1,0 +1,12 @@
+<ivy-module  version ="2.0"> 
+     <info organisation ="internetruntime"  module ="sdk"/> 
+     <dependencies> 
+         <dependency  org ="commons-lang"  name ="commons-lang"  rev ="2.0" /> 
+         <dependency  org ="commons-cli"  name ="commons-cli"  rev ="1.0" /> 
+         <dependency org="net.sf.json-lib" name="json-lib" rev="0.8"/>
+		 <dependency org="commons-httpclient" name="commons-httpclient" rev="3.1"/>
+         <dependency org="commons-codec" name="commons-codec" rev="1.6"/>
+         <dependency org="log4j" name="log4j" rev="1.2.17"/>          
+         <dependency org="org.apache.geronimo.specs" name="geronimo-servlet_2.5_spec" rev="1.2"/> 
+     </dependencies> 
+</ivy-module>
