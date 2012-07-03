@@ -70,8 +70,9 @@ object SignalController extends Controller {
 
 	def registerSignal(signalname:String)= Action{
 	  request=>
-	    System.out.println("RequestBody: "+request.body)
-	    Ok(SiteInternetRuntime.registerSignal(signalname,request.body.asText.toString()).toString());
+	    val map = request.body.asFormUrlEncoded
+	    val first = map.get("share")
+	    Ok(SiteInternetRuntime.registerSignal(signalname,first.head).toString());
 	}
 	
 	def getSignalDef(signalname:String)= Action{
