@@ -5,6 +5,12 @@ import java.util.ArrayList
 class AppXmlParser (xml:String){
   //val xmlFile = scala.xml.XML.loadFile("renrenApplication.txt");
   val xmlFile = scala.xml.XML.loadString(xml)
+  
+  def createApplication() =  {
+     Application((xmlFile \ "Name").text, (xmlFile \ "AppID").text, getRequests()) 
+  }
+  
+  
   def getUrl(signal:String): String= {
     var result = new String
     val RequestListener = xmlFile \ "SignalHanlders"

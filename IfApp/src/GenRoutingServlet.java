@@ -10,6 +10,10 @@ import javax.servlet.http.HttpSession;
 import org.internetrt.sdk.util.RoutingGenerator;
 
 
+
+
+
+
 public class GenRoutingServlet extends HttpServlet {
 
 	/**
@@ -85,11 +89,13 @@ public class GenRoutingServlet extends HttpServlet {
 		String signalXml = rt.getSignalDefination(trigger);
 		String appXml = rt.getAppDetail(actionChannel, accessToken);
 		
-		RoutingGenerator routingGenerator = new RoutingGenerator(signalXml,appXml);
+		RoutingGenerator routingGenerator = new RoutingGenerator(signalXml, appXml);
 		String routingXml = routingGenerator.generateRouting(trigger, triggerChannel, actionChannel);
-
+		
+		String resultString = TermToJson.stringToJson("routingXml", routingXml).toString();
+		
 		PrintWriter out = response.getWriter();
-		out.write(routingXml);
+		out.write(resultString);
 		out.flush();
 		out.close();
 	}

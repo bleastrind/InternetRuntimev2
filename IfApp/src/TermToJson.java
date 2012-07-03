@@ -15,70 +15,6 @@ import org.omg.CORBA.portable.ApplicationException;
 public class TermToJson 
 {
 	
-//	public static Application createApplication(String param)
-//	{
-//		Application application = Application()
-//		ArrayList<Signal> signals = new ArrayList<Signal>();
-//		
-//		Document doc = null;
-//		try {
-//			doc = DocumentHelper.parseText(param);
-//		} catch (DocumentException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		Element root = doc.getRootElement();			//根节点
-//		Iterator itRoot = root.elementIterator();
-//			
-//		Element second;										//二级节点
-//		Iterator itSec;
-//			
-//		while(itRoot.hasNext())
-//		{
-//			second = (Element) itRoot.next();
-//			if(second.getName()=="Name")
-//			{
-//				application.setAppName(second.getText());
-//			}
-//			else if(second.getName()=="Signals")
-//			{
-//				Element third;
-//				Iterator itThird;
-//				itSec = second.elementIterator();
-//				
-//				while(itSec.hasNext())
-//				{
-//					third = (Element)itSec.next();
-//					itThird = third.elementIterator();
-//						
-//					Element fourth;
-//					while(itThird.hasNext())
-//					{
-//						Signal signal = new Signal();
-//						fourth = (Element)itThird.next();
-//						if(fourth.getName()=="Signalname")
-//						{
-//							String text1 = fourth.getText();
-//							 signal.setSignalName(text1);
-////							System.out.println(text1);
-//						}
-//						fourth = (Element)itThird.next();
-//						 if(fourth.getName()=="Description")
-//						{
-//							String text2	 = fourth.getText();
-////							System.out.println(text2);
-//							signal.setDescription(text2);
-//						}
-//						 signals.add(signal);
-//						 application.setSignals(signals);
-//					}
-//				}
-//			}
-//		}
-//			
-//			return application;
-//	}
-	
 	public static JSONObject ApplicationToJson(Application application)
 	{
 		
@@ -125,4 +61,14 @@ public class TermToJson
 		return signalObject;
 	}
 	
+	public static JSONObject stringToJson(String key, String value){
+		JSONObject result = new JSONObject();
+		try {
+			result.put(key, value);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
 }
