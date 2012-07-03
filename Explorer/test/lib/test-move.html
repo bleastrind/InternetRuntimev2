@@ -1,0 +1,215 @@
+
+<script type="text/javascript"> 
+
+var Lib_Tween =
+{
+	'None': function(pct)
+	{
+		return pct;
+	},
+	'Quad': function(pct)
+	{
+		return -(Math.pow((pct-1), 2) -1);
+	}
+}
+
+
+var Lib_Route =
+{
+	Line: function(obj, originxy, targetxy, d, isWrapped)
+	{
+		var Distance = targetxy.getDistance(originxy);
+		if (isWrapped)
+		{
+			originxy.x = 0;
+			originxy.y = 0;
+		}
+		obj.style.left = originxy.x + Distance.scale(d).dx + 'px';
+		obj.style.top = originxy.y + Distance.scale(d).dy + 'px';
+	}
+}
+
+
+function DistanceXY(dx, dy)
+{
+	this.dx = dx;
+	this.dy = dy;
+	this.scale = function(s)
+	{
+		return new DistanceXY(this.dx * s, this.dy * s);
+	}
+}
+function AbsoluteXY(x, y)
+{
+	this.x = x;
+	this.y = y;
+	this.Plus = function(d)
+	{
+		this.x = x + d.dx;
+		this.y = y + d.dy;
+		return this;
+	}
+	this.getDistance = function(abxy)
+	{
+		return new DistanceXY(this.x - abxy.x, 
+								this.y - abxy.y)
+	}
+}
+
+function Wrapper(dr, ds, sz, sn)
+{
+	var w = document.createElement('div');
+	var Direction = 'center';
+	var DirectionMatrix = 
+	{
+		center: {left: 0, top: 0},
+		right: {left: 1, top: 0},
+		left: {left: -1, top: 0},
+		up: {left: 0, top: 1},
+		down: {left: 0, top: -1},
+	}
+	var Distance = 0;
+	var Size = 'origin';
+	var Seen = false;
+	if (dr != null)
+		Direction = dr;
+	if (ds != null)
+		Distance = ds;
+	if (sz != null)
+		Size = sz;
+	if (sn != null)
+		Seen = sn;
+	
+	this.wrap = function(Object)
+	{
+		if (Size == 'origin')
+		{
+			w.style.width = parseInt(Object.style.width) + 'px';
+			w.style.height = parseInt(Object.style.height) + 'px';
+		}
+		w.style.position = 'absolute';
+		w.style.left = (parseInt(Object.style.left) 
+						+ DirectionMatrix[Direction].left 
+						* (parseInt(Object.style.width) + Distance)) + 'px';
+		w.style.top = (parseInt(Object.style.top) 
+						+ DirectionMatrix[Direction].top 
+						* (parseInt(Object.style.height) + Distance)) + 'px';
+		Object.parentNode.appendChild(w);		
+		w.appendChild(Object);
+		Object.style.position = 'absolute';
+		Object.style.left = 0 + 'px';
+		Object.style.top = 0 + 'px';
+		if (!Seen)
+			w.style.overflow = 'hidden';
+	}
+	this.unwrap = function(Object)
+	{
+	
+	}
+}
+
+
+
+function Move(Object)
+{
+	var OriginalPos = new AbsoluteXY(
+							parseInt(Object.style.left),
+							parseInt(Object.style.top)
+							);
+	var Tween = 'None';
+	var Time = 500;
+	var To = OriginalPos;
+	var isWrapped = false;
+	var Route = Lib_Route['Line'];
+	var CallBack = function(){};
+	
+	
+	//Getters
+	this.getTo = function()
+	{
+		return To;
+	}
+	this.getFrom = function()
+	{
+		return OriginalPos;
+	}
+	
+	//Setters
+	this.Tween = function(anm)
+	{
+		Tween = Lib_Tween[anm];
+		return this;
+	};	
+	this.Time = function(tm)
+	{
+		Time = tm;
+		return this;
+	};
+	this.To = function(to)
+	{	
+		To = to;
+		return this;
+	};
+	this.Route = function(rt)
+	{	
+		Route = Lib_Route[rt];
+		return this;
+	};	
+	this.Wrap = function(dr, ds, sz, sn)
+	{
+		var wrapper = new Wrapper(dr, ds, sz, sn);
+		wrapper.wrap(Object);
+		isWrapped = true;
+		return this;
+	};
+	this.CallBack = function(cb)
+	{
+		CallBack = cb;
+		return this;
+	};
+	this.Excute = function()
+	{
+		var StartTime = new Date().getTime();
+		function Run()
+		{
+			var NewTime = new Date().getTime();
+			var d = Tween((NewTime - StartTime) / parseFloat(Time));
+			//no noun,change to verb
+			Route(Object, OriginalPos, To, d, isWrapped);
+			if (Time >= (NewTime - StartTime))
+				setTimeout(Run, 1);
+			else
+			{
+				Object.style.left = To.x + 'px';
+				Object.style.top = To.y + 'px';
+				CallBack(this);
+			}
+		}
+		Run();
+		return this;
+	};
+	return this;
+}
+
+
+function test1()
+{
+	Object.prototype.ss = 1;
+	var a = new Object();
+	var b = new Object();
+	a.ss = 2;
+	//alert(a.ss);
+	//alert(b.ss);
+	var Box = document.getElementById('box');
+	var Box1 = document.getElementById('box1');
+	
+	var target1 = new AbsoluteXY(200, 300);	
+	var aMove = Move(Box).Wrap().Tween('None').Time(1300).Route('Line').To(target1).Excute();
+	
+}
+</script>
+<button onclick = "test1()" >Test!!</button>
+<div id = 'box'; style="border: 1px solid #666666; height:100px; width:200px; left:0px; top:200px; position: absolute" >
+</div>
+<div id = 'box1'; style="border: 1px solid #666666; height:100px; width:200px; left:500px; top:200px; position: absolute" >
+</div>
