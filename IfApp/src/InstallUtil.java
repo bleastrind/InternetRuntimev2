@@ -6,7 +6,7 @@ public class InstallUtil {
 	{
 		InternetRuntime rt = new InternetRuntime();
 		String requestUrl = "http://localhost:9000/clients/register?username="+username+"&password="+password;
-		String result = rt.httpClientForRT(requestUrl);
+		String result = rt.httpClientGet(requestUrl);
 		System.out.println("registerUser method returns "+result);
 	}
 	
@@ -14,7 +14,7 @@ public class InstallUtil {
 	{
 		InternetRuntime rt = new InternetRuntime();
 		String requestUrl = "http://localhost:9000/clients/login?username="+username+"&password="+password;
-		String result = rt.httpClientForRT(requestUrl);
+		String result = rt.httpClientGet(requestUrl);
 		System.out.println("userLogin method returns userID "+result);
 	}
 	
@@ -22,7 +22,7 @@ public class InstallUtil {
 	{
 		InternetRuntime rt = new InternetRuntime();
 		String requestUrl = "http://localhost:9000/auth/appregister?email=fdsf";
-		String result = rt.httpClientForRT(requestUrl);
+		String result = rt.httpClientGet(requestUrl);
 		System.out.println("registerApp method returns id and secret "+result);
 	}
 	

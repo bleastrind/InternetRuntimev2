@@ -3,20 +3,44 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
 
 public class InternetRuntime {
 	
-	public String httpClientForRT(String requestUrl)
+	private List<String> parserXmlsIDString (String str)
+	{
+		List<String> applicationsIDList = new ArrayList<String>();
+		int start = str.indexOf(':')+1;
+		int end = str.length() - 1;
+		String subString = str.substring(start,end);
+		String[] tempStrings =subString.split(",");
+		for(String o:tempStrings)
+		{
+			applicationsIDList.add(o);
+		}
+		return applicationsIDList;
+	}
+	
+	private String replaceEnter(String str){
+		Pattern pattern = Pattern.compile("\n");
+		Matcher matcher = pattern.matcher(str);
+		String result = matcher.replaceAll("");
+		return result;
+	}
+	
+	public String httpClientGet(String requestUrl)
 	{
 		byte[] responseBody = null;
 		HttpClient httpClient = new HttpClient();
@@ -43,26 +67,45 @@ public class InternetRuntime {
 		return result;
 	}
 	
-	private List<String> parserXmlsIDString (String str)
+	
+	//Post 上去的数据的 Content-Type 是 application/form-url-encoded:Map[String,Seq[String]]
+	//处理的时候请注意
+	public  String httpClientPost(String url, Map<String, String>params)
 	{
-		List<String> applicationsIDList = new ArrayList<String>();
-		int start = str.indexOf(':')+1;
-		int end = str.length() - 1;
-		String subString = str.substring(start,end);
-		String[] tempStrings =subString.split(",");
-		for(String o:tempStrings)
-		{
-			applicationsIDList.add(o);
+		String response = null;
+		HttpClient client = new HttpClient();
+		HttpMethod method = new PostMethod (url);
+		//设置Http Post数据
+		if(params != null){
+			HttpMethodParams p = new HttpMethodParams();
+			for(Map.Entry<String, String> entry: params.entrySet())
+			{
+				p.setParameter(entry.getKey(), entry.getValue());
+			}
+			method.setParams(p);
 		}
-		return applicationsIDList;
+		try{
+			client.executeMethod(method);
+			if(method.getStatusCode()== HttpStatus.SC_OK){
+				response = method.getResponseBodyAsString();
+			}
+		}catch (IOException e) {
+			// TODO: handle exception
+			System.out.println("执行Http Post请求"+url+"时，发生异常！"+e);
+		}finally{
+			method.releaseConnection();
+		}
+		
+		return response;
 	}
+	
 	
 	public List<String> getApps (String accessToken)
 	{
 		String param = "accessToken="+accessToken;
 		List<String> applicationsIDList = new ArrayList<String>();
 		String requestUrl = "http://localhost:9000/config/apps"+"?"+param;
-		String xmlsID = httpClientForRT(requestUrl);
+		String xmlsID = httpClientGet(requestUrl);
 		applicationsIDList = parserXmlsIDString(xmlsID);
 		return applicationsIDList;
 	}
@@ -72,7 +115,7 @@ public class InternetRuntime {
 		String param = "accessToken="+accessToken;
 		
 		String requestUrl = "http://localhost:9000/config/apps/"+appID+"?"+param;
-		String result = httpClientForRT(requestUrl);
+		String result = httpClientGet(requestUrl);
 		int i = result.indexOf("appDetail:")+("appDetail:").length()+1;
 		String xmlString = result.substring(i,result.length()-2);
 		return xmlString;
@@ -81,7 +124,7 @@ public class InternetRuntime {
 	public String getAccessToken (String code,String appID, String appSecret)
 	{
 		String requestUrl = "http://localhost:9000/oauth/accesstoken?authtoken="+code+"&appID="+appID+"&appSecret="+appSecret;
-		String result = httpClientForRT(requestUrl);
+		String result = httpClientGet(requestUrl);
 		String[] aa = result.split(",");
 		String[] a = aa[0].split(":");
 		String b = a[1].substring(1,a[1].length()-1);
@@ -90,14 +133,7 @@ public class InternetRuntime {
 	
 	public String getSignalDefination(String signalName){
 		String requestUrl = "http://localhost:9000/signal/querydef/"+signalName;
-		String result = httpClientForRT(requestUrl);
-		return result;
-	}
-	
-	private String replaceEnter(String str){
-		Pattern pattern = Pattern.compile("\n");
-		Matcher matcher = pattern.matcher(str);
-		String result = matcher.replaceAll("");
+		String result = httpClientGet(requestUrl);
 		return result;
 	}
 	
@@ -122,7 +158,7 @@ public class InternetRuntime {
 		
 		System.out.println("REQUESTURL: "+requestUrl);
 		
-		String resultString = httpClientForRT(requestUrl);
+		String resultString = httpClientGet(requestUrl);
 		System.out.println("ConfirmRouting returns "+resultString);
 	}
 }
