@@ -82,40 +82,6 @@ public class accessTokenServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAA");
-
-		InternetRuntime rt = new InternetRuntime();
-	//	String accessToken = rt.getAccessToken();
-	//	List<String> appIDList  = rt.getApps(accessToken);
-		
-		JSONArray applications= new JSONArray();
-		JSONObject appsObject = new JSONObject();
-		
-	//	for(String str: appIDList)
-		{
-	//		String xmlString = rt.getAppDetail(str, accessToken);
-	//		AppXmlParser appXmlParser = new AppXmlParser(xmlString);
-	//		Application application  = appXmlParser.createApplication();
-			
-	//		JSONObject appObject = TermToJson.ApplicationToJson(application);
-			
-		//	applications.put(appObject);
-		}
-		
-		try {
-			appsObject.put("applications", applications);
-		} catch (JSONException e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-		
-		String result = appsObject.toString();
-		System.out.println(result);
-		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		out.write(result);
-		out.flush();
-		out.close();
 	}
 
 	/**

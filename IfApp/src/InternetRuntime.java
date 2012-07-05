@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.json.processors.JsonValueProcessor;
+
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -15,6 +17,11 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.internetrt.sdk.util.RootApplication;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.sun.java_cup.internal.internal_error;
 
 
 public class InternetRuntime {
@@ -160,5 +167,65 @@ public class InternetRuntime {
 		
 		String resultString = httpClientGet(requestUrl);
 		System.out.println("ConfirmRouting returns "+resultString);
+	}
+	
+	
+	public RootApplication registerRootApp(String name, List<String> accessRequests){
+		String requestUrlString = "http://localhost:9000/auth/appregister?email=fdsf";
+		String result = httpClientGet(requestUrlString);
+		System.out.println("registerRootApp returns "+result);
+		
+		String[] splitStrings = result.split(",");
+		
+		String idString = null;
+		String secretString = null;
+		
+		for(String str:splitStrings){
+			int indexOfId = str.indexOf("id");
+			int indexOfSecret = str.indexOf("secret");
+			
+			if(indexOfId >= 0)
+			{
+				int start = str.indexOf(":")+2;
+				int end = str.length()-1;
+				idString = str.substring(start,end);
+			}
+			else if(indexOfSecret >= 0)
+			{
+				int start = str.indexOf(":")+2;
+				int end = str.length()-1;
+				secretString = str.substring(start,end);
+			}
+		}
+		
+		RootApplication rootApplication = new RootApplication(name,idString,secretString,accessRequests);
+		
+		return rootApplication;
+	}
+	
+	public void installRootApp(String rootAppXmlString){
+		
+		String requestHost = "http://localhost:9000/clients/installapp?xml=";
+		String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+rootAppXmlString;
+		
+		try{
+			xmlString = URLEncoder.encode(xmlString, "utf-8");
+		}catch(Exception e){
+			System.out.println(e);
+		}
+		
+		String requestUrl = requestHost + xmlString;
+		
+		System.out.println("REQUESTURL: "+requestUrl);
+		
+		String resultString = httpClientGet(requestUrl);
+		System.out.println("installRootApp returns "+resultString);
+	}
+	
+	public void userLogin(String username, String password)
+	{
+		String requestUrl = "http://localhost:9000/clients/login?username="+username+"&password="+password;
+		String result = httpClientGet(requestUrl);
+		System.out.println("userLogin method returns userID "+result);
 	}
 }

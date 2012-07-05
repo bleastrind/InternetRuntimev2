@@ -21,6 +21,9 @@ public class BrowserBaseClientInputs extends Controller{
 		try{
 			String uid = SiteUserInterface.login(username,password);
 			session().put(CONSTS.SESSIONUID(), uid);
+			
+			System.out.println("UID in login"+uid);
+			
 			return ok(uid);
 		}catch(Exception e){
 			return ok(e.getMessage());
@@ -30,6 +33,9 @@ public class BrowserBaseClientInputs extends Controller{
 	public static Result installRootApp(){
 		String uid = session().get(CONSTS.SESSIONUID());
 		String xml = request().queryString().get("xml")[0];
+		
+		System.out.println("UID"+uid);
+		System.out.println("XML" + xml);
 		
 		Boolean success =  SiteUserInterface.installRootApp(uid,xml);
 		
