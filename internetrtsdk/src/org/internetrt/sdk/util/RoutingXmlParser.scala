@@ -1,8 +1,8 @@
 package org.internetrt.sdk.util
 
-class RoutingXmlParser (signalXmlString:String) {
+class RoutingXmlParser  {
  
-     val xmlFile = scala.xml.XML.loadString(signalXmlString);
+     val xmlFile = scala.xml.XML.loadFile("Routing.xml");
 
     def getFrom(): String = {
       val signal = xmlFile \ "signal";
