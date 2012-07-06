@@ -1,0 +1,13 @@
+create keyspace InternetRT_Personal;
+use InternetRT_Personal;
+create column family ApplicationAccess;
+create column family App;
+create column family AccessToken;
+create column family AuthCode;
+create column family Routing;
+create column family InternalUser;
+create column family RoutingInstance;
+create keyspace InternetRT_Global;
+use InternetRT_Global;
+create column family SignalDefination;
+create column family AppOwner;
