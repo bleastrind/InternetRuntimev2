@@ -90,7 +90,6 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
       {requestRouting.xml \ "Signal"}
       {requestRouting.xml \ "Adapter" filter ( node => (node \ "@to" text) == requestListenerID )}
       {requestRouting.xml \ "RequestListener"}
-      
       </RoutingInstance>
       
     dispatchEvents(workflowID,userID, routings);

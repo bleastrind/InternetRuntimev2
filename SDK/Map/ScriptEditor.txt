@@ -1,1 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><Application><Name>ScriptEditor</Name><AppID>a291df2d-958f-429f-8fdc-c21042c96d4c</AppID><AppSecrect>fbc7ee5d-dfd8-49e7-abd4-177eb9ace98a</AppSecrect><AccessRequests><AccessRequest>getApplications</AccessRequest></AccessRequests></Application>

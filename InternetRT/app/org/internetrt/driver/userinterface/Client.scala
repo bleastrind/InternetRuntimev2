@@ -66,11 +66,11 @@ object Client extends Controller {
   def getLongPollingResult(request:Request[AnyContent],wrapper:(String=>Result))={
       val uid = request.session.get(CONSTS.SESSIONUID).getOrElse(CONSTS.ANONYMOUS);
       val cid = request.queryString.get(CONSTS.CLIENTID) match {
-        case Some(x::rest)=>x //get the first client id
+        case Some(list)=>list.head //get the first client id
         case None=> UUID.randomUUID().toString() // else a new one
       }
       val status = request.queryString.get(CONSTS.CLIENTSTATUS) match{
-        case Some(x::rest)=>x //get the first client id
+        case Some(list)=>list.head //get the first status
         case None=> ClientStatus.Active.toString()
       }
       

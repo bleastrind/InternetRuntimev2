@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Build file for project -->
+
+<project name="renren" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant"  >
+  <property file="${user.home}/.ant.properties" />
+  <!-- ant build properties -->
+  <property file="build.properties"/>
+  <property name="project" value="renren"/>
+  <property name="version" value="1.0"/>
+  <property name="build.dir"  value=".."/>
+  <property name="build.src"  value="${build.dir}/renren/src/"/>
+  <property name="build.dest" value="${build.dir}/renren/bin"/>
+  <property name="build.lib"  value="${build.dir}/renren/lib"/>
+  <property name="build.ext"  value="./lib"/>
+  <property name="build.encoding" value="UTF-8"/>  
+
+  <property name="src.java.dir" value="../src/java"/>
+  <property name="javadoc.destdir" value="../docs/api"/>
+  <property name="javadoc.link" value="http://www.tangtang.org/java/docs/api/"/>
+  <property name="final.name" value="${project}-${version}"/>
+  <property name="dist.root" value="${build.dir}/dist"/>
+  <property name="dist.dir" value="${dist.root}/${final.name}"/>
+
+  <path id="classpath">    
+    <pathelement path="${java.class.path}/"/>
+    <fileset dir="${build.lib}">    
+      <include name="*.jar"/>
+    </fileset>    
+    <fileset dir="${build.ext}">    
+      <include name="*.jar"/>
+    </fileset>    
+  </path>
+  
+	 <target name="resolve" description="--> retrieve dependencies with ivy">
+	        <ivy:retrieve/>
+	 </target>
+	
+  <property name="classpath" refid="classpath"/>
+  <!-- =================================================================== -->
+  <!-- prints the environment                                        -->
+  <!-- =================================================================== -->
+  <target name="env">    
+    <echo message="build.compiler = ${build.compiler}"/>
+    <echo message="java.home = ${java.home}"/>
+    <echo message="user.home = ${user.home}"/>
+    <!--echo message="java.class.path = ${java.class.path}"/-->
+    <echo message="classpath = ${classpath}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepares the build directory                                        -->
+  <!-- =================================================================== -->
+  <target name="prepare" depends="env,resolve">
+    <tstamp/>
+    <filter token="year" value="${year}"/>
+    <filter token="version" value="${version}"/>
+    <filter token="date" value="${DSTAMP}"/>            
+    <!--
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.dest}"/>
+    <mkdir dir="${build.src}"/> 
+    -->
+    <!--  chose a class that's from j2ee.jar -->
+  </target>
+  <target name="J2EE-error" depends="prepare"  unless="J2EE.present">
+  
+<echo>
+********************************************************
+**
+**  J2EE has not been found and is needed for the target
+**  you have chosen
+**
+**  Since CLASSPATH is an evil idea, just link or drop
+**  a copy of your j2ee.jar into build/lib directory.
+**
+*********************************************************
+</echo>
+</target>
+
+  <target name="init">
+      <echo>
+      build init
+      build compile
+      </echo>
+    <mkdir dir="${build.dir}/data"/>      
+    <mkdir dir="${build.dir}/logs"/>
+    <mkdir dir="${build.dir}/dist"/>         
+  </target>
+
+  <target name="jar" depends="compile">
+    <mkdir dir="${dist.root}"/>
+    <delete dir="${dist.root}/${project}-${version}.jar"/>  
+    <jar jarfile="${dist.root}/${project}-${version}.jar">
+      <fileset dir="${build.dest}">
+        <include  name="com/renren/api/client/**"/>
+           	<include  name="com/yourdomain/webcanvas/**"/>
+      	<!--<exclude  name="org/tangtang/test/**"/>  -->      
+      </fileset>     
+    </jar>
+  </target>
+
+  <target name="srcjar" depends="prepare">
+    <delete dir="${dist.root}/${project}-${version}-src.jar"/>
+    <jar jarfile="${dist.root}/${project}-${version}-src.jar">
+      <fileset dir="${build.src}">
+        <include  name="com/renren/api/client/**"/>
+           	<include  name="com/yourdomain/webcanvas/**"/>
+      </fileset>     
+    </jar>
+  </target>
+  
+  <target name="compile" depends="prepare">    
+    <mkdir dir="${build.dest}"/>
+
+    <!-- 检查依赖性 -->
+    <depend srcdir="${build.src}"
+            destdir="${build.dest}"
+            cache="${build.dest}">
+        <classpath refid="classpath"/>
+    </depend>
+    
+    <javac srcdir="${build.src}"
+      destdir="${build.dest}"
+      debug="${debug}"
+      deprecation="${deprecation}"
+      optimize="${optimize}">      
+      <classpath refid="classpath"/>
+    </javac>
+  </target>
+
+  <target name="clean">
+    <delete>
+        <fileset dir="${build.dest}">
+            <include name="**/*.class"/>
+        </fileset>
+    </delete>    
+  </target>
+
+  <target name="clean_dist">
+    <delete>
+      <fileset dir="${dist.root}" includes="*"/>
+    </delete>
+    <delete dir="${dist.dir}" quiet="false"/>    
+  </target>
+</project>

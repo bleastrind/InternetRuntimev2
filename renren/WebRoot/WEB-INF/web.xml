@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee   http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+ <display-name>RenRen Demo for test</display-name>
+ <listener>
+  <listener-class>com.yourdomain.webcanvas.ApiInitListener</listener-class>
+ </listener>
+ <servlet>
+  <servlet-name>WelcomeServlet</servlet-name>
+  <servlet-class>com.yourdomain.webcanvas.WelcomeServlet</servlet-class>
+ </servlet>
+ <servlet>
+  <servlet-name>HomeServlet</servlet-name>
+  <servlet-class>com.yourdomain.webcanvas.HomeServlet</servlet-class>
+ </servlet>
+ <servlet>
+  <servlet-name>messageReciver</servlet-name>
+  <servlet-class>com.yourdomain.webcanvas.messageReciver</servlet-class>
+ </servlet>
+ <servlet-mapping>
+  <servlet-name>WelcomeServlet</servlet-name>
+  <url-pattern>/renrenapp/welcome</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+  <servlet-name>HomeServlet</servlet-name>
+  <url-pattern>/renrenapp/home</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+  <servlet-name>messageReciver</servlet-name>
+  <url-pattern>/renrenapp/reciver</url-pattern>
+ </servlet-mapping>
+ <welcome-file-list>
+  <welcome-file>index.jsp</welcome-file>
+  <welcome-file>index.html</welcome-file>
+ </welcome-file-list>
+ <error-page>
+  <error-code>404</error-code>
+  <location>/404.html</location>
+ </error-page>
+ <login-config>
+  <auth-method>BASIC</auth-method>
+ </login-config>
+</web-app>
