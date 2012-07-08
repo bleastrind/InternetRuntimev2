@@ -1,0 +1,16 @@
+#{extends 'main.html' /}
+<html>
+<h3>App name:</h3>
+<p>${app.name}</p>
+<h3>App information:</h3>
+<p>${app.information}</p>
+#{form @AppController.addUserAppSave() }
+	<input type="hidden" name="app" value="${app}">
+	<input type="hidden" name="userId" value="${token}">
+	<input type="hidden" name="appId" value="${app.getId()}">
+	<input type="hidden" name="appId" value="${app.information}">
+	<input type="hidden" name="requestUrl" value="http://localhost:9000/appcontroller/installConfig">
+	<input type="submit" id="ok" value="Install and config the application!">
+#{/form}
+</html>
+

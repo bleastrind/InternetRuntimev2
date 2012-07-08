@@ -1,0 +1,34 @@
+#{extends 'main.html' /}
+<html>
+#{if applist.size()}
+	<h1>There are the apps:</h1>
+	<table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>information</th>
+				<th>Action</th>								
+            </tr>
+        </thead>
+        <tbody>
+            #{list items:applist, as:'app'}
+                <tr>
+                    <td>${app.name}</td>
+                    <td>${app.information}</td>
+                    <td>
+                        <a href="@{AppController.listApp(app)}">Details View</a>
+                    </td>
+					
+                </tr>
+            #{/list}
+        </tbody>
+    </table>	
+#{/if}
+#{else}
+    <h3>There are no app!<h3>
+#{/else}
+
+<div>
+	<a href="@{AppController.listAllApp()}">My Apps</a>
+</div>
+</html>

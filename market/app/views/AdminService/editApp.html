@@ -1,0 +1,27 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<h1>Hello Admin!You can manage every appliacation here!</h1>
+
+
+
+     #{form @AdminController.editAppSave(app)}
+     <p>
+          <label for="name">App name: </label>
+          <input type="text" name="name" id="name" value="${app.name}${params.name}" />
+     </p>
+     <p>
+          <label for="information">App information: </label>
+          <textarea name="information" id="information">${app.information}${params.information}</textarea>
+    </p>
+     <p>
+          <label for="information">App install url: </label>
+          <textarea name="installUrl" id="installUrl">${app.installUrl}${params.installUrl}</textarea>
+    </p>
+          <input type = "submit" value = "save">
+     #{/form}
+	 	#{form @AdminController.welcome()}
+		<input type = "submit" value = "back">
+	#{/form}	
+   
+

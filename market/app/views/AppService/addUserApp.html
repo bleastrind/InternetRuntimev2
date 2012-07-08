@@ -1,0 +1,29 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<h1>You can get some appliacations here!</h1>
+
+#{if applist.size()}
+#{list items: applist, as:'app'}
+     <div>
+          <span>${applist.indexOf(app) + 1}.${app.name}</span>
+     </div>
+	<div class="details">
+		<a href = @{AppController.listApp(app)}>details</a>
+	</div>
+      #{form @AppController.addUserAppSave(app)}
+          <input type="submit" id="enter" value="finish">
+     #{/form}
+#{/list}
+
+#{/if}
+#{else}
+    Sorry we have no appliacation now.
+#{/else}
+<h1></h1>
+#{form @AppController.listAllApp()}
+	<input type = "submit" value = "back">
+#{/form}
+
+
+

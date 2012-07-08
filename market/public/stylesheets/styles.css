@@ -1,0 +1,30 @@
+a:visited {   color: #0000FF;text-decoration: none}
+a:hover {  color: #FF0000; text-decoration: none}
+a:hover2 {  clolr:#0000FF;  text-decoration: none;font-size: 9px}
+a:link {  color: #000000; text-decoration: none}
+a.menu:visited {  color:#0000FF;text-decoration: none;letter-spacing: 2pt}
+a.menu:hover {  color: #990000; text-decoration: none;letter-spacing: 2pt}
+a.menu:link {  color: #0000ff; text-decoration: none;letter-spacing: 2pt}
+a.light:visited {  color: #ffffff; text-decoration: none}
+a.light:hover {  color: #ffff00; text-decoration: none}
+a.light:link {  color: #ffffff;text-decoration: none}
+
+a.tit:visited {  color: #ffffff; text-decoration: none; letter-spacing: 2pt}
+a.tit:hover {  color: #ffff00; text-decoration: none; letter-spacing: 2pt}
+a.tit:link {  color: #ffffff; text-decoration: none; letter-spacing: 2pt}
+input.a {  border: 1px solid; height: 16px; border-color: #aaaaaa #eeeeee #eeeeee #aaaaaa}
+input.b {  font-size:9pt;border: 1pt solid; height: 15pt; width:60pt;letter-spacing:2pt; border-color: #eeeeee #aaaaaa #aaaaaa #eeeeee;}
+select.a {  border: 0px #666699 solid;width:300;}
+table.a {  border: 1px #000000 solid}
+table.b {  border: 1px #000000 solid; filter: Shadow(Color=eeeeee, Direction=320)}
+table.c {  border: #000000; border-style: solid; border-top-width: 0px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px}
+textarea {  border: 1px solid; border-color: #aaaaaa #eeeeee #eeeeee #aaaaaa; font-family: "Arial", "Helvetica", "sans-serif"; font-size: 9pt}
+td {  font-size: 9pt; color: #000000}
+td.menu{color:000000;letter-spacing:3pt;padding-top:2pt}
+
+td.button {padding-top: 2px; letter-spacing: 2pt}
+.title {  font-family: "ËÎÌו"; font-size: 10.5pt;color: #000000}
+.name {  font-family: "ËÎÌו"; font-size: 10.5pt;letter-spacing: 6pt;color: #FFFFFF}
+.top { background-image: url(images/bgpic.gif); background-repeat: repeat-x}
+
+.ts {  font-family: "ËÎÌו"; font-size: 12px}

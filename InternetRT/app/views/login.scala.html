@@ -1,6 +1,9 @@
+@(oldurl:String)
+
 <h1>Login</h1>
-<form action="/clients/login" method="get">
+<form action="/clients/login" method="post">
 UserName:<input name="username" type="text"></input>
 PassWord:<input name="password" type="password"></input>
+<input name="oldurl" type="hidden" value="@oldurl"></input>
 <button type="submit"/>
 </form>

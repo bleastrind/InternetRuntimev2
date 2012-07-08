@@ -6,26 +6,30 @@
   <property file="${user.home}/.ant.properties" />
   <!-- ant build properties -->
   <property file="build.properties"/>
+  <property environment = "env" />
+
+  <property name="scala.home" value="${env.SCALA_HOME}"/>
+	  
   <property name="project" value="internetrtsdk"/>
   <property name="version" value="0.11235"/>
   <property name="build.dir"  value=".."/>
   <property name="build.src"  value="${build.dir}/internetrtsdk/src/"/>
   <property name="build.dest" value="${build.dir}/internetrtsdk/bin"/>
-  <property name="build.lib"  value="${build.dir}/internetrtsdk/lib"/>
+  <property name="build.lib"  value="${build.dir}/internetrtsdk/lib"/> 
   <property name="build.ext"  value="./lib"/>
   <property name="build.encoding" value="UTF-8"/>  
 
   <property name="src.java.dir" value="../src/java"/>
   <property name="javadoc.destdir" value="../docs/api"/>
-  <property name="javadoc.link" value="http://www.tangtang.org/java/docs/api/"/>
   <property name="final.name" value="${project}-${version}"/>
-  <property name="dist.root" value="${build.dir}/dist"/>
+  <property name="dist.root" value="${build.dir}/market/lib"/>
   <property name="dist.dir" value="${dist.root}/${final.name}"/>
 
   <path id="classpath">    
     <pathelement path="${java.class.path}/"/>
-    <fileset dir="${build.lib}">    
+  	<fileset dir="${build.lib}">    
       <include name="*.jar"/>
+     
     </fileset>    
     <fileset dir="${build.ext}">    
       <include name="*.jar"/>
@@ -41,24 +45,25 @@
   <!-- prints the environment                                        -->
   <!-- =================================================================== -->
   <target name="env">    
+    <mkdir dir="${build.lib}"/>
     <echo message="build.compiler = ${build.compiler}"/>
     <echo message="java.home = ${java.home}"/>
     <echo message="user.home = ${user.home}"/>
-    <!--echo message="java.class.path = ${java.class.path}"/-->
-    <echo message="classpath = ${classpath}"/>
+  	<echo message="scala.home = ${scala.home}"/>
+    <!--echo message="java.class.path = ${java.class.path}"/
+    <echo message="classpath = ${classpath}"/>-->
   </target>
 
   <!-- =================================================================== -->
   <!-- Prepares the build directory                                        -->
   <!-- =================================================================== -->
-  <target name="prepare" depends="env,resolve">
+  <target name="prepare" depends="env,resolve,init">
     <tstamp/>
     <filter token="year" value="${year}"/>
     <filter token="version" value="${version}"/>
     <filter token="date" value="${DSTAMP}"/>            
-    <!--
-    <mkdir dir="${build.dir}"/>
-    <mkdir dir="${build.dest}"/>
+    
+  	<!--<mkdir dir="${build.dest}"/>
     <mkdir dir="${build.src}"/> 
     -->
     <!--  chose a class that's from j2ee.jar -->
@@ -85,7 +90,24 @@
       </echo>
     <mkdir dir="${build.dir}/data"/>      
     <mkdir dir="${build.dir}/logs"/>
-    <mkdir dir="${build.dir}/dist"/>         
+    <mkdir dir="${build.dir}/dist"/>    
+  	
+    <property
+      name="scala-library.jar"
+      value="${scala.home}/lib/scala-library.jar"
+       />
+    <path id="build.classpath">
+      <pathelement location="${scala-library.jar}"   />
+      <!--<pathelement location="${your.path}"   />-->
+      <pathelement location="${build.dir}"   />
+    </path>
+    <taskdef resource="scala/tools/ant/antlib.xml">
+      <classpath>
+        <pathelement location="${scala.home}/lib/scala-compiler.jar"   />
+        <pathelement location="${scala-library.jar}"   />
+      </classpath>
+    </taskdef>
+  	
   </target>
 
   <target name="jar" depends="compile">
@@ -94,7 +116,6 @@
     <jar jarfile="${dist.root}/${project}-${version}.jar">
       <fileset dir="${build.dest}">
         <include  name="org/internetrt/sdk/**"/>
-      	<include  name="weibo4j/**"/>
       	<!--<exclude  name="org/tangtang/test/**"/>  -->      
       </fileset>     
     </jar>
@@ -105,7 +126,6 @@
     <jar jarfile="${dist.root}/${project}-${version}-src.jar">
       <fileset dir="${build.src}">
       	<include  name="org/internetrt/sdk/**"/>
-      	      	<include  name="weibo4j/**"/>
       </fileset>     
     </jar>
   </target>
@@ -127,6 +147,11 @@
       optimize="${optimize}">      
       <classpath refid="classpath"/>
     </javac>
+  	<scalac srcdir="${build.src}"
+  	            destdir="${build.dest}"
+  	            classpathref="classpath">
+  	      <include name="**/*.scala"   />
+  	</scalac>
   </target>
 
   <target name="clean">

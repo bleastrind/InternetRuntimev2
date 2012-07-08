@@ -52,7 +52,8 @@ object Client extends Controller {
     
     implicit val timeout = Timeout(5.seconds)
     ClientMessageActor.ref ! Message(uid, "test");
-    Ok("D")
+    import play.api.templates.Html
+    Ok(Html("""<a href="http://www.baidu.com">"""+uid+"""</a>"""))
   }
   def tt() = {
     Thread.sleep(10000)

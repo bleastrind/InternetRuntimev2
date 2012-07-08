@@ -1,0 +1,37 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<html>
+#{if applist.size()}
+	<h1>Your apps are:</h1>
+	<table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>information</th>
+				<th>Action</th>
+				<th>Config</th>	
+            </tr>
+        </thead>
+        <tbody>
+            #{list items:applist, as:'app'}
+                <tr>
+                    <td>${app.name}</td>
+                    <td>${app.information}</td>
+                    <td>
+                        <a href="@{AppController.deleteUserApp(app)}">Delete The App</a>
+                    </td>
+					<td>${configlist.get(applist.indexOf(app)).getConfig()}</td>
+                </tr>
+            #{/list}
+        </tbody>
+    </table>
+#{/if}
+#{else}
+    <h3>You have got no app!<h3>
+#{/else}
+
+<div>
+	<a href="@{AppController.listAllApps()}">Add More!</a>
+</div>
+</html>

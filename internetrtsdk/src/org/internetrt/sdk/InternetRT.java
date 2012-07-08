@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -20,10 +21,6 @@ import net.sf.json.JSONObject;
 
 import org.internetrt.sdk.util.*;
 
-import weibo4j.http.AccessToken;
-import weibo4j.model.PostParameter;
-import weibo4j.model.WeiboException;
-import weibo4j.util.InternetRTConfig;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -33,16 +30,36 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
+import scala.Tuple2;
+
 /**
  * @author sinaWeibo
  * 
  */
 
-public class InternetRT implements java.io.Serializable {
-
-	private static final long serialVersionUID = 4282616848978535016L;
-
-	public HttpClient client = new HttpClient();
+public class InternetRT {
+	public static class Props{
+		public static String APPID = "appID";
+		public static String APPSECRET = "appSecret";
+		public static String REDIRECTURL = "redirect_URI";
+		public static String BASEURL = "baseURL";
+		public static String ACCESSTOKENURL = "accessTokenURL";
+		public static String ROUTINGINSTANCE = "routingInstanceURl";
+		public static String AUTHURL = "authorizeURL";
+	}
+	public static InternetRT create(InternetRTConfig config) throws Exception{
+		String values = "appID,appSecret,redirect_URI,baseURL,accessTokenURL,routingInstanceURl,authorizeURL";
+		if(!config.containsAllProperties(Arrays.asList(values.split(","))))
+			throw new Exception("The configuration don't have all the properties of:"+values);
+		InternetRT rt = new InternetRT();
+		rt.internetRTConfig = config;
+		return rt;
+	}
+	
+	private InternetRTConfig internetRTConfig ; 
+	
+	// Forbidden new a InternetRT with not well prepared config
+	private InternetRT(){}	
 	
 	private List<String> parserXmlsIDString (String str)
 	{
@@ -92,26 +109,31 @@ public class InternetRT implements java.io.Serializable {
 		return result;
 	}
 
+	public String getAuthCodeUrl(){
+		return internetRTConfig.getValue(Props.AUTHURL)
+		+ "?appID=" + internetRTConfig.getValue(Props.APPID)
+		+"&redirect_uri="+ internetRTConfig.getValue(Props.REDIRECTURL);
+	}
 
 	public String setAccessTokenWithCode(String code) throws HttpException,
 			IOException {
-		System.out.println(InternetRTConfig.getValue("accessTokenURL")
+		System.out.println(internetRTConfig.getValue("accessTokenURL")
 				+ "?"
-				+ generatorParam2String(new PostParameter[] {
-						new PostParameter("appID", InternetRTConfig
+				+ generatorParam2String(new Tuple2[] {
+						new Tuple2("appID", internetRTConfig
 								.getValue("appID")),
-						new PostParameter("appSecret", InternetRTConfig
+						new Tuple2("appSecret", internetRTConfig
 								.getValue("appSecret")),
-						new PostParameter("authtoken", code) }));
-		String response  = httpClientGet(InternetRTConfig
+						new Tuple2("authtoken", code) }));
+		String response  = httpClientGet(internetRTConfig
 				.getValue("accessTokenURL")
 				+ "?"
-				+ generatorParam2String(new PostParameter[] {
-						new PostParameter("appID",
-								InternetRTConfig.getValue("appID")),
-						new PostParameter("appSecret",
-								InternetRTConfig.getValue("appSecret")),
-						new PostParameter("authtoken", code) }));
+				+ generatorParam2String(new Tuple2[] {
+						new Tuple2("appID",
+								internetRTConfig.getValue("appID")),
+						new Tuple2("appSecret",
+								internetRTConfig.getValue("appSecret")),
+						new Tuple2("authtoken", code) }));
 		System.out.print(response);
 		JSONObject json = JSONObject.fromObject(response);
 		String accesstoken = (String) json.get("access_token");
@@ -120,38 +142,36 @@ public class InternetRT implements java.io.Serializable {
 
 	public String getAuthCodeByRoutingInstanceID(String rid)
 			throws HttpException, IOException {
-		System.out.println(InternetRTConfig.getValue("accessTokenURL")
+		System.out.println(internetRTConfig.getValue("accessTokenURL")
 				+ "?"
-				+ generatorParam2String(new PostParameter[] {
-						new PostParameter("appID", InternetRTConfig
+				+ generatorParam2String(new Tuple2[] {
+						new Tuple2("appID", internetRTConfig
 								.getValue("appID")),
-						new PostParameter("appSecret", InternetRTConfig
+						new Tuple2("appSecret", internetRTConfig
 								.getValue("appSecret")),
-						new PostParameter("rid", rid) }));
-		String response =  httpClientGet((InternetRTConfig
-				.getValue("routingInstanceURl") + "?" + generatorParam2String(new PostParameter[] {
-				new PostParameter("appID", InternetRTConfig.getValue("appID")),
-				new PostParameter("appSecret",
-						InternetRTConfig.getValue("appSecret")),
-				new PostParameter("rid", rid) })));
+						new Tuple2("rid", rid) }));
+		String response =  httpClientGet((internetRTConfig
+				.getValue("routingInstanceURl") + "?" + generatorParam2String(new Tuple2[] {
+				new Tuple2("appID", internetRTConfig.getValue("appID")),
+				new Tuple2("appSecret",
+						internetRTConfig.getValue("appSecret")),
+				new Tuple2("rid", rid) })));
 		System.out.print(response);
 		JSONObject json = JSONObject.fromObject(response);
 		return (String) json.get("access_token");
 	}
 
-	public String authorize(String response_type) throws WeiboException {
-		return InternetRTConfig.getValue("authorizeURL").trim() + "?client_id="
-				+ InternetRTConfig.getValue("client_ID").trim()
+	public String authorize(String response_type) {
+		return internetRTConfig.getValue("authorizeURL").trim() + "?client_id="
+				+ internetRTConfig.getValue("client_ID").trim()
 				+ "&redirect_uri="
-				+ InternetRTConfig.getValue("redirect_URI").trim()
+				+ internetRTConfig.getValue("redirect_URI").trim()
 				+ "&response_type=" + response_type;
 	}
 
 	public void send(String accesstoken, String from, String signalName,
 			Map<String, String> sourceMap) throws IOException {
 
-		// 解析xml
-		// sourceMap to targetMap
 		String xml = initActionFromThirdPart(accesstoken, signalName, sourceMap);
 		System.out.println(xml);
 		AppXmlParser parser = new AppXmlParser(xml);
@@ -159,8 +179,6 @@ public class InternetRT implements java.io.Serializable {
 				+ generatorParamString(Adapter(sourceMap)));
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("GET");
-		// conn.getOutputStream();
-		// 发出请求
 	}
 
 	private Map<String, String> Adapter(Map<String, String> sourceMap) {
@@ -190,15 +208,15 @@ public class InternetRT implements java.io.Serializable {
 		return params.toString();
 	}
 
-	public String generatorParam2String(PostParameter[] postParameters) {
+	public String generatorParam2String(Tuple2[] postParameters) {
 		String param = "";
 		int i = 0;
-		for (PostParameter entry : postParameters) {
+		for (Tuple2 entry : postParameters) {
 			if (i != 0)
-				param += "&" + entry.getName() + "="
-						+ entry.getValue().toString();
+				param += "&" + entry._1() + "="
+						+ entry._2().toString();
 			else
-				param += entry.getName() + "=" + entry.getValue().toString();
+				param += entry._1() + "=" + entry._2().toString();
 			i++;
 		}
 		return param;
@@ -209,7 +227,7 @@ public class InternetRT implements java.io.Serializable {
 			throws IOException {
 
 		System.out.println(generatorParamString(parameters));
-		URL url = new URL(InternetRTConfig.getValue("baseURL")
+		URL url = new URL(internetRTConfig.getValue("baseURL")
 				+ "/signal/init/thirdpart/" + signalname + "?"
 				+ "access_token=" + AccessToken + "&"
 				+ generatorParamString(parameters));
@@ -231,7 +249,7 @@ public class InternetRT implements java.io.Serializable {
 		String response = null;
 		HttpClient client = new HttpClient();
 		HttpMethod method = new PostMethod(url);
-		// 设置Http Post数据
+		// Set Http Post Data
 		if (params != null) {
 			HttpMethodParams p = new HttpMethodParams();
 			for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -246,7 +264,7 @@ public class InternetRT implements java.io.Serializable {
 			}
 		} catch (IOException e) {
 			// TODO: handle exception
-			System.out.println("执行Http Post请求" + url + "时，发生异常！" + e);
+			System.out.println("Http Post:" + url + "\terror:" + e);
 		} finally {
 			method.releaseConnection();
 		}
@@ -318,20 +336,13 @@ public class InternetRT implements java.io.Serializable {
 		System.out.println("ConfirmRouting returns " + resultString);
 	}
 
-	public void userLogin(String username, String password) {
-		String requestUrl = "http://localhost:9000/clients/login?username="
-				+ username + "&password=" + password;
-		String result = httpClientGet(requestUrl);
-		System.out.println("userLogin method returns userID " + result);
-	}
-	
-	public Boolean installApp(String token,String xml){
+	public boolean installApp(String token,String xml){
 		Map<String,String> parameters = new HashMap();
 		parameters.put("token", token);
 		parameters.put("xml", xml);
 		return Boolean.parseBoolean(
 				httpClientGet(
-						InternetRTConfig.getValue("baseURL")+
+						internetRTConfig.getValue("baseURL")+
 						"/config/installapp"+
 						generatorParamString(parameters)
 						)
