@@ -139,7 +139,11 @@
             cache="${build.dest}">
         <classpath refid="classpath"/>
     </depend>
-    
+    <scalac srcdir="${build.src}"
+  	            destdir="${build.dest}"
+  	            classpathref="classpath">
+  	      <include name="**/*.scala"   />
+  	</scalac>
     <javac srcdir="${build.src}"
       destdir="${build.dest}"
       debug="${debug}"
@@ -147,11 +151,7 @@
       optimize="${optimize}">      
       <classpath refid="classpath"/>
     </javac>
-  	<scalac srcdir="${build.src}"
-  	            destdir="${build.dest}"
-  	            classpathref="classpath">
-  	      <include name="**/*.scala"   />
-  	</scalac>
+
   </target>
 
   <target name="clean">

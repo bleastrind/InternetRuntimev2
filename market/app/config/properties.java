@@ -7,6 +7,7 @@ public class properties {
 	static {
 		try {
 			InternetRTConfig config = new InternetRTConfig();
+
 			config.updatePropertiy("appID", "50ddb2b1-b550-4b25-90f1-1ec235cafaf8");
 			config.updatePropertiy("appSecret",
 					"a6b409bd-9a33-4298-8eed-4dd6b07c01f0");
