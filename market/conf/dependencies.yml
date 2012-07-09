@@ -1,6 +1,7 @@
 # Application dependencies
 
 require:
+    - me.prettyprint -> hector 0.8.0-3
     - play
     - net.sf.json-lib -> json-lib 0.8
     - commons-httpclient -> commons-httpclient 3.1

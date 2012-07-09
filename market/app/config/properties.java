@@ -7,11 +7,11 @@ public class properties {
 	static {
 		try {
 			InternetRTConfig config = new InternetRTConfig();
-			config.updatePropertiy("appID", "b781c1c6-2fbd-4d25-a3f7-3f3eaf133d51");
+			config.updatePropertiy("appID", "aca6f9d2-dbe9-47e5-b2fb-e99887c36983");
 			config.updatePropertiy("appSecret",
-					"bb5419ed-b35c-4cb5-9786-8eb364d5c81b");
+					"6fbb4a1b-421f-453b-bda5-39a3b228ee26");
 			config.updatePropertiy("redirect_URI",
-					"http://217.0.0.1:9001/Application/loginUser"); //Play 1.0 and Play 2.0 will conflict on session, if domain is same & port is different
+					"http://127.0.0.1:9001/Application/loginUser"); //Play 1.0 and Play 2.0 will conflict on session, if domain is same & port is different
 			config.updatePropertiy("baseURL", "http://localhost:9000");
 			config.updatePropertiy("accessTokenURL",
 					"http://localhost:9000/oauth/accesstoken");
