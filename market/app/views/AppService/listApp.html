@@ -5,10 +5,13 @@
 <h3>App information:</h3>
 <p>${app.information}</p>
 #{form @AppController.addUserAppSave() }
-	<input type="hidden" name="app" value="${app}">
 	<input type="hidden" name="userId" value="${token}">
-	<input type="hidden" name="appId" value="${app.getId()}">
-	<input type="hidden" name="appId" value="${app.information}">
+	<input type="hidden" name="name" value="${app.getName()}">
+	<input type="hidden" name="information" value="${app.getInformation()}">
+	<input type="hidden" name="installUrl" value="${app.getInstallUrl()}">
+	<input type="hidden" name="updated" value="${app.getUpdated()}">
+	<input type="hidden" name="updateUrl" value="${app.getUpdateUrl()}">
+	<input type="hidden" name="secret" value="${app.getSecret()}">
 	<input type="hidden" name="requestUrl" value="http://localhost:9000/appcontroller/installConfig">
 	<input type="submit" id="ok" value="Install and config the application!">
 #{/form}

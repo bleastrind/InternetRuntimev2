@@ -22,7 +22,9 @@ public class AppService{
 		List<App> userapps = new ArrayList();
 		AppDao appdao = new AppDao();
 		for (String app:apps){
-			userapps.add(appdao.findById(app));
+			System.out.println("app id :"+app);
+			App p = appdao.findById(app);
+			if (p!=null) userapps.add(p);
 		}
 		
 		return userapps;

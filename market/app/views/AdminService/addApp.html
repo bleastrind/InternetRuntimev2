@@ -3,7 +3,7 @@
 
 <h1>Hello Admin!You can manage every appliacation here!</h1>
 
-
+	<h3> Your Appid:${id} ,Your Secret:${secret}</h3>
       #{form @AdminController.addAppSave()}
      <p>
           <label for="name">App name: </label>
@@ -16,6 +16,22 @@
      <p>
           <label for="information">App install url: </label>
           <textarea name="installUrl" id="installUrl">${params.installUrl}</textarea>
+    </p>
+	
+	<p>
+          <label for="imformation">App install email: </label>
+          <textarea name="email" id="email">${params.email}</textarea>
+    </p>
+	
+	<p>
+          <label for="imformation">App updated: </label>
+          <input type="radio"  name="updated" id="updated" value="true">true</input>
+		  <input type ="radio" name="updated" id="updated" value="false" checked>false</input>
+    </p>
+	
+	<p>
+          <label for="imformation">App updatedUrl: </label>
+          <textarea name="updateUrl" id="updateUrl">${params.email}</textarea>
     </p>
 
           <input type = "submit" value = "save">

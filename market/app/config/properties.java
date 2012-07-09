@@ -7,6 +7,7 @@ public class properties {
 	static {
 		try {
 			InternetRTConfig config = new InternetRTConfig();
+<<<<<<< HEAD
 			config.updatePropertiy("appID", "aca6f9d2-dbe9-47e5-b2fb-e99887c36983");
 			config.updatePropertiy("appSecret",
 					"6fbb4a1b-421f-453b-bda5-39a3b228ee26");
@@ -27,7 +28,7 @@ public class properties {
 		}
 	}
 	public static InternetRT irt;
-	
+
 //	public static String BaseUrl = "http://localhost:9000";
 //	public static String AppInstallUrl = "http://localhost:9000";
 //	public static String accessTokenURL = "http://localhost:9000/oauth/accesstoken";
