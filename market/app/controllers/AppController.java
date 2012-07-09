@@ -21,10 +21,11 @@ import config.properties;
 public class AppController extends Controller {
 	
 	public static String getAccessToken(){
+		System.out.println("get token!!!!!!!!!!!!!!!!!");
 		return Cache.get(session.getId() + "-token", String.class);
 	}
 
-	@Before(only={"listAllApp","deleteUserApp","addUserAppSave"})
+	@Before(only={"listAllApps","listAllApp","deleteUserApp","addUserAppSave"})
 	public static void checkUser(){
 		String token = getAccessToken();
 		if(token == null){
@@ -56,10 +57,12 @@ public class AppController extends Controller {
 		render("AppService/addUserApp.html", applist);
 	}
 	
-	public static void addUserAppSave(App app)
+	public static void addUserAppSave(String id,String name,String information,String installUrl,String updated,String updateUrl,String secret)
 	{
 		String token = getAccessToken();
 		System.out.println(token+"******************");
+		App app = new App(id,name,information,installUrl,updated,updateUrl,secret);
+		System.out.println("AAAAAAAAA"+app.getId());
 		if (AppService.addUserApp(app, token))
 			render("AppService/addsuccess.html");	
 		else

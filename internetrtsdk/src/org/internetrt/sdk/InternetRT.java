@@ -36,7 +36,6 @@ import scala.Tuple2;
  * @author sinaWeibo
  * 
  */
-
 public class InternetRT {
 	public static class Props{
 		public static String APPID = "appID";
@@ -338,16 +337,29 @@ public class InternetRT {
 
 	public boolean installApp(String token,String xml){
 		Map<String,String> parameters = new HashMap();
-		parameters.put("token", token);
+		parameters.put("accessToken", token);
 		parameters.put("xml", xml);
+		System.out.println("******************"+internetRTConfig.getValue("baseURL")+
+				"/config/installapp?"+
+				generatorParamString(parameters));
 		return Boolean.parseBoolean(
 				httpClientGet(
 						internetRTConfig.getValue("baseURL")+
-						"/config/installapp"+
+						"/config/installapp?"+
 						generatorParamString(parameters)
 						)
 				);
 	
+	}
+	
+	public Map<String,String> appregister(String email){
+		Map<String,String> map = new HashMap();
+		String result = httpClientGet(internetRTConfig.getValue("baseURL")+"/auth/appregister?email="+email);
+		System.out.println(result);
+		JSONObject json = JSONObject.fromObject(result);
+		map.put("id",(String) json.get("id"));
+		map.put("secret", (String)json.get("secret"));
+		return map;
 	}
 	
 	public static void main(String args[]) {

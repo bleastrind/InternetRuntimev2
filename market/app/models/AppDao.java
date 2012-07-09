@@ -27,9 +27,15 @@ public class AppDao {
 	Mutator<String> m = createMutator(keyspace, se);
 	
 	public void save(App instance){
+		System.out.println(instance.getId());
 		m.insert(instance.getId(), CF, createStringColumn("name", instance.getName()));
 		m.insert(instance.getId(), CF, createStringColumn("information", instance.getInformation()));
-		m.insert(instance.getId(), CF, createStringColumn("installUrl", instance.getInstallUrl()));			
+		m.insert(instance.getId(), CF, createStringColumn("installUrl", instance.getInstallUrl()));		
+		m.insert(instance.getId(), CF, createStringColumn("updated", instance.getUpdated()));
+		System.out.println( "^&*^*%^(&%*&((((((((((((((("+instance.getUpdateUrl());
+		m.insert(instance.getId(), CF, createStringColumn("updateUrl", instance.getUpdateUrl()));
+		System.out.println( instance.getSecret());
+		m.insert(instance.getId(), CF, createStringColumn("secret", instance.getSecret()));		
 	}
 	
 
@@ -61,7 +67,10 @@ public class AppDao {
 				App temp = new App(row.getKey(),
 					rowQuery.setName("name").execute().get().getValue(),
 					rowQuery.setName("information").execute().get().getValue(),
-					rowQuery.setName("installUrl").execute().get().getValue()
+					rowQuery.setName("installUrl").execute().get().getValue(),
+					rowQuery.setName("updated").execute().get().getValue(),
+					rowQuery.setName("updateUrl").execute().get().getValue(),
+					rowQuery.setName("secret").execute().get().getValue()
 				);
 				appList.add(temp);
 			}
@@ -72,13 +81,21 @@ public class AppDao {
 	{
 		System.out.println("Find APP by ID:"+id);
 		ColumnQuery<String, String, String> columnQuery = createStringColumnQuery(keyspace);
-		ColumnQuery<String, String, String> rowQuery = columnQuery.setColumnFamily(CF).setKey(id);
+		ColumnQuery<String, String, String> rowQuery = columnQuery.setColumnFamily(CF).setKey("55dca5f4-5ecf-40c0-a3b2-076068a3487b");
+		
+		if (rowQuery.setName("name").execute().get()!=null){
+			System.out.println(rowQuery.setName("information").execute().get().getValue());
 		App app = new App(id,
 			rowQuery.setName("name").execute().get().getValue(),
 			rowQuery.setName("information").execute().get().getValue(),
-			rowQuery.setName("installUrl").execute().get().getValue()
+			rowQuery.setName("installUrl").execute().get().getValue(),
+			rowQuery.setName("updated").execute().get().getValue(),
+			rowQuery.setName("updateUrl").execute().get().getValue(),
+			rowQuery.setName("secret").execute().get().getValue()
 		);
 		return app;
+		} else
+			return null;
 	}
 }
 
