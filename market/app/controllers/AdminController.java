@@ -44,9 +44,12 @@ public class AdminController extends Controller {
         render("AdminService/addApp.html",id,secret);
     }
 
-    public static void addAppSave(String id,String name, String information, String installUrl,String email,String updated,String updateUrl,String secret)
+    public static void addAppSave(String id,String name, String AccessRequest, String installUrl,String email,String updated,String updateUrl,String secret)
     {
-		AdminService.addAppSave(id,name, information, installUrl,email,updated,updateUrl,secret);
+    	String information = "<Application><Name>"+name+"</Name><AppID>"+id +
+    			"</AppID><AccessRequests><AccessRequest>"+AccessRequest+"</AccessRequest></AccessRequests></Application>";
+    	System.out.println("id:"+id+"secret:"+secret+"information:"+information);
+    	AdminService.addAppSave(id,name, information, installUrl,email,updated,updateUrl,secret);
         welcome();
     }
 }

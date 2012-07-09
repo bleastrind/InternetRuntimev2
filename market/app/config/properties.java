@@ -7,9 +7,9 @@ public class properties {
 	static {
 		try {
 			InternetRTConfig config = new InternetRTConfig();
-			config.updatePropertiy("appID", "b9a5f404-c8da-473f-8221-95f3c26e80b2");
+			config.updatePropertiy("appID", "50ddb2b1-b550-4b25-90f1-1ec235cafaf8");
 			config.updatePropertiy("appSecret",
-					"58799187-f008-46e3-b136-1903e8788374");
+					"a6b409bd-9a33-4298-8eed-4dd6b07c01f0");
 			config.updatePropertiy("redirect_URI",
 					"http://127.0.0.1:9001/Application/loginUser"); //Play 1.0 and Play 2.0 will conflict on session, if domain is same & port is different
 			config.updatePropertiy("baseURL", "http://localhost:9000");

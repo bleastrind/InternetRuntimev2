@@ -81,7 +81,7 @@ public class AppDao {
 	{
 		System.out.println("Find APP by ID:"+id);
 		ColumnQuery<String, String, String> columnQuery = createStringColumnQuery(keyspace);
-		ColumnQuery<String, String, String> rowQuery = columnQuery.setColumnFamily(CF).setKey("55dca5f4-5ecf-40c0-a3b2-076068a3487b");
+		ColumnQuery<String, String, String> rowQuery = columnQuery.setColumnFamily(CF).setKey(id);
 		
 		if (rowQuery.setName("name").execute().get()!=null){
 			System.out.println(rowQuery.setName("information").execute().get().getValue());
