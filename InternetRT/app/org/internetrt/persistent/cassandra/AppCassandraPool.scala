@@ -68,8 +68,12 @@ class AppCassandraPool(cluster: Cluster) extends AppPool {
   def getApp(userID: String, id: String): Option[Application] ={
     val res = template.queryColumns(userID)
     if (res.hasResults())
-      Some(ApplicationSerializer.fromBytes(res.getByteArray(id)))
-    else
+	{
+	val bytes = res.getByteArray(id);
+    val buffer = ByteBuffer.wrap(bytes);
+	val value = ApplicationSerializer.fromByteBuffer(bytes);
+      Some(value)
+    }else
       None
   }
   def getAppIDsByUserID(userID: String): Seq[String] = {
