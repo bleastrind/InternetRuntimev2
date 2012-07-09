@@ -42,12 +42,7 @@ abstract class AuthCenterImpl extends AnyRef
   def login(username: String, password: String): String = {
     internalUserPool.get(username) match {
       case Some((uid, encryptedpassword)) => {
-        System.out.println("aaaaaaaaaaaaaaaaaaaaa");
-         System.out.println(encryptedpassword);
-         System.out.println(Encrypt.encrypt(password));
-        
         if (encryptedpassword == Encrypt.encrypt(password)){
-          System.out.println("bbbbbbbbbbbbbbbbbbbb");
           uid
         }
         else

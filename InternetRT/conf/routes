@@ -25,6 +25,12 @@ GET		/clients/longpolling	org.internetrt.driver.userinterface.Client.longpolling
 #reponse a question
 GET		/clients/response		org.internetrt.driver.userinterface.Client.response
 #login
+POST		/clients/login			org.internetrt.driver.userinterface.BrowserBaseClientInputs.login
+#register
+POST		/clients/register		org.internetrt.driver.userinterface.BrowserBaseClientInputs.register
+#installApp
+POST		/clients/installapp		org.internetrt.driver.userinterface.BrowserBaseClientInputs.installRootApp
+#login
 GET		/clients/login			org.internetrt.driver.userinterface.BrowserBaseClientInputs.login
 #register
 GET		/clients/register		org.internetrt.driver.userinterface.BrowserBaseClientInputs.register

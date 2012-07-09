@@ -1,0 +1,25 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<div id="login">
+   
+
+    #{form @Application.getAccount(), id:'formLogin'}
+    <p>
+        <label for="account">Login Name:</label>
+        <input type="text" name="account" id="account" value="${params.account}" />
+    </p>
+    <p>
+        <label for="password">Password:</label>
+        <input type="text" name="password" id="password" value="${params.password}" />
+    </p>
+    <p>
+        <input type="submit" value="OK" />
+    </p>
+    #{/form}
+
+</div>
+
+<script type="text/javascript" charset="${_response_encoding}">
+    sessvars.$.clearMem()
+</script>

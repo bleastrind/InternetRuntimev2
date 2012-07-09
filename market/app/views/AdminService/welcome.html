@@ -1,0 +1,45 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<h1>Hello Admin!You can manage every appliacation here!</h1>
+
+#{if applist.size()}
+
+	<table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>information</th>
+				<th>Delete</th>
+				<th>Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            #{list items:applist, as:'app'}
+                <tr>
+                    <td>${app.name}</td>
+                    <td>${app.information}</td>
+                    <td>
+                        <a href="@{AdminController.deleteApp(app,app.getId())}">Delete The App</a>
+                    </td>
+					<td>
+						<a href="@{AdminController.editApp(app)}">Edit</a>
+					</td>
+                </tr>
+            #{/list}
+        </tbody>
+    </table>
+	
+#{/if}
+#{else}
+    Sorry we have no appliacation now.
+#{/else}
+<h3>
+     #{form @AdminController.addApp()}
+          <input type = "submit" value = "Add a new app">
+     #{/form}
+</h3>
+<h3><a href = "@{Application.index()}">log out</a></h3>
+
+
+

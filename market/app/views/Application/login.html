@@ -1,0 +1,16 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+#{form @Application.getAccount()}
+    <p>
+        <label for="account">Your account: </label>
+        <input type="text" name="account" id="account" value="${params.account}" />
+    </p>
+    <p>
+        <label for="password">Your password: </label>
+        <input type="text" name="password" id="password" value="${params.password}" />
+    </p>
+    <p>
+        <input type="submit" value="OK" />
+    </p>
+#{/form}
