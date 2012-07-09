@@ -11,3 +11,16 @@ create keyspace InternetRT_Global;
 use InternetRT_Global;
 create column family SignalDefination;
 create column family AppOwner;
+
+create keyspace InternetRuntime;
+use InternetRuntime;
+create column family User 
+with comparator = UTF8Type
+and column_metadata =
+[{column_name: account, validation_class: UTF8Type, index_type: KEYS},
+{column_name: password, validation_class: UTF8Type},
+{column_name: name, validation_class: UTF8Type}];
+create column family UserSpace
+with comparator = UTF8Type;
+create column family App
+with comparator = UTF8Type;
