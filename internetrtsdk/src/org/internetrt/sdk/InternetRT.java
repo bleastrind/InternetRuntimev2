@@ -1,4 +1,4 @@
-package org.internetrt.sdk;
+package src.org.internetrt.sdk;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +19,8 @@ import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
-import org.internetrt.sdk.util.*;
+import scala.Tuple2;
+import src.org.internetrt.sdk.util.*;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
@@ -29,8 +30,6 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-
-import scala.Tuple2;
 
 /**
  * @author sinaWeibo
@@ -362,8 +361,14 @@ public class InternetRT {
 		return map;
 	}
 	
-	public static void main(String args[]) {
-
+	public static void main(String args[]) throws HttpException, IOException {
+		InternetRT irt = new InternetRT();
+		
+		Map<String,String> map = new HashMap();
+		map.put("status", "Œ“ «Ω© ¨∑€");
+		String token = irt.setAccessTokenWithCode("61db7998-54ff-4317-badf-4e345ebd0c19");
+		System.out.println(token);
+		irt.send(token, "sina", "share", map);
 	}
 
 }

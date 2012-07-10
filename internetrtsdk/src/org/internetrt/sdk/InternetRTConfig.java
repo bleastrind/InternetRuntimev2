@@ -1,4 +1,4 @@
-package org.internetrt.sdk;
+package src.org.internetrt.sdk;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
