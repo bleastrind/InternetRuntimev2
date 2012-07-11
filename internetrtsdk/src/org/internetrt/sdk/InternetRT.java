@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -29,8 +28,6 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-
-import scala.Tuple2;
 
 /**
  * @author sinaWeibo
@@ -81,32 +78,7 @@ public class InternetRT {
 		return result;
 	}
 	
-	public String httpClientGet(String requestUrl)
-	{
-		byte[] responseBody = null;
-		HttpClient httpClient = new HttpClient();
-		GetMethod getMethod = new GetMethod(requestUrl);
-		getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-				new DefaultHttpMethodRetryHandler());
-		try {
-			int statusCode = httpClient.executeMethod(getMethod);
-			if (statusCode != HttpStatus.SC_OK) {
-				System.err.println("Method failed: "
-						+ getMethod.getStatusLine());
-			}
-			responseBody = getMethod.getResponseBody();
-			
-		} catch (HttpException e) {
-			System.out.println("Please check your provided http address!");
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			getMethod.releaseConnection();
-		}
-		String result = new String(responseBody);
-		return result;
-	}
+
 
 	public String getAuthCodeUrl(){
 		return internetRTConfig.getValue(Props.AUTHURL)
@@ -118,21 +90,21 @@ public class InternetRT {
 			IOException {
 		System.out.println(internetRTConfig.getValue("accessTokenURL")
 				+ "?"
-				+ generatorParam2String(new Tuple2[] {
-						new Tuple2("appID", internetRTConfig
+				+ HttpHelper.generatorParamString(new Pair[] {
+						new Pair("appID", internetRTConfig
 								.getValue("appID")),
-						new Tuple2("appSecret", internetRTConfig
+						new Pair("appSecret", internetRTConfig
 								.getValue("appSecret")),
-						new Tuple2("authtoken", code) }));
-		String response  = httpClientGet(internetRTConfig
+						new Pair("authtoken", code) }));
+		String response  = HttpHelper.httpClientGet(internetRTConfig
 				.getValue("accessTokenURL")
 				+ "?"
-				+ generatorParam2String(new Tuple2[] {
-						new Tuple2("appID",
+				+ HttpHelper.generatorParamString(new Pair[] {
+						new Pair("appID",
 								internetRTConfig.getValue("appID")),
-						new Tuple2("appSecret",
+						new Pair("appSecret",
 								internetRTConfig.getValue("appSecret")),
-						new Tuple2("authtoken", code) }));
+						new Pair("authtoken", code) }));
 		System.out.print(response);
 		JSONObject json = JSONObject.fromObject(response);
 		String accesstoken = (String) json.get("access_token");
@@ -143,18 +115,18 @@ public class InternetRT {
 			throws HttpException, IOException {
 		System.out.println(internetRTConfig.getValue("accessTokenURL")
 				+ "?"
-				+ generatorParam2String(new Tuple2[] {
-						new Tuple2("appID", internetRTConfig
+				+ HttpHelper.generatorParamString(new Pair[] {
+						new Pair("appID", internetRTConfig
 								.getValue("appID")),
-						new Tuple2("appSecret", internetRTConfig
+						new Pair("appSecret", internetRTConfig
 								.getValue("appSecret")),
-						new Tuple2("rid", rid) }));
-		String response =  httpClientGet((internetRTConfig
-				.getValue("routingInstanceURl") + "?" + generatorParam2String(new Tuple2[] {
-				new Tuple2("appID", internetRTConfig.getValue("appID")),
-				new Tuple2("appSecret",
+						new Pair("rid", rid) }));
+		String response =  HttpHelper.httpClientGet((internetRTConfig
+				.getValue("routingInstanceURl") + "?" + HttpHelper.generatorParamString(new Pair[] {
+				new Pair("appID", internetRTConfig.getValue("appID")),
+				new Pair("appSecret",
 						internetRTConfig.getValue("appSecret")),
-				new Tuple2("rid", rid) })));
+				new Pair("rid", rid) })));
 		System.out.print(response);
 		JSONObject json = JSONObject.fromObject(response);
 		return (String) json.get("access_token");
@@ -173,109 +145,37 @@ public class InternetRT {
 
 		String xml = initActionFromThirdPart(accesstoken, signalName, sourceMap);
 		System.out.println(xml);
-		AppXmlParser parser = new AppXmlParser(xml);
-		URL url = new URL(parser.getUrl(signalName)
-				+ generatorParamString(Adapter(sourceMap)));
+		String urlstr = new ListenerRequestGenerator(xml).generateSignalListenerUrl(adapter(sourceMap),null);
+		URL url = new URL(urlstr);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("GET");
 	}
+	
 
-	private Map<String, String> Adapter(Map<String, String> sourceMap) {
+	private Map<String, String> adapter(Map<String, String> sourceMap) {
 		return sourceMap;
-	}
-
-	public static String generatorParamString(Map<String, String> parameters) {
-		StringBuffer params = new StringBuffer();
-		if (parameters != null) {
-			for (Iterator<String> iter = parameters.keySet().iterator(); iter
-					.hasNext();) {
-				String name = iter.next();
-				String value = parameters.get(name);
-				params.append(name + "=");
-				try {
-					params.append(URLEncoder.encode(value, "UTF-8"));
-				} catch (UnsupportedEncodingException e) {
-					throw new RuntimeException(e.getMessage(), e);
-				} catch (Exception e) {
-					String message = String.format("'%s'='%s'", name, value);
-					throw new RuntimeException(message, e);
-				}
-				if (iter.hasNext())
-					params.append("&");
-			}
-		}
-		return params.toString();
-	}
-
-	public String generatorParam2String(Tuple2[] postParameters) {
-		String param = "";
-		int i = 0;
-		for (Tuple2 entry : postParameters) {
-			if (i != 0)
-				param += "&" + entry._1() + "="
-						+ entry._2().toString();
-			else
-				param += entry._1() + "=" + entry._2().toString();
-			i++;
-		}
-		return param;
 	}
 
 	public String initActionFromThirdPart(String AccessToken,
 			String signalname, Map<String, String> parameters)
 			throws IOException {
 
-		System.out.println(generatorParamString(parameters));
-		URL url = new URL(internetRTConfig.getValue("baseURL")
+		System.out.println(HttpHelper.generatorParamString(parameters));
+		String url = internetRTConfig.getValue("baseURL")
 				+ "/signal/init/thirdpart/" + signalname + "?"
 				+ "access_token=" + AccessToken + "&"
-				+ generatorParamString(parameters));
-		System.out.println(url.toString());
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("GET");
-		// conn.
-
-		BufferedReader br = new BufferedReader(new InputStreamReader(
-				conn.getInputStream()));
-		String str = "", t = null;
-		while ((t = br.readLine()) != null) {
-			str += t + "\n";
-		}
-		return str;
+				+ HttpHelper.generatorParamString(parameters);
+		System.out.println(url);
+		
+		return HttpHelper.httpClientGet(url);
 	}
 
-	public String httpClientPost(String url, Map<String, String> params) {
-		String response = null;
-		HttpClient client = new HttpClient();
-		HttpMethod method = new PostMethod(url);
-		// Set Http Post Data
-		if (params != null) {
-			HttpMethodParams p = new HttpMethodParams();
-			for (Map.Entry<String, String> entry : params.entrySet()) {
-				p.setParameter(entry.getKey(), entry.getValue());
-			}
-			method.setParams(p);
-		}
-		try {
-			client.executeMethod(method);
-			if (method.getStatusCode() == HttpStatus.SC_OK) {
-				response = method.getResponseBodyAsString();
-			}
-		} catch (IOException e) {
-			// TODO: handle exception
-			System.out.println("Http Post:" + url + "\terror:" + e);
-		} finally {
-			method.releaseConnection();
-		}
-
-		return response;
-	}
 
 	public List<String> getApps(String accessToken) {
 		String param = "accessToken=" + accessToken;
 		List<String> applicationsIDList = new ArrayList<String>();
 		String requestUrl = "http://localhost:9000/config/apps" + "?" + param;
-		String xmlsID = httpClientGet(requestUrl);
+		String xmlsID = HttpHelper.httpClientGet(requestUrl);
 		applicationsIDList = parserXmlsIDString(xmlsID);
 		return applicationsIDList;
 	}
@@ -285,7 +185,7 @@ public class InternetRT {
 
 		String requestUrl = "http://localhost:9000/config/apps/" + appID + "?"
 				+ param;
-		String result = httpClientGet(requestUrl);
+		String result = HttpHelper.httpClientGet(requestUrl);
 		int i = result.indexOf("appDetail:") + ("appDetail:").length() + 1;
 		String xmlString = result.substring(i, result.length() - 2);
 		return xmlString;
@@ -294,7 +194,7 @@ public class InternetRT {
 	public String getAccessToken(String code, String appID, String appSecret) {
 		String requestUrl = "http://localhost:9000/oauth/accesstoken?authtoken="
 				+ code + "&appID=" + appID + "&appSecret=" + appSecret;
-		String result = httpClientGet(requestUrl);
+		String result = HttpHelper.httpClientGet(requestUrl);
 		String[] aa = result.split(",");
 		String[] a = aa[0].split(":");
 		String b = a[1].substring(1, a[1].length() - 1);
@@ -304,7 +204,7 @@ public class InternetRT {
 	public String getSignalDefination(String signalName) {
 		String requestUrl = "http://localhost:9000/signal/querydef/"
 				+ signalName;
-		String result = httpClientGet(requestUrl);
+		String result = HttpHelper.httpClientGet(requestUrl);
 		return result;
 	}
 
@@ -331,7 +231,7 @@ public class InternetRT {
 
 		System.out.println("REQUESTURL: " + requestUrl);
 
-		String resultString = httpClientGet(requestUrl);
+		String resultString = HttpHelper.httpClientGet(requestUrl);
 		System.out.println("ConfirmRouting returns " + resultString);
 	}
 
@@ -341,12 +241,12 @@ public class InternetRT {
 		parameters.put("xml", xml);
 		System.out.println("******************"+internetRTConfig.getValue("baseURL")+
 				"/config/installapp?"+
-				generatorParamString(parameters));
+				HttpHelper.generatorParamString(parameters));
 		return Boolean.parseBoolean(
-				httpClientGet(
+				HttpHelper.httpClientGet(
 						internetRTConfig.getValue("baseURL")+
 						"/config/installapp?"+
-						generatorParamString(parameters)
+						HttpHelper.generatorParamString(parameters)
 						)
 				);
 	
@@ -354,7 +254,7 @@ public class InternetRT {
 	
 	public Map<String,String> appregister(String email){
 		Map<String,String> map = new HashMap();
-		String result = httpClientGet(internetRTConfig.getValue("baseURL")+"/auth/appregister?email="+email);
+		String result = HttpHelper.httpClientGet(internetRTConfig.getValue("baseURL")+"/auth/appregister?email="+email);
 		System.out.println(result);
 		JSONObject json = JSONObject.fromObject(result);
 		map.put("id",(String) json.get("id"));

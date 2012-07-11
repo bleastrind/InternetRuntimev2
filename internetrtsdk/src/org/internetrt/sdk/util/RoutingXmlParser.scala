@@ -1,8 +1,11 @@
 package org.internetrt.sdk.util
 
-class RoutingXmlParser  {
+import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
+
+class RoutingXmlParser(xml:String)  {
  
-     val xmlFile = scala.xml.XML.loadFile("Routing.xml");
+     val xmlFile = scala.xml.XML.loadString(xml);
 
     def getFrom(): String = {
       val signal = xmlFile \ "signal";
@@ -10,58 +13,66 @@ class RoutingXmlParser  {
 	  return from.toString();
     }
     
-    def getTo(): String = {
-	  val signalListener = xmlFile \ "RequestListener"
+    def getTo(id:String = null): String = {
+	  val signalListener = getListener(id);
 	  val requestType = signalListener \ "@runat";
-	  return requestType.toString();
+	  requestType.toString();
+	}
+
+	def getEventListenerIds(): java.util.List[String] = {
+	  val ids = xmlFile \ "EventListener" map (node => node \ "@id" text)
+	  scala.collection.JavaConversions.asList(ids)
 	}
     
-//	def getMap() : java.util.Map[String, String]= {
-//	  val map = scala.collection.mutable.Map.empty[String, String];
-//	  val adapter = xmlFile \ "Adapter"
-//	  adapter \ "mapper" foreach{(mapper)=>
-//	    val key = mapper \ "key"
-//	   val fromParam = key \ "@from"
-//	   val toParam = key \ "@to"
-//	   map += (fromParam.toString() -> toParam.toString());
-//	  }
-//	  return scala.collection.JavaConversions.asMap(map);
-//	}
-	
-	def getReqType(): String = {
+	def getReqType(id:String = null): String = {
 	  
-	  val RequestListener = xmlFile \ "RequestListener"
+	  val RequestListener = getListener(id);
 	  val requestType = RequestListener \ "@type";
-	  return requestType.toString();
+	  requestType.toString();
 	}
 	
-	def getReqUrl(): String = {
-	  val RequestListener = xmlFile \ "RequestListener";
-	  val requestUrl = (RequestListener \ "url").text;
-	  return requestUrl.toString();
+	def getReqUrl(id:String = null): String = {
+	  val requestListener = getListener(id);
+	  val requestUrl = (requestListener \ "url").text;
+	  requestUrl.toString();
 	}
 	
-	def getParamsFormat(): java.util.Map[String,String] = {
-	   val map = scala.collection.mutable.Map.empty[String, String];
-	   val params = xmlFile \ "RequestListener" \ "Adapter" \"params" \ "param" foreach{(param)=>
-	   map += ((param \ "key").text-> (param \ "value").text)
+	def getParamsFormat(id:String = null): java.util.Map[String,String] = {
+	   val requestListener = getListener(id);
+	   val params = requestListener \ "Adapter" \"params" \ "param" map{(param)=>
+	      ( param \ "key" text )-> (param \ "value" text)
 	   }
-	    return scala.collection.JavaConversions.asMap(map);
+	   Map(params:_*);
 	}
 	
-	def getHeadersFormat(): java.util.Map[String,String] = {
-	   val map = scala.collection.mutable.Map.empty[String, String];
-	   val params = xmlFile\ "RequestListener" \ "Adapter" \"headers" \ "header" foreach{(header)=>
-	   map += ((header \ "key").text-> (header \ "value").text)
+	def getHeadersFormat(id:String = null): java.util.Map[String,String] = {
+	   val requestListener = getListener(id);
+	   val params = requestListener \ "Adapter" \"headers" \ "header" map{(header)=>
+	     ( header \ "key" text )-> (header \ "value" text)
 	   }
-	    return scala.collection.JavaConversions.asMap(map);
+	   Map(params:_*);
 	}
 	   
-	   def getBodyFormat(): java.util.Map[String,String] = {
-	   val map = scala.collection.mutable.Map.empty[String, String];
-	   val params = xmlFile \ "RequestListener" \ "Adapter" \"body" foreach{(body)=>
-	   map += ((body \ "key").text-> (body \ "value").text)
+	   def getBodyFormat(id:String = null): java.util.Map[String,String] = {
+	   val requestListener = getListener(id);
+	   val params =requestListener \ "Adapter" \"body" map{(header)=>
+	     ( header \ "key" text )-> (header \ "value" text)
 	   }
-	    return scala.collection.JavaConversions.asMap(map);
+	   Map(params:_*);
 	}
+	   
+	   private def getRequestListener() = {
+	     xmlFile\ "RequestListener" 
+	   }
+	   
+	   private def getEventListener(id:String) = {
+	     xmlFile\ "EventListener" filter (node => (node \ "@id" text) == id);
+	   }
+	   
+	   private def getListener(id:String = null) = {
+	     if( id == null )
+	       getRequestListener();
+	     else
+	       getEventListener(id);	     
+	   }
 }
