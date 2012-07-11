@@ -1,18 +1,26 @@
 package Servlet;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.PriorityBlockingQueue;
 
+import org.internetrt.sdk.InternetRT;
+
 import weibo4j.Comments;
+import weibo4j.Timeline;
 import weibo4j.Weibo;
 import weibo4j.model.Comment;
 import weibo4j.model.CommentWapper;
+import weibo4j.model.Status;
+import weibo4j.model.StatusWapper;
 import weibo4j.org.json.JSONArray;
 import weibo4j.org.json.JSONObject;
 
@@ -21,33 +29,19 @@ public class FeedStub implements Runnable{
 	public static Queue<UserSpace> up = new PriorityBlockingQueue<UserSpace>();
 	public static Queue<UserSpace> upt = new PriorityBlockingQueue<UserSpace>();
 	public static Weibo weibo = new Weibo();
-
-	public void addFeedUser(String sessionKey)
-	{
-		synchronized(this){
-			try{ 
-				System.out.println("add user");
-				weibo.setToken(sessionKey);
-				CommentWapper cw = new Comments().getCommentByMe();
-				List<Comment> comments = cw.getComments();
-				UserSpace us = new UserSpace(sessionKey,comments);
-				up.add(us);
-			} catch (Exception err){
-				System.out.print("add err");
-			}
-		}
-	}
 	
-	public void addFeedUser(String sessionKey,String token)
+	public void addFeedUser(String sessionKey,String Token)
 	{
 		synchronized(this){
 			try{ 
 				System.out.println("add user");
+				System.out.println(Token);
 				weibo.setToken(sessionKey);
-				CommentWapper cw = new Comments().getCommentByMe();
-				List<Comment> comments = cw.getComments();
-				UserSpace us = new UserSpace(sessionKey,comments,token);
+				StatusWapper sw = new Timeline().getUserTimeline();
+				List<Status> status = sw.getStatuses();
+				UserSpace us = new UserSpace(sessionKey,status,Token);
 				up.add(us);
+				Initer.User.put(config.properties.irt.getUserIdByToken(Token), us);
 			} catch (Exception err){
 				System.out.print("add err");
 			}
@@ -75,31 +69,33 @@ public class FeedStub implements Runnable{
 			synchronized(this){
 				if (up.size()!=0){
 					UserSpace us = up.poll();
-					List<Comment> comments = us.getMessage();
-					List<Comment> cms = new LinkedList<Comment>();
-					Comments cm = new Comments();
-					List<Comment> cmt = new LinkedList<Comment>(); ;
-					try {cmt = cm.getCommentByMe().getComments();}
+					List<Status> status = us.getMessage();
+					List<Status> sts = new LinkedList<Status>();
+					Timeline tl = new Timeline();
+					try {sts = tl.getUserTimeline().getStatuses();}
 					catch (Exception err) {}
 					String sessionKey = us.getSessionKey();
 					weibo.setToken(sessionKey);
-					for (Comment x :cmt){	
-						if (!comments.contains(x)) {
-							//System.out.println(x.getText());
-							/*
-							InternetRT irt = new InternetRT();
-							irt.setToken(us.getToken());
-							irt.send("weibo","share",newHashMap());
-							*/
+					for (Status x :sts){	
+						if (!status.contains(x)) {						
+							System.out.println("*******"+x.getText());
+							try {
+								Map<String,String> map = new HashMap();
+								map.put("message", x.getText());
+								config.properties.irt.send(us.getToken(), "sina", "share", map);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							try{
 								
 							} catch (Exception err){
 								
 							}
-					        comments.add(x);
+							status.add(x);
 						}
 					}
-					UserSpace ut = new UserSpace(sessionKey,comments);
+					UserSpace ut = new UserSpace(sessionKey,status,us.getToken());
 					upt.add(ut);
 				}
 				up = upt;

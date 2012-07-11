@@ -35,7 +35,7 @@ abstract class SignalSystemImpl extends SignalSystem {
   def initAction(s: Signal, options: Map[String, String]): SignalResponse = {
     try {
       val ins = workflowEngine.initWorkflow(s.user, getRouting(s), options)
-
+    		 System.out.println("xml"+ins.toString())
       return new ObjectResponse(ins.xml)
     } catch {
       case e:Exception => {

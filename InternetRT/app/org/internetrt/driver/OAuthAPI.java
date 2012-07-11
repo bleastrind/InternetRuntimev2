@@ -52,5 +52,16 @@ public class OAuthAPI extends Controller {
 				",refresh_token=\""+accesstoken.refresh()+"\"}");
 	}
 	
+	public static Result getUserIdByToken(String accessToken){
+		String userId = SiteInternetRuntime.getUserIDByAccessToken(accessToken);
+		return ok("{user_id:\""+userId+"\"}");
+	}
 	
+	public static Result getCodeByRoutingInstance(){
+		String appid = request().queryString().get("appID")[0];
+		String secret = request().queryString().get("appSecret")[0];
+		String rid = request().queryString().get("rid")[0];
+		String code = SiteInternetRuntime.getAuthcodeForActionFlow(appid,secret,rid);
+		return ok("{code:\""+code+"\"}");
+	}
 }

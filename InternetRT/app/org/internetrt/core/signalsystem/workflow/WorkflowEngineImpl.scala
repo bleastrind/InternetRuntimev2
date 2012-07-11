@@ -70,8 +70,8 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
     routingInstancePool.get(workflowID)
   }
 
-  def dispatchEvents(workflowID:String, userID:String, routing:Seq[Routing]){
-    
+  def dispatchEvents(workflowID:String, userID:String, routings:Seq[Routing])={
+    routings map ( r => r.xml \ "EventListener")
   }
   def generateInstanceByRouting(userID: String, routings: Seq[Routing], options: Map[String, String]): RoutingInstance = {
 
