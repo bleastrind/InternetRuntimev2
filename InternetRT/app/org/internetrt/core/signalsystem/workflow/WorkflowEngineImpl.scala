@@ -15,7 +15,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
     try {
 
       val newinstance = generateInstanceByRouting(userID, routings, options)
-
+    		  System.out.println(newinstance)
       routingInstancePool.put(newinstance.id, newinstance)
       newinstance
     } catch {
@@ -67,7 +67,9 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
   }
   
   def getRoutingInstaceByworkflowID(workflowID: String): Option[RoutingInstance] = {
-    routingInstancePool.get(workflowID)
+      val a= routingInstancePool.get(workflowID)
+    		  System.out.println(a)
+    		  a
   }
 
   def dispatchEvents(workflowID:String, userID:String, routing:Seq[Routing]){
@@ -86,7 +88,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
 
     val routingInstance = 
       <RoutingInstance>
-      <id>{ workflowID } </id>
+      <id>{ workflowID }</id>
       {requestRouting.xml \ "Signal"}
       {requestRouting.xml \ "Adapter" filter ( node => (node \ "@to" text) == requestListenerID )}
       {requestRouting.xml \ "RequestListener"}

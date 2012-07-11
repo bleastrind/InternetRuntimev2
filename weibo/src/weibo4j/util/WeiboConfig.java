@@ -9,7 +9,7 @@ public class WeiboConfig {
 	private static Properties props = new Properties(); 
 	static{
 		try {
-			props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties"));
+			props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("configs.properties"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
