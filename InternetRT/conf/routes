@@ -51,7 +51,6 @@ GET		/oauth/authorize						org.internetrt.driver.userinterface.OAuthAPI.authoriz
 GET		/oauth/accesstoken						org.internetrt.driver.OAuthAPI.token
 GET		/oauth/workflow							org.internetrt.driver.OAuthAPI.authorizebyworkflow
 GET		/oauth/getuserid/:accessToken			org.internetrt.driver.OAuthAPI.getUserIdByToken(accessToken :String)
-GET		/oauth/tokenbyrid						org.internetrt.driver.OAuthAPI.getCodeByRoutingInstance
 
 #Auth
 GET		/auth/appregister		org.internetrt.driver.AppRegister.register

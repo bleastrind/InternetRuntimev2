@@ -60,7 +60,7 @@ class RoutingXmlParser(xml:String)  {
 	   }
 	   Map(params:_*);
 	}
-	   
+
 	   private def getRequestListener() = {
 	     xmlFile\ "RequestListener" 
 	   }
@@ -74,5 +74,9 @@ class RoutingXmlParser(xml:String)  {
 	       getRequestListener();
 	     else
 	       getEventListener(id);	     
+           }
+	
+	  def getRoutingInstanceId () ={
+	    ( xmlFile \ "id").text
 	   }
 }
