@@ -53,3 +53,4 @@ GET		/oauth/workflow							org.internetrt.driver.OAuthAPI.authorizebyworkflow
 
 #Auth
 GET		/auth/appregister		org.internetrt.driver.AppRegister.register
+

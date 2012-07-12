@@ -1,119 +1,226 @@
 <script type="text/javascript"> 
-function InternetRuntime()
+window.InternetRuntime = {};
+window.InternetRuntime.Client = {};
+
+window.InternetRuntime.Client.Core = new function()
 {
-	var BaseUrl = "http://localhost:9000";
-	//var Status = ['Active', 'Background', 'Sleep'];
-	var Tools = 
-	{		
-		isNullOrEmpty: function(arr)
-		{
-			return (arr == null || arr.length == 0);
-		},
-		
-		joinParamsByAnd: function(params)
-		{
-			var StringArray = [];
-			for (var o in params)
-				StringArray.push( o + '=' + params[o]);
-			return StringArray.join('&');
-		}
-		
-		
-	};
+	//	Global Consts
+	var CONST = 
+	{	
+		BASE_URL: 'http://localhost:9000',
+		LOGIN_URL: '/clients/login',
+		REGISTER_URL: '/clients/register',
+		LONGPOLLING_URL: '/clients/longpolling',
+		CID_PARAM_NAME: 'CID',
+		STATUS_PARAM_NAME: 'CLIENTSTATUS',		
+		STATUS_ACTIVE: 'Active',
+		STATUS_BACKGROUND: 'Backgroung',
+		STATUS_SLEEP: 'Sleep'
+	}
 	
-	
-	
-	this.Communication = new function()
+	var CORS = new function
 	{
-		
-		
-		function asyncHTTPPost(url, params, content, callbackfunc)
+		//	Receive
+		window.onmessage = function(e)
 		{
-			try
+			MessageHandler[e.data.type](e.data);
+		}
+		var MessageHandler = 
+		{
+			loginByJump: function(data)
+			{
+				window.InternetRuntime.Client.Core.loginByJump();
+			},
+			registerByJump: function(data)
+			{
+				window.InternetRuntime.Client.Core.registerByJump();
+			},
+			/*
+			initOption: function(data)
+			{
+				window.InternetRuntime.Communication.initOption(data.signalname);
+			},*/
+			start: function(data)
+			{
+				window.InternetRuntime.Client.Core.run();
+			}
+		}
+		
+		//	Send
+		function postMessage(msg)
+		{
+			window.top.postMessage(msg, '*');
+		}
+		this.jumpToUrl = function(url)
+		{
+			var msg = 
+			{
+				type: 'jumpToUrl',
+				url: url
+			}
+			postMessage(msg);
+		}
+	
+		this.knownUser = function()
+		{
+			var msg = 
+			{
+				type: 'knowUser',
+				username: 'Xu Peilong'	//need a username?
+			}
+			postMessage(msg);
+		}
+		
+		this.unknownUser = function()
+		{
+			var msg = 
+			{
+				type: 'unknownUser'
+			}
+			postMessage(msg);
+		}				
+	}
+	
+	
+	//	Check if an object is null or undefined
+	function isNU(obj)
+	{	
+		return (obj == null || obj == undefined);
+	}
+	
+	//	Format the http params names and values to "?[n1]=[v1]&[n2]=[v2]&..."
+	function formatHttpParams(params)
+	{
+		var StringArray = [];
+		for (var p in params)
+			StringArray.push(p + '=' + params[p]);
+		if (StringArray.length == 0)
+			return '';
+		else
+			return '?' + StringArray.join('&');
+	}
+	
+	
+	
+
+	
+	//	Client start to work
+	this.run = function()
+	{	
+		try
+		{
+			Communication.startLongpolling();
+		}
+		catch(e)
+		{
+			alert(e);
+		}
+	}
+	
+	this.loginByJump = function()
+	{	
+		CORS.jumpToUrl(CONST.BASE_URL + CONST.LOGIN_URL);
+	}
+	
+	this.registerByJump = function()
+	{
+		CORS.jumpToUrl(CONST.BASE_URL + CONST.REGISTER_URL);
+	}
+	
+	var Communication = new function()
+	{
+		//	Class: Http Request
+		function asynHttpRequest()
+		{
+			var Type = 'Get';
+			var Url = '';
+			var Params = {};
+			var Content = null;
+			var CallBack = function(){};
+			var OKCallBack = function(){};
+			var ErrorCallBack = function(){alert('Http request to ' + Url + ' Error!')};
+			
+			this.setType = function(type)
+			{
+				Type = type;
+				return this;
+			}
+			this.setUrl = function(url)
+			{
+				Url = url;
+				return this;
+			}
+			this.pushParam = function(name, value)
+			{
+				if (isNU(name) || isNU(value))
+					return this;
+				Params[name] = value;
+				return this;
+			}
+			this.pushContent = function(content)
+			{
+				if (Content)
+					Content = Content + content;
+				else
+					Content = content;				
+				return this;
+			}
+			this.setCallBack = function(callback)
+			{
+				CallBack = callback;
+				return this;
+			}
+			this.setOKCallBack = function(callback)
+			{
+				OKCallBack = callback;
+				return this;
+			}
+			this.setErrorCallBack = function(callback)
+			{
+				ErrorCallBack = callback;
+				return this;
+			}
+			this.send = function()
 			{
 				var request = new XMLHttpRequest();
-				if(!Tools.isNullOrEmpty(params))
-					url = url + "?" + Tools.joinParamsByAnd(params);
-				request.open("POST", url, true);
-				request.send(content);
+				request.open(Type, Url + formatHttpParams(Params), true);
 				request.onreadystatechange = function()
 				{
-					if (request.readyState==4 && request.status==200)
+					if (request.readyState==4)
 					{
-						if (callbackfunc)
-							callbackfunc(request.responseText);				
+						CallBack(request);
+						if (request.status==200)
+							OKCallBack(request);
+						else
+							ErrorCallBack(request);
 					}
-					else if (request.readyState==4 && request.status!=200)
-						alert("asyncHTTPGet Error!");
 				}
-			}catch (e)
-			{
-				alert(e);
-			}
-		}
-		
-		function asyncHTTPGet(url, params, callbackfunc)
-		{
-			try
-			{		
-				var request = new XMLHttpRequest();
-				if(!Tools.isNullOrEmpty(params))
-					url = url + "?" + Tools.joinParamsByAnd(params);
-				request.open("GET", url, true);
-				request.onreadystatechange = function()
-				{
-					if (request.readyState==4 && request.status==200)	
-					{
-						if (callbackfunc)
-							callbackfunc(request.responseText);				
-					}
-					else if (request.readyState==4 && request.status!=200)
-						alert("asyncHTTPGet Error!");
-				}
-				request.send();
-			}catch (e)
-			{
-				alert(e);
-			}
-		}
-		
-		function HTTPGet(url, params)
-		{
-			try
-			{
-				var request = new XMLHttpRequest();
-				if(!Tools.isNullOrEmpty(params))
-					url = url + "?" + Tools.joinParamsByAnd(params);
-				request.open("GET", url, false);
-				request.send();
-				return request.responseText;
-			}catch (e)
-			{
-				alert(e);
+				if (Content)
+					request.send(Content);
+				else
+					request.send();
 			}
 		}
 		
 		
-		this.login = function(username, password)
-		{	
-			var params = {};
-			params.username = username;
-			params.password = password;
-			var url = BaseUrl + "/clients/login";
-			var response = HTTPGet(url, params);
-			var lp = new longpolling(eventHandlers);
-			lp.Tick();
-		}
-		this.register = function(username, password)
+		
+		this.StartLongPolling = function()
 		{
-			var params = {};
-			params.username = username;
-			params.password = password;
-			var url = BaseUrl + "/clients/register";
-			var response = HTTPGet(url, params);
-			if (response != '')
-				alert(response);
+			var lp = new LongPolling(null);
+			lp.start();
 		}
+		
+		function unknownUser()
+		{
+			CORS.unknownUser();
+		}
+		function knownUser()
+		{
+			CORS.knownUser();
+		}
+		
+		
+		
 		this.initOption = function(signalname)
 		{			
 			var url = BaseUrl + "/signal/initOption/client/" + signalname;
@@ -123,100 +230,74 @@ function InternetRuntime()
 			if (response != '')
 				alert(response);
 		}
-		function longpolling(callbackfuncsmap)
+		
+		
+		function LongPolling(eventHandler)
 		{
-			var status = 'Active';
-			var cid = null;
-			var url = BaseUrl+ "/clients/longpolling";
+			var Status = 'Active';
+			var CId = null;
+			var Url = CONST.BASE_URL+ CONST.LONGPOLLING_URL;
 			
-			this.Tick = tick;
+			
+			//start the longpolling
+			this.start = function()
+			{
+				tick();
+			}
+			
+			//a longpolling tick
 			function tick()			
 			{
 				try
 				{
-					var params = {};
-					if (cid != null)
-						params.CID = cid;
-					params.status = status;
-					
-					asyncHTTPGet(url, params, handleLongpolling);
+					new asynHttpRequest
+					.setType('Get')
+					.setUrl(Url)
+					.pushParam(CID_PARAM_NAME, CId)
+					.pushParam(STATUS_PARAM_NAME, Status)
+					.setOKCallBack(handleLongpolling)
+					.setErrorCallBack(unknownUser)
+					.send();
 				}
 				catch (e)
 				{
-				alert(e);
+					alert(e);
 				}
 			}
-			function handleLongpolling(rsp, msgId)
+			function handleLongpolling(request)
 			{
-				//alert(rsp);
-				var response = eval(rsp);
-			//	alert(response);
-				cid = response;
-				
-				
-				if (response.data)
+				knownUser();
+				var response = request.responseText;
+				CId = eval(response);
+				//why get cid instead of {cid:cid}????
+				/*if (response.data)
 					switch (response.type)
 					{
-					default:	callbackfuncsmap["default"](msgId, response.data);
+					default:	eventHandler["default"](msgId, response.data);
 					}
-				
-				if (status == 'Active' || status == 'Background')
+				*/
+				if (Status == 'Active' || Status == 'Background')
 				{
 					tick();
 				}
 			}
 		}
+		/*
 		var eventHandlers = 
 		{
-			"default": function askByPrompt(msgId, data)
+			"default": function(msgId, data)
 			{
 				var r = prompt(data,"");
 				var url = BaseUrl+ "/clients/response";
 				asyncHTTPPost(url, {'msgID': msgId}, r);				
 			}
 		}
+		*/
 	}
 	
-	window.onmessage = function(e)
-	{
-		MessageHandler[e.data.type](e.data);
-	}
-	var MessageHandler = 
-	{
-		login: function(data)
-		{
-			window.InternetRuntime.Communication.login(data.username, data.password);
-		},
-		register: function(data)
-		{
-			window.InternetRuntime.Communication.register(data.username, data.password);
-		},
-		initOption: function(data)
-		{
-			window.InternetRuntime.Communication.initOption(data.signalname);
-		}
-		
-	}
-	
-	
-	
-	
 }
 
-window.InternetRuntime = new InternetRuntime();
 
 
 
-function testRegister()
-{
-	window.InternetRuntime.Communication.register();
-}
-function testLogin()
-{
-	window.InternetRuntime.Communication.login();
-}
-function testHttpGet()
-{
-	window.InternetRuntime.Communication.HTTPGet("http://www.baidu.com");
-}
 </script>
