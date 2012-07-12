@@ -11,11 +11,11 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
 
   val routingInstancePool: RoutingInstancePool
 
-  def initWorkflow(userID: String, routings: Seq[Routing], options: Map[String, String]): RoutingInstance = {
+  def initWorkflow(userID: String, vars:Map[String,Seq[String]],routings: Seq[Routing], options: Map[String, String]): RoutingInstance = {
     try {
 
-      val newinstance = generateInstanceByRouting(userID, routings, options)
-
+      val newinstance = generateInstanceByRouting(userID,vars, routings, options)
+    		  System.out.println(newinstance)
       routingInstancePool.put(newinstance.id, newinstance)
       newinstance
     } catch {
@@ -67,13 +67,14 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
   }
   
   def getRoutingInstaceByworkflowID(workflowID: String): Option[RoutingInstance] = {
-    routingInstancePool.get(workflowID)
+	routingInstancePool.get(workflowID)
   }
 
-  def dispatchEvents(workflowID:String, userID:String, routing:Seq[Routing]){
-    
+  def dispatchEvents(workflowID:String, vars:Map[String,Seq[String]],userID:String, routings:Seq[Routing])={
+    val eventListenerNodes = routings map ( r => r.xml \ "EventListener" toSeq ) flatten;
+    eventListenerNodes
   }
-  def generateInstanceByRouting(userID: String, routings: Seq[Routing], options: Map[String, String]): RoutingInstance = {
+  def generateInstanceByRouting(userID: String,vars:Map[String,Seq[String]], routings: Seq[Routing], options: Map[String, String]): RoutingInstance = {
 
     val actualRoutings = if( routings == null ) Seq.empty else routings
     val (requestRouting,requestListenerID) = checkStatus(actualRoutings, options) match{
@@ -86,13 +87,13 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
 
     val routingInstance = 
       <RoutingInstance>
-      <id>{ workflowID } </id>
+      <id>{ workflowID }</id>
       {requestRouting.xml \ "Signal"}
       {requestRouting.xml \ "Adapter" filter ( node => (node \ "@to" text) == requestListenerID )}
       {requestRouting.xml \ "RequestListener"}
+      { scala.xml.NodeSeq.fromSeq(dispatchEvents(workflowID,vars,userID, routings)) }
       </RoutingInstance>
       
-    dispatchEvents(workflowID,userID, routings);
 
     new RoutingInstance(userID, routingInstance)
   }

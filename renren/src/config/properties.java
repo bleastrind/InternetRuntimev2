@@ -4,13 +4,15 @@ import org.internetrt.sdk.InternetRT;
 import org.internetrt.sdk.InternetRTConfig;
 
 public class properties {
+	public static String appID = "335cb40e-0d51-4a8a-addd-8969ad4dfb6f";
+	public static String appSecret ="7e81e20b-1f3c-47de-b7a7-6f426b2cdf8a";
 	static {
 		try {
 			InternetRTConfig config = new InternetRTConfig();
 
-			config.updatePropertiy("appID", "50ddb2b1-b550-4b25-90f1-1ec235cafaf8");
+			config.updatePropertiy("appID", appID);
 			config.updatePropertiy("appSecret",
-					"a6b409bd-9a33-4298-8eed-4dd6b07c01f0");
+					appSecret);
 			config.updatePropertiy("redirect_URI",
 					"http://127.0.0.1:9001/Application/loginUser"); //Play 1.0 and Play 2.0 will conflict on session, if domain is same & port is different
 			config.updatePropertiy("baseURL", "http://localhost:9000");
@@ -20,8 +22,11 @@ public class properties {
 					"http://localhost:9000/oauth/workflow");
 			config.updatePropertiy("authorizeURL",
 					"http://localhost:9000/oauth/authorize");
-		
+			System.out.println(InternetRT.class);
 			irt = InternetRT.create(config);
+			
+			System.out.println("321");
+
 		} catch (Exception e) {
 			System.out.println("Internet Runtime Creation Failure!");
 			e.printStackTrace();
@@ -29,11 +34,4 @@ public class properties {
 	}
 	public static InternetRT irt;
 
-//	public static String BaseUrl = "http://localhost:9000";
-//	public static String AppInstallUrl = "http://localhost:9000";
-//	public static String accessTokenURL = "http://localhost:9000/oauth/accesstoken";
-//	public static String redirectUrl = "http://localhost:9001";
-//	public static String codeURL = BaseUrl
-//			+ "/oauth/authorize?appID=a6d2decd-868b-4a01-ab67-f94d946e9e08&redirect_uri="
-//			+ redirectUrl;
 }

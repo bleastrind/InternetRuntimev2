@@ -3,19 +3,42 @@
 
 <h1>Hello Admin!You can manage every appliacation here!</h1>
 
-
+	<h3> Your Appid:${id} ,Your Secret:${secret}</h3>
       #{form @AdminController.addAppSave()}
+	  
+	 <input type="hidden" name="id" value="${id}">
+	 <input type="hidden" name="secret" value="${secret}">
      <p>
-          <label for="name">App name: </label>
+          <label for="name">name: </label>
           <input type="text" name="name" id="name" value="${params.name}" />
      </p>
+	
+	 <p>   
+	  <label>AccessRequest</label>
+      <select name="AccessRequest" id="AccessRequest">   
+        <option value="${params.AccessRequest}">getApplications</option>          
+      </select>   
+     </p>  
+	 
      <p>
-          <label for="information">App information: </label>
-          <textarea name="information" id="information">${params.information}</textarea>
+          <label for="installUrl">installurl: </label>
+          <input type="text" name="installUrl" id="installUrl"  value="${params.installUrl}">
     </p>
-     <p>
-          <label for="information">App install url: </label>
-          <textarea name="installUrl" id="installUrl">${params.installUrl}</textarea>
+
+	<p>
+          <label for="updated">updated: </label>
+          <input type="radio"  name="updated" id="updated" value="true">true</input>
+		  <input type ="radio" name="updated" id="updated" value="false" checked>false</input>
+    </p>	
+	
+	<p>
+          <label for="updateUrl">updatedUrl: </label>
+          <input type="text" name="updateUrl" id="updateUrl" value="${params.updateUrl}">
+    </p>
+	
+	<p>
+          <label for="updateUrl">email: </label>
+          <input type="text" name="email" id="email" value="${params.email}">
     </p>
 
           <input type = "submit" value = "save">
