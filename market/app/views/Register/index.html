@@ -1,0 +1,38 @@
+#{extends 'main.html' /}
+#{set title:'Sign in' /}
+
+<div id="home">
+
+    <h2>regesiter</h2>
+
+    <div id="signin">
+        #{form @RegisterController.regist()}
+            #{if flash.error}
+                <p class="error">
+                    ${flash.error}
+                </p>
+            #{/if}
+			<p>
+				<label for="account">account</label>
+				<input type="text" name="account" id="account"
+value="${params.account}" >
+			</p>
+			<p>
+				<label for="password">password</label>
+				<input type="text" name="password" id="password" value="${params.password}" >
+			</p>
+						<p>
+				<label for="name">name</label>
+				<input type="text" name="name" id="name" value="${params.name}" >
+			</p>
+		    <p>
+                <label></label>
+                <input type="submit" id="enter" value="finish">
+            </p>
+        #{/form}
+    </div>
+	#{form @Application.index()}
+		<input type = "submit" value = "back">
+	#{/form}
+
+</div>

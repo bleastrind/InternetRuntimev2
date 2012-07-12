@@ -1,0 +1,843 @@
+<button onclick = "test1()" >Test!!</button>
+<textarea id = 'box'; style="overflow: hidden; border: 1px solid #666666; height:400px; width:500px; left:0px; top:200px; position: absolute" >
+
+</textarea>
+<script type="text/javascript"> 
+
+var testbox = document.getElementById('box');
+testbox.value = '';
+
+if (!window.InternetRuntime)
+	window.InternetRuntime = {};
+window.InternetRuntime.UI = new function(){
+		
+	//	Global Consts	
+	var CONST = 
+	{
+		PRE: 'internetrt_',
+		WRAPPER_CLASS: this.PRE + 'wrapper',
+		DEFALUT_TIME: 0
+	}
+
+				
+	//	Library: Origin Simple DOM Object
+	var Lib_SimpleObject = 
+	{
+		div: function()
+		{
+			return document.createElement('div');
+		},
+		img: function()
+		{
+			return document.createElement('img');
+		}
+	}
+		
+		
+	//	Library: Style
+	var Lib_Style = 
+	{
+		Default: function(obj)
+		{},
+		first: function(obj)
+		{
+			obj.style.backgroundColor = '#DCE9F9';
+				obj.style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
+			obj.style.boxShadow = '0 1px 0 rgba(255, 255, 255, 0.8) inset';
+			obj.style.border = '1px solid #CCCCCC';
+			obj.style.borderRadius = '6px 6px 6px 6px';
+		},
+		tag: function(obj)
+		{
+			obj.style.backgroundColor = '#DCE9F9';
+				obj.style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
+			obj.style.boxShadow = '0 1px 0 rgba(255, 255, 255, 0.8) inset';
+			obj.style.border = '1px solid #CCCCCC';
+			obj.style.borderRightStyle = 'none';
+			obj.style.borderRadius = '6px 0px 0px 6px';
+		},
+		item: function(obj)
+		{
+			obj.style.borderColor =  '#0879C0';
+			obj.style.borderStyle = 'solid';
+			obj.style.borderWidth = '1px';
+			obj.style.padding = '0 4px';
+			obj.style.backgroundColor = '#066099';
+			obj.style.borderRadius = '6px 6px 6px 6px';
+		},
+		wraper: function(obj)
+		{
+			obj.style.overflow = 'hidden';
+		},
+		hidden: function(obj)
+		{
+			obj.style.visibility = 'hidden';
+			obj.style.display = 'none';
+		}
+	};
+
+	//	Library: Tween Formula 	
+	var Lib_Tween =
+	{
+		Default: function(pct)
+		{
+			return pct;
+		},
+		Quad: function(pct)
+		{
+			return -(Math.pow((pct-1), 2) -1);
+		}
+	};
+
+	
+	//	Library: Moving Route 
+	var Lib_Route =
+	{
+		Default: function(obj, originxy, targetxy, d)
+		{			
+			
+			var Distance = targetxy.getDst(originxy);
+			var temp = new XY(originxy.x, originxy.y);
+			obj.XY(temp.plus(Distance.scale(d)));
+		}
+	}	
+	
+	function isNotNullOrUndefined(obj)
+	{
+		if (obj == null || obj == undefined)
+			return false;
+		else
+			return true;
+	}
+	
+	
+	
+	//Absolute position of father container.
+	this.XY = XY;
+	function XY(x, y)
+	{		
+		this.x = x;
+		this.y = y;
+		this.plus = function(d)
+		{
+			return new XY(this.x + d.dx, this.y + d.dy);
+		}
+		this.minus = function(d)
+		{
+			return new XY(this.x - d.dx, this.y - d.dy);
+		}
+		this.getDst = function(xy)
+		{
+			return new DXY(this.x - xy.x, this.y - xy.y)
+		}
+	}
+	//Distance between two position.
+	this.DXY = DXY;
+	function DXY(dx, dy)
+	{
+		this.dx = dx;
+		this.dy = dy;
+		this.scale = function(s)
+		{
+			return new DXY(this.dx * s, this.dy * s);
+		}
+	}
+	
+	
+	//	Wrapper container
+	function Warrper(xy, size)
+	{
+		this.prototype = new DOM_Object(Lib_SimpleObject['div']());
+		this.setXY(xy);
+		this.setSize(size);
+		w.className = CONST.WRAPPER_CLASS;
+	}
+	
+	//	DOM Object
+	function DOM_Object(domobj)
+	{
+		if ((!domobj) || (!domobj.style))
+			return null;
+		var Obj = domobj;
+		Obj.style.position = 'absolute';
+		this.DOMObject = Obj;
+		var PosXY;
+		if (isNaN(parseInt(Obj.style.left)))
+			PosXY = new XY(0, 0);
+		else
+			PosXY = new XY(parseInt(Obj.style.left), parseInt(Obj.style.top));
+		this.XY = function(xy)
+		{
+			if (isNotNullOrUndefined(xy))
+			{
+				PosXY = xy;
+				Obj.style.left = PosXY.x + 'px';
+				Obj.style.top = PosXY.y + 'px';
+				return this;
+			}
+			else
+				return PosXY;
+		}
+		
+		this.RightTopXY = function(xy)
+		{
+			if (isNotNullOrUndefined(xy))
+			{
+				PosXY.x = xy.x - SizeDXY.dx;
+				PosXY.y = xy.y;
+				Obj.style.left = PosXY.x + 'px';
+				Obj.style.top = PosXY.y + 'px';
+				return this;
+			}
+			else
+				return new XY(PosXY.x + SizeDXY.dx, PosXY.y);
+		}
+		this.LeftBottomXY = function(xy)
+		{
+			if (isNotNullOrUndefined(xy))
+			{
+				PosXY.x = xy.x;
+				PosXY.y = xy.y - SizeDXY.dy;
+				Obj.style.left = PosXY.x + 'px';
+				Obj.style.top = PosXY.y + 'px';
+				return this;
+			}
+			else
+				return new XY(PosXY.x, PosXY.y + SizeDXY.dy);
+		}
+		
+		this.RightBottomXY = function(xy)
+		{
+			if (isNotNullOrUndefined(xy))
+			{
+				PosXY.x = xy.x - SizeDXY.dx;
+				PosXY.y = xy.y - SizeDXY.dy;
+				Obj.style.left = PosXY.x + 'px';
+				Obj.style.top = PosXY.y + 'px';
+				return this;
+			}
+			else
+				return new XY(PosXY.x + SizeDXY.dx, PosXY.y + SizeDXY.dy);
+		}
+
+
+		
+		this.CenterXY =function(xy)
+		{
+			if (isNotNullOrUndefined(xy))
+			{
+				PosXY = xy.minus(SizeDXY.scale(0.5));
+				Obj.style.left = PosXY.x + 'px';
+				Obj.style.top = PosXY.y + 'px';
+				return this;
+			}
+			else
+				return PosXY.plus(SizeDXY.scale(0.5));
+		}
+		
+		
+		var Id = Obj.id;
+		this.Id = function(id)
+		{
+			if (isNotNullOrUndefined(id))
+			{
+				Id = id;
+				Obj.id = Id;
+				return this;
+			}
+			else
+				return Id;
+		}
+		
+		var Class = Obj.className;
+		this.Class = function(cls)
+		{
+			if (isNotNullOrUndefined(cls))
+			{
+				Class = cls;
+				Obj.className = Class;
+				return this;
+			}
+			else
+				return Class;
+		}
+		
+		var Style = 'Default';
+		this.Style = function(stl)
+		{
+			if (isNotNullOrUndefined(stl))
+			{
+				Style = stl;
+				Lib_Style[Style](Obj);
+				return this;
+			}
+			else
+				return Style;
+		}
+		
+		var Src = '';
+		this.Src = function(src)
+		{
+			if (isNotNullOrUndefined(src))
+			{
+				Src = src;
+				Obj.src = Src;
+				return this;
+			}
+			else
+				return Src;
+		}
+		
+		var Father = new DOM_Object(Obj.parentNode);
+		this.Father = function(fth)
+		{
+			if (isNotNullOrUndefined(fth))
+			{
+				Father = fth;
+				fth.Child(this);
+				return this;
+			}
+			else
+				return Father;
+		}
+		this.WindowFather = function()
+		{			
+			Father = null;
+			document.body.appendChild(Obj);
+			return this;		
+		}
+		
+		var Childs = [];
+		this.Child = function(chld)
+		{
+			Childs.push(chld);
+			Obj.appendChild(chld.DOMObject);
+			return this;
+		}
+		this.Childs = function(chlds)
+		{
+			if (isNotNullOrUndefined(chlds))
+			{
+				Childs = chlds;
+				for (var i = 0; i < chlds.length; i++)
+					Obj.appendChild(chlds[i].DOMObject);
+				return this;
+			}
+			else
+				return Childs;
+		}
+		
+		
+		var Time = CONST.DEFALUT_TIME;
+		this.Time = function(tm)
+		{
+			if (isNotNullOrUndefined(tm))
+			{
+				Time = tm;
+				return this;
+			}
+			else 
+				return Time;
+		}
+		
+		var Tween = Lib_Tween['Default'];
+		this.Tween = function(twn)
+		{
+			if (isNotNullOrUndefined(twn))
+			{
+				Tween = Lib_Tween[twn];
+				return this;
+			}
+			else 
+				return Tween;
+		}
+		
+		
+		var To = PosXY;
+		this.To = function(t)
+		{
+			if (isNotNullOrUndefined(t))
+			{
+				To = t;				
+				return this;
+			}
+			else
+				return To;
+		}
+		
+		
+		var Route = Lib_Route['Default'];
+		this.Route = function(rt)
+		{
+			if (isNotNullOrUndefined(rt))
+			{
+				Route = Lib_Route[rt];
+				return this;
+			}
+			else 
+				return Route;
+		}
+		
+		var CoverWrapper = null;
+		this.CoverFrom = function()
+		{
+			
+		}
+		this.CoverTo = function()
+		{
+		
+		}
+		
+		var CallBack = function(){};
+		this.CallBack = function(clbk)
+		{
+			if (isNotNullOrUndefined(clbk))
+			{
+				CallBack = clbk;
+				return this;
+			}
+			else 
+				return CallBack;
+		}
+		
+		//why this. ???
+		this.Anime = function(tween, time, func, callback)
+		{
+			var AnimeObject = this;
+			if (time == 0)
+			{					
+				func(AnimeObject, 1);
+				callback(AnimeObject);	
+				return;
+			}
+			var StartTime = new Date().getTime();
+			function Run()
+			{
+				var NewTime = new Date().getTime();
+				var d = tween((NewTime - StartTime) / parseFloat(time));
+				if (time >= (NewTime - StartTime))
+				{
+					//alert(d);
+					func(AnimeObject, d);
+					setTimeout(Run, 10);
+				}
+				else
+				{
+					func(AnimeObject, 1);
+					callback(AnimeObject);	
+				}
+			}
+			Run();
+		}
+		
+		this.Move = function()
+		{
+	
+			var Move_Time = Time;
+			var Move_From = PosXY;
+			var Move_To = To;
+			var Move_Tween = Tween;
+			var Move_Route = Route;
+			var Move_CallBack = CallBack;
+			CallBack = function(){};
+			
+			this.Anime(Move_Tween, Move_Time, 
+				function(obj, d)
+				{	
+					Move_Route(obj, Move_From, Move_To, d);
+				},
+				Move_CallBack);
+			return this;
+		}
+		
+		
+		var Opacity = 1;
+		this.Opacity = function(opct)
+		{
+			var Opacity_Start = Opacity;
+			var Opacity_Time = Time;;
+			var Opacity_Tween = Tween;
+			var Opacity_CallBack = CallBack;
+			CallBack = function(){};
+			
+			this.Anime(Opacity_Tween, Opacity_Time, 
+				function(obj, d)
+				{
+					Opacity = Opacity_Start + d * (opct - Opacity_Start);
+					Obj.style.opacity = Opacity;					
+				},
+				Opacity_CallBack);
+			return this;
+		}
+		
+		var SizeDXY = new DXY(parseInt(Obj.style.width), parseInt(Obj.style.height));	
+		
+		function ComponentSearcher(obj)
+		{
+			var ans = [];
+			ans.push(obj);
+			var childs = obj.Childs();			
+			for (var i = 0; i < childs.length; i++)
+				ans = ans.concat(ComponentSearcher(childs[i]));		
+			return ans;		
+		};
+		
+		function ResizeAll(objs, dxy, d)
+		{
+			for (var i = 0; i < objs.length; i++)		
+				objs[i].Resize(dxy, d);
+		}
+		
+		this.Resize = function(dxy, d)
+		{
+			if (d == 1)
+			{
+				SizeDXY = dxy;
+				Obj.style.width = SizeDXY.dx + 'px';
+				Obj.style.height = SizeDXY.dy + 'px';
+			}
+			else
+			{
+				Obj.style.width = SizeDXY.dx + (dxy.dx - SizeDXY.dx) * d + 'px';
+				Obj.style.height = SizeDXY.dy + (dxy.dy - SizeDXY.dy) * d + 'px';
+			}
+		}
+				
+		
+		
+		this.Size = function(dxy)
+		{			
+			if (isNotNullOrUndefined(dxy))
+			{
+				var Resize_Objects = ComponentSearcher(this);
+				var Resize_Time = Time;
+				var Resize_Tween = Tween;
+				var Resize_CallBack = CallBack;
+				CallBack = function(){};
+				
+				this.Anime(Resize_Tween, Resize_Time, 
+					function(obj, d)
+					{
+						ResizeAll(Resize_Objects, dxy, d);
+					},
+					Resize_CallBack);
+				
+				return this;
+			}
+			else
+				return SizeDXY;
+		}
+		
+		var InFunc = function(){};
+		var OutFunc = function(){};
+		
+		var IN = 1, OUT = 2;
+		var MouseState = OUT;
+		var REST = 1, RUN = 2;
+		var AnimeState = REST; 
+		
+		this.HoverIn = function(inf)
+		{
+			InFunc = inf;
+			Obj.onmouseover = function(e)
+			{		
+				testbox.value+=e.relatedTarget.style.width;
+				if (checkContain(Obj, e.relatedTarget))				
+					return;					
+
+				MouseState = IN;
+				if (AnimeState == REST)
+				{
+					AnimeState = RUN;
+					InFunc(InFuncDone);
+				}
+			}
+			return this;
+		}
+		
+		this.HoverOut = function(outf)
+		{
+			OutFunc = outf;
+			Obj.onmouseout = function(e)
+			{	
+				
+				if (checkContain(Obj, e.relatedTarget))				
+					return;			
+
+				MouseState = OUT;
+				if (AnimeState == REST)
+				{
+					AnimeState = RUN;
+					OutFunc(OutFuncDone);
+				}						
+			}
+			return this;
+		}								
+		function InFuncDone()
+		{			
+			testbox.value+= MouseState;
+			if (MouseState == OUT)
+				OutFunc(OutFuncDone);
+			else
+				AnimeState = REST;			
+		}
+		function OutFuncDone()
+		{
+			if (MouseState == IN)
+				InFunc(InFuncDone);
+			else
+				AnimeState = REST;				
+		};	
+		
+		var DoFunc = function(){};
+		this.Click = function(dof)
+		{
+			DoFunc = dof;
+			Obj.onclick = function()
+			{			
+				if (AnimeState == REST)
+				{
+					AnimeState = RUN;
+					DoFunc(DoFuncDone);
+				}
+			}		
+			return this;
+		}
+		function DoFuncDone()
+		{				
+			AnimeState = REST;			
+		}
+		
+		
+		this.isContained = function(simpleobj)
+		{
+			return checkContain(simpleobj);
+		}
+		function checkContain(Obj, simpleobj)
+		{
+			var childs = Obj.childNodes;
+			if (Obj == simpleobj)
+				return true;
+			if (childs)	
+				for (var i = 0; i < childs.length; i++)
+				{
+					if (checkContain(childs[i], simpleobj))
+						return true;
+				}
+			return false;
+		}
+		
+		
+	
+		
+	}
+	//Create a DOM Obeject
+	this.Create = function(type)
+	{
+		return new DOM_Object(Lib_SimpleObject[type]());
+	}
+};
+
+/*
+	Pos: InternetRuntime.UI.DXY(x, y)
+			plus(XY): XY
+			minus(XY): XY
+			getDst(XY): DXY		
+	Distance: InternetRuntime.UI.DXY(Int x, Int y)
+			scale(Int): DXY
+	Create: InternetRuntime.UI.Create(Lib_SimpleObject)
+	Object:	InternetRuntime.UI.DOM_Object()
+			DOMObject
+			XY(XY)
+			RightTopXY(XY)
+			LeftBottomXY(XY)
+			RightBottomXY(XY)
+			CenterXY(XY)
+			Id(String)
+			Class(String)
+			Style(Lib_Style)
+			Sec(String)
+			Father(DOM_Object)
+			WindowFather()
+			Child(DOM_Object)
+			Childs(DOM_Object[])
+			Time(Int)
+			Tween(Lib_Tween)
+			To(XY)
+			Route(Lib_Route)
+			CallBack(Function)
+			Move()
+			Opacity(Float)
+			Size(DXY)
+			HoverIn(Function(done))
+			HoverOut(Function(done))
+			Click(Function(done))
+*/
+function test1()
+{	
+	
+
+	var XY = InternetRuntime.UI.XY;
+	var DXY = InternetRuntime.UI.DXY;
+	var Create = InternetRuntime.UI.Create;
+
+	var Point = new function()
+	{	
+		this.fresh = function()
+		{
+			this.ScreenCenter = new XY
+							(document.body.scrollLeft + window.innerWidth / 2
+							,document.body.scrollTop + window.innerHeight / 2);
+			this.ScreenRightbottom = new XY
+							(document.body.scrollLeft + document.body.clientWidth
+							,document.body.scrollTop + document.body.clientHeight);
+		}
+		this.fresh();
+		
+	}
+
+	
+	//CenterXY();
+	function load()
+	{
+		var LoadingPanel = new function()
+		{
+			var LoadingPanelSize = new DXY(250, 70);
+			var LoadingPanelCenterXY = Point.ScreenCenter;
+			var LoadingLogoSize = new DXY(231, 24);
+			var LoadingLogoCenterXY = new XY(125, 30);
+			var	LoadingLogo = Create('img')
+			.Size(LoadingLogoSize)
+			.CenterXY(LoadingLogoCenterXY)
+			.Src('InternetRuntime.png');
+			return Create('div')
+			.Size(LoadingPanelSize)
+			.CenterXY(LoadingPanelCenterXY)
+			.Style('first')
+			.Child(LoadingLogo);
+		}
+		function showLoadingPanel()
+		{
+			LoadingPanel
+			.WindowFather()
+			.Opacity(0)
+			.Time(600)
+			.CallBack(hideLoadingPanel)
+			.Opacity(1)
+		}
+		function hideLoadingPanel()
+		{
+			
+			var SmallSize = new InternetRuntime.UI.DXY(23, 10);
+			LoadingPanel
+			.Time(300)
+			.To(Point.ScreenRightbottom.minus(SmallSize.scale(1.2)))
+			.Opacity(0)
+			.Move()
+			.CallBack(InitUserPanel)
+			.Size(SmallSize);
+		}
+		
+		var UserPanelTag = new function()
+		{
+			var UserPanelTagSize = new DXY(25, 70);			
+			return Create('div')
+			.Size(UserPanelTagSize)
+			.Style('tag')			
+		}
+		var UserPanel = new function()
+		{			
+			var UserPanelSize = new DXY(250, 150);
+			var UserPanelTagLeftBottomXY = new XY(-2, UserPanelSize.dy);
+			UserPanelTag.RightBottomXY(UserPanelTagLeftBottomXY);
+			return Create('div')
+			.Size(UserPanelSize).Style('first')
+			.Child(UserPanelTag);
+			
+		}
+		var UserPanelWrapper = new function()
+		{
+			var UserPanelWrapperSize = new DXY(UserPanel.Size().dx + UserPanelTag.Size().dx, UserPanel.Size().dy); 
+			return Create('div')
+			.Size(UserPanelWrapperSize)
+			.Style('wraper')
+		}
+		var UserPanelInitPos = new XY(UserPanelWrapper.Size().dx, 0);
+		function InitUserPanel()
+		{	
+			LoadingPanel.Style('hidden');
+			UserPanel
+			.XY(UserPanelInitPos);
+			UserPanelWrapper.WindowFather()
+			.Child(UserPanel)
+			.XY(Point.ScreenRightbottom.minus(UserPanelWrapper.Size()));
+			document.body.onscroll = function()
+			{
+				Point.fresh();
+				UserPanelWrapper.XY(Point.ScreenRightbottom.minus(UserPanelWrapper.Size()));
+			}
+			
+			UserPanelTag
+			.HoverIn(showUserPanel);
+			UserPanelWrapper
+			.HoverOut(hideUserPanel);
+			
+		}
+		function showUserPanel(done)
+		{
+			var ShowTargetXY = new XY(UserPanelTag.Size().dx, 0);
+			UserPanel
+			.Time(300)
+			.To(ShowTargetXY)
+			.CallBack(done)
+			.Move();
+		}
+		function hideUserPanel(done)
+		{
+			UserPanel
+			.Time(300)
+			.To(UserPanelInitPos)
+			.CallBack(done)
+			.Move();			
+		}
+		showLoadingPanel();
+	}
+	load();
+	
+	/*
+	var a = {};
+
+	var aSize = new InternetRuntime.UI.DXY(100, 100);
+	var aXY = new InternetRuntime.UI.XY(200, 200);
+	var zeroSize = new InternetRuntime.UI.DXY(50, 50);
+	InternetRuntime.UI
+	.Create('div').Size(zeroSize).Style('first').Opacity(0).WindowFather()
+	.Time(500).Tween('Quad').To(aXY)
+	.Move()
+	.Opacity(1)	
+	.CallBack(function(obj){	
+		obj.HoverIn(function(done){
+			obj
+			.CallBack(done)
+			.Size(new InternetRuntime.UI.DXY(50, 50));
+		})
+		.HoverOut(function(done){
+			obj
+			.CallBack(done)
+			.Size(new InternetRuntime.UI.DXY(100, 100));
+		})
+		.Click(function(done){
+			obj		
+			.CallBack(function(){
+				obj
+				.CallBack(done)
+				.Size(new InternetRuntime.UI.DXY(50, 50))
+			})		
+			.Size(new InternetRuntime.UI.DXY(100, 100))
+		})
+		
+	})
+	.Size(aSize);
+	*/
+}
+</script>

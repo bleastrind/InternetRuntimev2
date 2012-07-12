@@ -5,48 +5,25 @@ import org.internetrt._;
 
 object SignalController extends Controller {
 
-	def initfromthirdpart(signalname:String) = init(signalname,"thirdpart")
-	
-	def initfromclient(signalname:String) = init(signalname,"client")
-	
-	private def init(signalname:String,Type:String)=Action{
+	def init(signalname:String)=Action{
 	  request=>
-	  val response = Type match{
-	    case "thirdpart" => SiteInternetRuntime.initActionFromThirdPart(
+	  val response = SiteInternetRuntime.initActionFromThirdPart(
 	        request.queryString.get(CONSTS.ACCESSTOKEN).getOrElse(Seq.empty).head,
 	        signalname,
 	        request.queryString,
-	        null);
-	    case "client" => SiteUserInterface.initActionFromUserinterface(  //TODO  move to interface
-	        request.session.get(CONSTS.SESSIONUID).get,
-	        signalname,
-	        request.queryString,
-	        null);
-	        
-	  }
+	        request.queryString.mapValues( seq => seq.headOption.getOrElse("")));
+
 	  Ok(response.getResponse)
 	}
 	
-	def initOptionfromthirdpart(signalname:String) = initOption(signalname,"thirdpart")
-	
-	def initOptionfromclient(signalname:String) = initOption(signalname,"client")
-	
-	private def initOption(signalname:String, Type:String)= Action{
+	def initOption(signalname:String)= Action{
 	   request=>
-	  val response = Type match{
-	    case "thirdpart" => SiteInternetRuntime.initActionOptionsFromThirdPart(
+	  val response = SiteInternetRuntime.initActionOptionsFromThirdPart(
 	        request.queryString.get(CONSTS.ACCESSTOKEN).getOrElse(Seq.empty).head,
 	        signalname,
 	        request.queryString,
-	        null);
-	    case "client" => SiteUserInterface.initActionOptionsFromUserinterface(//TODO  move to interface
-	        request.session.get(CONSTS.SESSIONUID).get,
-	        signalname,
-	        request.queryString,
-	        null);
-	        
-	  }
-	    
+	        request.queryString.mapValues( seq => seq.headOption.getOrElse("")));
+
 	  val resultxml = scala.xml.Utility.trim(
 	    <Options>
 		  {scala.xml.NodeSeq.fromSeq( 
@@ -70,7 +47,9 @@ object SignalController extends Controller {
 
 	def registerSignal(signalname:String)= Action{
 	  request=>
-	    Ok(SiteInternetRuntime.registerSignal(signalname,request.body.asXml.toString()).toString());
+	    val map = request.body.asFormUrlEncoded
+	    val first = map.get("share")
+	    Ok(SiteInternetRuntime.registerSignal(signalname,first.head).toString());
 	}
 	
 	def getSignalDef(signalname:String)= Action{

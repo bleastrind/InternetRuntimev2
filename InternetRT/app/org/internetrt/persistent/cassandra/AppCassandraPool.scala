@@ -53,7 +53,7 @@ class AppCassandraPool(cluster: Cluster) extends AppPool {
   
   def installApplication(userID: String, id: String, app: Application) = {
     val updater = template.createUpdater(userID)
-    updater.setValue(id, app, ApplicationSerializer)
+    updater.setValue(id, scala.xml.Utility.trim(app.xml).toString(), StringSerializer.get())
     try {
       template.update(updater)
       true
@@ -68,25 +68,12 @@ class AppCassandraPool(cluster: Cluster) extends AppPool {
   def getApp(userID: String, id: String): Option[Application] ={
     val res = template.queryColumns(userID)
     if (res.hasResults())
-      Some(ApplicationSerializer.fromBytes(res.getByteArray(id)))
+      Some(Application(scala.xml.XML.loadString(res.getString(id))))
     else
       None
   }
   def getAppIDsByUserID(userID: String): Seq[String] = {
     val res = template.queryColumns(userID)
     scala.collection.JavaConversions.collectionAsScalaIterable(res.getColumnNames()) toSeq
-  }
-
-  object ApplicationSerializer extends AbstractSerializer[Application] {
-
-    def fromByteBuffer(buffer: ByteBuffer): Application = {
-      val xml = scala.xml.XML.loadString(new String(buffer.array()));
-      Application(xml)
-    }
-
-    def toByteBuffer(value: Application): ByteBuffer = {
-      val xml = scala.xml.Utility.trim(value.xml)
-      ByteBuffer.wrap(xml.toString.getBytes())
-    }
   }
 }

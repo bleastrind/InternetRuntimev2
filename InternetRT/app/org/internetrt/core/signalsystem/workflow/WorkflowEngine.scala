@@ -8,7 +8,7 @@ case class OkState(requestRouting:Routing, requestListenerID:String) extends Che
 case class OptionMissingState(options:Map[String,Seq[scala.xml.Node]]) extends CheckedStatus{}
 
 	trait WorkflowEngine {
-		def initWorkflow(userID:String ,routings: Seq[Routing],options:Map[String,String]):RoutingInstance
+		def initWorkflow(userID:String ,vars:Map[String,Seq[String]],routings: Seq[Routing],options:Map[String,String]):RoutingInstance
 		
 		def checkStatus(routings: Seq[Routing], options: Map[String, String]):CheckedStatus
 		

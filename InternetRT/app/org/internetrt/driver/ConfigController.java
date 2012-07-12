@@ -1,18 +1,5 @@
 package org.internetrt.driver;
 
-
-import java.awt.List;
-import java.util.ArrayList;
-
-import javax.security.sasl.AuthenticationException;
-
-import org.internetrt.*;
-import org.internetrt.core.security.*;
-import org.internetrt.core.signalsystem.SignalResponse;
-
-import com.sun.java.swing.plaf.windows.WindowsInternalFrameTitlePane.ScalableIconUIResource;
-
-import play.mvc.Http.Request;
 import play.mvc.Result;
 import play.mvc.Controller;
 
@@ -27,7 +14,7 @@ public class ConfigController extends Controller {
 		String accessToken = request().queryString().get("accessToken")[0];
 		
 		scala.collection.Seq<String> a=org.internetrt.SiteInternetRuntime.getApplications(accessToken);;
-		java.util.List<String> javaapps = scala.collection.JavaConversions.asList(a);
+		java.util.List<String> javaapps = scala.collection.JavaConversions.seqAsJavaList(a);
 
 		StringBuilder applicationString = new StringBuilder();
 		int i = 0;

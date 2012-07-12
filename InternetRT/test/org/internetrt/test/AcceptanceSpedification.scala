@@ -100,7 +100,7 @@ def setrouting = {
 	object sip extends When[SignalResponse,(String,String)]{
 		def extract(p:SignalResponse, text:String):(String,String) = {
 		  val data = "";
-		  val routingInstaceID = p.asInstanceOf[ObjectResponse].asObject[RoutingInstance].id;
+		  val routingInstaceID = p.asInstanceOf[ObjectResponse].asObject[scala.xml.Elem] \ "id" text;
 		  (data,routingInstaceID)
 		}
 	}

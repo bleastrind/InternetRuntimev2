@@ -111,7 +111,7 @@ function render_triggerChannels()
 	{
 	
 		html += '<a onclick="choose_triggerChannel_id('+i+')">'
-						+'<img src="'+ "images/"+appsByTri[i].appName+"_logo.jpg" +'">'
+						+'<img src="'+ "../images/"+appsByTri[i].appName+"_logo.jpg" +'">'
 					+'</a>';
 	}
 		$("#choose_triggerChannel").html(html);
@@ -131,7 +131,7 @@ function render_actionChannels()
 	for(var i = 0; i< apps.length; i++)
 	{
 		html += '<a onclick="choose_actionChannel_id('+i+')">'
-						+'<img src="'+ "images/"+apps[i].appName+"_logo.jpg" +'">'
+						+'<img src="'+ "../images/"+apps[i].appName+"_logo.jpg" +'">'
 					+'</a>';
 	}
 		$("#choose_actionChannel").html(html);
@@ -162,10 +162,12 @@ function genRouting()
 		success : function(data)
 		{
 			alert("SUCCESS");
-			var r = confirm(data);
+			result = eval(data);
+			routing = result.routingXml;
+			var r = confirm(routing);
 			if(r == true)
 			{
-				restoreRouting(data);
+				restoreRouting(routing);
 			}
 		}
 	

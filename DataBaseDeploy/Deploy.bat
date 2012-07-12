@@ -1,0 +1,1 @@
+start bin\cassandra-cli.bat -f 1.txt
