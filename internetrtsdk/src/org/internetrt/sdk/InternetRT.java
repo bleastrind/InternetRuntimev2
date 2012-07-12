@@ -107,13 +107,22 @@ public class InternetRT {
 				+ "&response_type=" + response_type;
 	}
 
-	public void send(String accesstoken, String from, String signalName,
+	public String send(String accesstoken, String from, String signalName,
 			Map<String, String> sourceMap) throws IOException {
 
 		String xml = initActionFromThirdPart(accesstoken, signalName, sourceMap);
 		System.out.println(xml);
-		String urlstr = new ListenerRequestGenerator(xml).generateSignalListenerUrl(adapter(sourceMap),null);
-		System.out.println("weibo"+HttpHelper.httpClientGet(urlstr));
+		RoutingXmlParser parser = new RoutingXmlParser(xml);
+		ListenerRequestGenerator generator = new ListenerRequestGenerator(parser);
+
+		//Event signals
+		for(ListenerConfig config: parser.getEventListeners()){
+			String eventUrl = generator.generateSignalListenerUrl(adapter(sourceMap), config);
+			HttpHelper.httpClientGet(eventUrl);
+		}
+		//Request signal
+		String urlstr = generator.generateSignalListenerUrl(adapter(sourceMap),null);	
+		return HttpHelper.httpClientGet(urlstr);
 	}
 	
 

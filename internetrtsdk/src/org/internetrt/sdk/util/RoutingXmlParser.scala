@@ -2,6 +2,7 @@ package org.internetrt.sdk.util
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
+case class ListenerConfig(node:scala.xml.Node){}
 
 class RoutingXmlParser(xml:String)  {
  
@@ -13,68 +14,58 @@ class RoutingXmlParser(xml:String)  {
 	  return from.toString();
     }
     
-    def getTo(id:String = null): String = {
-	  val signalListener = getListener(id);
+    def getTo(listener:ListenerConfig = null): String = {
+	  val signalListener = if (listener == null) getRequestListener.node else listener.node;
 	  val requestType = signalListener \ "@runat";
 	  requestType.toString();
 	}
-
-	def getEventListenerIds(): java.util.List[String] = {
-	  val ids = xmlFile \ "EventListener" map (node => node \ "@id" text)
-	  scala.collection.JavaConversions.asList(ids)
-	}
     
-	def getReqType(id:String = null): String = {
+	def getReqType(listener:ListenerConfig = null): String = {
 	  
-	  val RequestListener = getListener(id);
-	  val requestType = RequestListener \ "@type";
+	  val signalListener = if (listener == null) getRequestListener.node else listener.node;
+	  val requestType = signalListener \ "@type";
 	  requestType.toString();
 	}
 	
-	def getReqUrl(id:String = null): String = {
-	  val requestListener = getListener(id);
-	  val requestUrl = (requestListener \ "url").text;
+	def getReqUrl(listener:ListenerConfig = null): String = {
+	  val signalListener = if (listener == null) getRequestListener.node else listener.node;
+	  val requestUrl = (signalListener \ "url").text;
 	  requestUrl.toString();
 	}
 	
-	def getParamsFormat(id:String = null): java.util.Map[String,String] = {
-	   val requestListener = getListener(id);
-	   val params = requestListener \ "Adapter" \"params" \ "param" map{(param)=>
+	def getParamsFormat(listener:ListenerConfig = null): java.util.Map[String,String] = {
+	   val signalListener = if (listener == null) getRequestListener.node else listener.node;
+	   val params = signalListener \ "Adapter" \"params" \ "param" map{(param)=>
 	      ( param \ "key" text )-> (param \ "value" text)
 	   }
 	   Map(params:_*);
 	}
 	
-	def getHeadersFormat(id:String = null): java.util.Map[String,String] = {
-	   val requestListener = getListener(id);
-	   val params = requestListener \ "Adapter" \"headers" \ "header" map{(header)=>
+	def getHeadersFormat(listener:ListenerConfig = null): java.util.Map[String,String] = {
+	   val signalListener = if (listener == null) getRequestListener.node else listener.node;
+	   val params = signalListener \ "Adapter" \"headers" \ "header" map{(header)=>
 	     ( header \ "key" text )-> (header \ "value" text)
 	   }
 	   Map(params:_*);
 	}
 	   
-	   def getBodyFormat(id:String = null): java.util.Map[String,String] = {
-	   val requestListener = getListener(id);
-	   val params =requestListener \ "Adapter" \"body" map{(header)=>
+	   def getBodyFormat(listener:ListenerConfig = null): java.util.Map[String,String] = {
+	   val signalListener = if (listener == null) getRequestListener.node else listener.node;
+	   val params =signalListener \ "Adapter" \"body" map{(header)=>
 	     ( header \ "key" text )-> (header \ "value" text)
 	   }
 	   Map(params:_*);
 	}
 
-	   private def getRequestListener() = {
-	     xmlFile\ "RequestListener" 
+	   def getRequestListener() = {
+	     ListenerConfig(xmlFile\ "RequestListener" head)
 	   }
 	   
-	   private def getEventListener(id:String) = {
-	     xmlFile\ "EventListener" filter (node => (node \ "@id" text) == id);
+	   def getEventListeners():java.util.List[ListenerConfig] = {
+	     val listeners = xmlFile\ "EventListener" map (node => ListenerConfig(node));
+	     scala.collection.JavaConversions.seqAsJavaList(listeners)
 	   }
-	   
-	   private def getListener(id:String = null) = {
-	     if( id == null )
-	       getRequestListener();
-	     else
-	       getEventListener(id);	     
-           }
+
 	
 	  def getRoutingInstanceId () ={
 	    ( xmlFile \ "id").text

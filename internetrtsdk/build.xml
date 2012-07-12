@@ -2,7 +2,7 @@
 
 <!-- Build file for project -->
 
-<project name="internetrt" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant"  >
+<project name="internetrt" default="deploy" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant"  >
   <property file="${user.home}/.ant.properties" />
   <!-- ant build properties -->
   <property file="build.properties"/>
