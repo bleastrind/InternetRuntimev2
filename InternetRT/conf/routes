@@ -55,3 +55,4 @@ GET		/oauth/getuserid/:accessToken			org.internetrt.driver.OAuthAPI.getUserIdByT
 
 #Auth
 GET		/auth/appregister		org.internetrt.driver.AppRegister.register
+

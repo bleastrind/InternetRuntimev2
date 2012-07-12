@@ -3,13 +3,12 @@ if (!window.InternetRuntime)
 	
 window.InternetRuntime.Explorer = new function()
 {
-	function isNUE(obj)
+	//check if an object is null or undefined
+	function isNU(obj)
 	{	
-		if (obj == null || obj == undefined || obj = '')
-			return true;
-		else
-			return false;
+		return (obj == null || obj == undefined);
 	}
+	
 	var Filters = 
 	{
 		link: function(objs)
