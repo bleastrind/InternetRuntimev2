@@ -22,7 +22,7 @@
   <property name="src.java.dir" value="../src/java"/>
   <property name="javadoc.destdir" value="../docs/api"/>
   <property name="final.name" value="${project}-${version}"/>
-  <property name="dist.root" value="${build.dir}/market/lib"/>
+  <property name="dist.root" value="${build.dir}/internetrtsdk"/>
   <property name="dist.dir" value="${dist.root}/${final.name}"/>
 
   <path id="classpath">    
@@ -66,7 +66,6 @@
   	<!--<mkdir dir="${build.dest}"/>
     <mkdir dir="${build.src}"/> 
     -->
-    <!--  chose a class that's from j2ee.jar -->
   </target>
   <target name="J2EE-error" depends="prepare"  unless="J2EE.present">
   
@@ -109,7 +108,14 @@
     </taskdef>
   	
   </target>
-
+	  <!-- =================================================================== -->
+	  <!-- Prepares the deploy directory                                        -->
+	  <!-- =================================================================== -->
+  <target name="deploy" depends="jar">
+	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/market/lib"/>
+  	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/InternetRT/lib"/>
+  </target>
+	
   <target name="jar" depends="compile">
     <mkdir dir="${dist.root}"/>
     <delete dir="${dist.root}/${project}-${version}.jar"/>  
