@@ -3,6 +3,7 @@ package org.internetrt.sdk.util
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 case class ListenerConfig(node:scala.xml.Node){}
+case class DataAdapter(node:scala.xml.Node){}
 
 class RoutingXmlParser(xml:String)  {
  
@@ -33,26 +34,26 @@ class RoutingXmlParser(xml:String)  {
 	  requestUrl.toString();
 	}
 	
-	def getParamsFormat(listener:ListenerConfig = null): java.util.Map[String,String] = {
+	def getParamsAdapter(listener:ListenerConfig = null): java.util.Map[String,DataAdapter] = {
 	   val signalListener = if (listener == null) getRequestListener.node else listener.node;
 	   val params = signalListener \ "Adapter" \"params" \ "param" map{(param)=>
-	      ( param \ "key" text )-> (param \ "value" text)
+	      ( param \ "key" text )-> DataAdapter(param \ "value" head)
 	   }
 	   Map(params:_*);
 	}
 	
-	def getHeadersFormat(listener:ListenerConfig = null): java.util.Map[String,String] = {
+	def getHeadersAdapter(listener:ListenerConfig = null): java.util.Map[String,DataAdapter] = {
 	   val signalListener = if (listener == null) getRequestListener.node else listener.node;
 	   val params = signalListener \ "Adapter" \"headers" \ "header" map{(header)=>
-	     ( header \ "key" text )-> (header \ "value" text)
+	     ( header \ "key" text )-> DataAdapter(header \ "value" head)
 	   }
 	   Map(params:_*);
 	}
 	   
-	   def getBodyFormat(listener:ListenerConfig = null): java.util.Map[String,String] = {
+	   def getBodyAdapter(listener:ListenerConfig = null): java.util.Map[String,DataAdapter] = {
 	   val signalListener = if (listener == null) getRequestListener.node else listener.node;
 	   val params =signalListener \ "Adapter" \"body" map{(header)=>
-	     ( header \ "key" text )-> (header \ "value" text)
+	     ( header \ "key" text )-> DataAdapter(header \ "value" head)
 	   }
 	   Map(params:_*);
 	}
