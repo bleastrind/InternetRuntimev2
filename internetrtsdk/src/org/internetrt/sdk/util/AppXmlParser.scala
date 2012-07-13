@@ -10,7 +10,6 @@ class AppXmlParser (xml:String){
      Application((xmlFile \ "Name").text, (xmlFile \ "AppID").text, getRequests()) 
   }
   
-  
   def getUrl(signal:String): String= {
     var result = new String
     val RequestListener = xmlFile \ "SignalHanlders"
