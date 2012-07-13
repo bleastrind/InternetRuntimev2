@@ -65,10 +65,10 @@ public class InternetRT {
 	
 
 
-	public String getAuthCodeUrl(){
+	public String getAuthCodeUrl(String appID,String redirect){
 		return internetRTConfig.getValue(Props.AUTHURL)
-		+ "?appID=" + internetRTConfig.getValue(Props.APPID)
-		+"&redirect_uri="+ internetRTConfig.getValue(Props.REDIRECTURL);
+		+ "?appID=" + appID
+		+"&redirect_uri="+ redirect;
 	}
 
 	public String setAccessTokenWithCode(String code){

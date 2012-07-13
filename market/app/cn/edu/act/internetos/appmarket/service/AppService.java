@@ -35,7 +35,7 @@ public class AppService{
 		try {
 			System.out.print("market");
 		irt.getAppDetail(config.properties.appID, token);
-		System.out.println("yes market");
+		System.out.println("market");
 		return true;
 		} catch(Exception err){
 			System.out.println("no market");
