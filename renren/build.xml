@@ -41,16 +41,18 @@
     <target name="build-subprojects"/>
     <target depends="init,resolve" name="build-project">
     	  <path id="renren.classpath">
-    	        <pathelement location="${build.lib}"/>
-
+    	  	<fileset dir="${build.lib}">    
+    	  	  	      <include name="*.jar"/>
+    	  	  	     
+    	  	  	    </fileset> 
     	    </path>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="${build.dest}" source="${source}" target="${target}">
+        <javac debug="true" debuglevel="${debuglevel}" destdir="${build.dest}">
             <src path="${build.src}"/>
             <classpath refid="renren.classpath"/>
         </javac>
     </target>
 	<target depends="build" name="war">
-		<war destfile="${project}-${version}.war" webxml="${build.webroot}/WEB-INF/web.xml">
+		<war destfile="${project}.war" webxml="${build.webroot}/WEB-INF/web.xml">
 		  <fileset dir="${build.webroot}">
 		  	<exclude name="**/*.class"/>
 		  	<exclude name="**/*.jar"/>
@@ -62,6 +64,6 @@
 	</target>
 	
 	<target depends="war" name="deploy">
-		<copy file="${project}-${version}.war" todir="${tomcat.app}"/>
+		<copy file="${project}.war" todir="${tomcat.app}"/>
 	</target>
 </project>

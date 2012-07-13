@@ -6,6 +6,7 @@ import java.util.UUID
 import org.internetrt.core.model.Application
 import scala.xml.XML
 import org.internetrt.core.signalsystem.Signal
+import org.internetrt.core.model.Routing
 
 abstract class UserInterface {
   
@@ -25,12 +26,14 @@ abstract class UserInterface {
   }
   
   def installRootApp(uid:String,xml:String):Boolean = {
- 
 	val app = Application(XML.loadString(xml))
 	aclSystem.grantAccess(uid,app.id, app.accessRequests,true)
 	confSystem.installApp(uid, app)
   }
-  
+    def confirmRouting(userID:String, xml: String):Boolean = {
+      confSystem.confirmRouting(userID, Routing(userID,scala.xml.XML.loadString(xml)))
+  }
+    
   def response(uid: String, msg: String, msgID: String) = {
     clientManager.response(uid, msg, msgID)
   }
