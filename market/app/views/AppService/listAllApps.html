@@ -1,5 +1,9 @@
 #{extends 'main.html' /}
 <html>
+
+#{if !flag}
+	<a href="@{AppController.installMarket()}">Install Market</a>
+	#{/if}
 #{if applist.size()}
 	<h1>There are the apps:</h1>
 	<table>

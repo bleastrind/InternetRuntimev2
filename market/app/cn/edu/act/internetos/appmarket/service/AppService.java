@@ -30,6 +30,19 @@ public class AppService{
 		return userapps;
 	}
 	
+	public static boolean market(String token){
+		InternetRT irt = properties.irt;
+		try {
+			System.out.print("market");
+		irt.getAppDetail(config.properties.appID, token);
+		System.out.println("yes market");
+		return true;
+		} catch(Exception err){
+			System.out.println("no market");
+			return false;
+		}
+	}
+	
 	public static List<AppConfig> getAllConfig(String token){
 		/*UserSpaceDao ueserspacedao = new UserSpaceDao();
 		UserSpace userspace = userspacedao.getUserSpace(user);	

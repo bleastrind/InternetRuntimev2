@@ -13,7 +13,8 @@ import java.io.IOException;
 import java.lang.*;
 
 import org.apache.commons.httpclient.HttpException;
-import org.internetrt.sdk.InternetRT;
+import org.internetrt.sdk.*;
+import org.internetrt.sdk.util.*;
 
 import config.properties;
 
@@ -40,7 +41,8 @@ public class AppController extends Controller {
 	
 	public static void listAllApps(){
 		List<App> applist = AppService.getAllApps();
-        render("AppService/listAllApps.html", applist);
+		Boolean flag = AppService.market(getAccessToken());
+        render("AppService/listAllApps.html", applist,flag);
 	}
 	
 	public static void listAllApp(){
@@ -83,6 +85,11 @@ public class AppController extends Controller {
 	public static void installConfig(String userId, String appId, String config){
 		AppService.setConfig(userId, appId, config);
 		render("AppService/SetConfigSuccess.html", request.body);
+	}
+	
+	public static void installMarket(){
+		String token = getAccessToken();
+	//	AppService.addUserApp(app, token);
 	}
 
 	/*
