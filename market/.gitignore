@@ -1,0 +1,8 @@
+.settings
+eclipse
+lib
+logs
+target
+tmp
+.classpath
+.project

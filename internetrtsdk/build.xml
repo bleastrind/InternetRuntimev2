@@ -2,7 +2,7 @@
 
 <!-- Build file for project -->
 
-<project name="internetrt" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant"  >
+<project name="internetrt" default="deploy" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant"  >
   <property file="${user.home}/.ant.properties" />
   <!-- ant build properties -->
   <property file="build.properties"/>
@@ -16,36 +16,27 @@
   <property name="build.src"  value="${build.dir}/internetrtsdk/src/"/>
   <property name="build.dest" value="${build.dir}/internetrtsdk/bin"/>
   <property name="build.lib"  value="${build.dir}/internetrtsdk/lib"/> 
-  <property name="build.ext"  value="./lib"/>
+  <!--<property name="build.ext"  value="./lib"/> -->
   <property name="build.encoding" value="UTF-8"/>  
 
   <property name="src.java.dir" value="../src/java"/>
   <property name="javadoc.destdir" value="../docs/api"/>
   <property name="final.name" value="${project}-${version}"/>
+s
   <property name="dist.root" value="${build.dir}/IfApp/WebRoot/WEB-INF/lib"/>
+
   <property name="dist.dir" value="${dist.root}/${final.name}"/>
 
-  <path id="classpath">    
-    <pathelement path="${java.class.path}/"/>
-  	<fileset dir="${build.lib}">    
-      <include name="*.jar"/>
-     
-    </fileset>    
-    <fileset dir="${build.ext}">    
-      <include name="*.jar"/>
-    </fileset>    
-  </path>
   
 	 <target name="resolve" description="--> retrieve dependencies with ivy">
-	        <ivy:retrieve/>
+	        <ivy:retrieve pattern="${build.lib}/[artifact]-[type]-[revision].[ext]"/>
 	 </target>
-	
-  <property name="classpath" refid="classpath"/>
+
   <!-- =================================================================== -->
   <!-- prints the environment                                        -->
   <!-- =================================================================== -->
   <target name="env">    
-    <mkdir dir="${build.lib}"/>
+
     <echo message="build.compiler = ${build.compiler}"/>
     <echo message="java.home = ${java.home}"/>
     <echo message="user.home = ${user.home}"/>
@@ -66,7 +57,6 @@
   	<!--<mkdir dir="${build.dest}"/>
     <mkdir dir="${build.src}"/> 
     -->
-    <!--  chose a class that's from j2ee.jar -->
   </target>
   <target name="J2EE-error" depends="prepare"  unless="J2EE.present">
   
@@ -90,7 +80,8 @@
       </echo>
     <mkdir dir="${build.dir}/data"/>      
     <mkdir dir="${build.dir}/logs"/>
-    <mkdir dir="${build.dir}/dist"/>    
+    <mkdir dir="${build.dir}/dist"/>   
+    <mkdir dir="${build.lib}"/>
   	
     <property
       name="scala-library.jar"
@@ -109,7 +100,19 @@
     </taskdef>
   	
   </target>
+	  <!-- =================================================================== -->
+	  <!-- Prepares the deploy directory                                        -->
+	  <!-- =================================================================== -->
+  <target name="deploy" depends="jar">
+	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/market/lib"/>
+  	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/InternetRT/lib"/>
+  	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/renren/WebRoot/WEB-INF/lib"/>
+  	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/renren/lib"/>
+  	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/weibo/WebRoot/WEB-INF/lib"/>
+  	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/weibo/lib"/>
 
+  </target>
+	
   <target name="jar" depends="compile">
     <mkdir dir="${dist.root}"/>
     <delete dir="${dist.root}/${project}-${version}.jar"/>  
@@ -131,6 +134,19 @@
   </target>
   
   <target name="compile" depends="prepare">    
+    <path id="classpath">    
+  	    <pathelement path="${java.class.path}/"/>
+  	  	<fileset dir="${build.lib}">    
+  	      <include name="*.jar"/>
+  	     
+  	    </fileset>   
+  	  	<!--
+  	    <fileset dir="${build.ext}">    
+  	      <include name="*.jar"/>
+  	    </fileset>    -->
+    </path>
+    <property name="classpath" refid="classpath"/>
+  	
     <mkdir dir="${build.dest}"/>
 
     <!-- 检查依赖性 -->

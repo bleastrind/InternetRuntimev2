@@ -1,7 +1,5 @@
 package com.renren.api.client;
 
-import com.renren.api.client.utils.ConfigUtil;
-
 public class RenrenApiConfig {
     public static String renrenApiUrl     = "http://api.renren.com/restserver.do";
     public static String renrenApiVersion = "1.0";

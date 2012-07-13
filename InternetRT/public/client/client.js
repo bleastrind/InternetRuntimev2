@@ -1,43 +1,103 @@
-var BaseUrl = "http://localhost:9000";
-var ClientIframeSrc = BaseUrl + '/assets/client/Client.html';
-function Client()
+if (!window.InternetRuntime)
+	window.InternetRuntime = {};
+if (!window.InternetRuntime.Client)
+window.InternetRuntime.Client = {};
+
+
+
+window.InternetRuntime.Client = new function()
 {
-	var IframePage = document.createElement('iframe');
-	IframePage.src = ClientIframeSrc;
-	IframePage.style.width = 10 + 'px';
-	IframePage.style.height = 10 + 'px';
-	document.body.appendChild(IframePage);
-	this.login = function(username, password)
-	{	
-		var msg = 
-		{
-			type: 'login',
-			username: username,
-			password: password
-		}
-		IframePage.contentWindow.postMessage(msg, BaseUrl);
+	var CONST = 
+	{
+		BASE_URL: 'http://localhost:9000',
+		CORE_IFRAME_SRC: this.BASE_URL + '/assets/client/Client.html';
 	}
-	this.register = function(username, password)
-	{	
-		var msg = 
+	
+	function loadCore = 
+	{
+		var CoreIframe = document.createElement('iframe');
+		CoreIframe.onready = function()
 		{
-			type: 'register',
-			username: username,
-			password: password
+			CORS.start();
 		}
-		IframePage.contentWindow.postMessage(msg, BaseUrl);
+		CoreIframe.src = CONST.CORE_IFRAME_SRC;
+		CoreIframe.style.width = 1 + 'px';
+		CoreIframe.style.height = 1 + 'px';
+		document.body.appendChild(CoreIframe);
 	}
-	this.initOption = function(signalname)
-	{	
-		var msg = 
+	
+	
+	
+	function jumpToUrl(url)
+	{
+		document.location.href = url;
+	}
+	
+	
+	
+	var CORS = new function
+	{
+		//	Receive
+		window.onmessage = function(e)
 		{
-			type: 'initOption',
-			signalname: signalname
+			MessageHandler[e.data.type](e.data);
 		}
-		IframePage.contentWindow.postMessage(msg, BaseUrl);
+		var MessageHandler = 
+		{
+			jumpToUrl: function(data)
+			{
+				jumpToUrl(data.url);
+			},
+			unknownUser: function(data)
+			{
+				
+			},
+			knownUser: function(data)
+			{
+				
+			}
+			/*
+			initOption: function(data)
+			{
+				window.InternetRuntime.Communication.initOption(data.signalname);
+			},*/			
+		}
+		
+		//	Send
+		function postMessage(msg)
+		{
+			window.top.postMessage(msg, CONST.BASE_URL);
+		}
+		this.loginByJump = function()
+		{
+			var msg = 
+			{
+				type: 'loginByJump'
+			}
+			postMessage(msg);
+		}
+		this.registerByJump = function()
+		{
+			var msg = 
+			{
+				type: 'registerByJump'
+			}
+			postMessage(msg);
+		}
+		this.start = function()
+		{
+			var msg = 
+			{
+				type: 'start'
+			}
+			postMessage(msg);
+		}
 	}
+
+	
+	loadCore();
 }
-var gClient = new Client();
+
 
 
 //test

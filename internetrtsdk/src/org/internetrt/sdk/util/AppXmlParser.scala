@@ -28,24 +28,6 @@ class AppXmlParser (xml:String){
    case _ => false
  }
   
-//  def getMap (signal:String): java.util.Map[String, String] = {
-//      val maps = scala.collection.mutable.Map.empty[String, String];
-//       val RequestListener = xmlFile \ "SignalHanlders"
-//        RequestListener \ "RequestListener" foreach{(RequestListener)=>
-//      if(matchSignal((RequestListener\"MatchRule"\"Signalname").text, signal) )
-//      {
-//    	  val Adapter = RequestListener \ "Adapter"
-//    	  val converter = Adapter \ "converter"
-//    	  converter \ "map" foreach{(map)=>
-//    	   val fromParam = map \ "@from"
-//    	   val toParam = map \ "@to"
-//    	   maps += (fromParam.toString() -> toParam.toString());
-//    	    }
-//    	  }
-//      }
-//       return scala.collection.JavaConversions.asMap(maps);
-//  }
-  
   def getAppName(): String = {
 		  (xmlFile \ "Name").text
   }

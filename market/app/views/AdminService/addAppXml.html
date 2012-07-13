@@ -1,0 +1,25 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<h1>Hello Admin!You can manage every appliacation here!</h1>
+
+	<h3> Your Appid:${id} ,Your Secret:${secret}</h3>
+      #{form @AdminController.addAppSaveXml()}
+	  
+	 <input type="hidden" name="id" value="${id}">
+	 <input type="hidden" name="secret" value="${secret}">
+ 
+	    <p>
+		<label for="xml"> xml:</label>
+		<textarea name="information" id="information"></textarea>
+		</p>
+
+     <input type = "submit" value = "save">
+
+     #{/form}
+	 <h1></h1>
+	#{form @AdminController.welcome()}
+		<input type = "submit" value = "back">
+	#{/form}	 
+   
+

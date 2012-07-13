@@ -1,5 +1,12 @@
+<button onclick = "test1()" >Test!!</button>
+<textarea id = 'box'; style="overflow: hidden; border: 1px solid #666666; height:400px; width:500px; left:0px; top:200px; position: absolute" >
 
+</textarea>
 <script type="text/javascript"> 
+
+var testbox = document.getElementById('box');
+testbox.value = '';
+
 if (!window.InternetRuntime)
 	window.InternetRuntime = {};
 window.InternetRuntime.UI = new function(){
@@ -19,6 +26,10 @@ window.InternetRuntime.UI = new function(){
 		div: function()
 		{
 			return document.createElement('div');
+		},
+		img: function()
+		{
+			return document.createElement('img');
 		}
 	}
 		
@@ -31,10 +42,19 @@ window.InternetRuntime.UI = new function(){
 		first: function(obj)
 		{
 			obj.style.backgroundColor = '#DCE9F9';
-			obj.style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
+				obj.style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
 			obj.style.boxShadow = '0 1px 0 rgba(255, 255, 255, 0.8) inset';
 			obj.style.border = '1px solid #CCCCCC';
 			obj.style.borderRadius = '6px 6px 6px 6px';
+		},
+		tag: function(obj)
+		{
+			obj.style.backgroundColor = '#DCE9F9';
+				obj.style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
+			obj.style.boxShadow = '0 1px 0 rgba(255, 255, 255, 0.8) inset';
+			obj.style.border = '1px solid #CCCCCC';
+			obj.style.borderRightStyle = 'none';
+			obj.style.borderRadius = '6px 0px 0px 6px';
 		},
 		item: function(obj)
 		{
@@ -44,6 +64,15 @@ window.InternetRuntime.UI = new function(){
 			obj.style.padding = '0 4px';
 			obj.style.backgroundColor = '#066099';
 			obj.style.borderRadius = '6px 6px 6px 6px';
+		},
+		wraper: function(obj)
+		{
+			obj.style.overflow = 'hidden';
+		},
+		hidden: function(obj)
+		{
+			obj.style.visibility = 'hidden';
+			obj.style.display = 'none';
 		}
 	};
 
@@ -91,9 +120,11 @@ window.InternetRuntime.UI = new function(){
 		this.y = y;
 		this.plus = function(d)
 		{
-			this.x = this.x + d.dx;
-			this.y = this.y + d.dy;
-			return this;
+			return new XY(this.x + d.dx, this.y + d.dy);
+		}
+		this.minus = function(d)
+		{
+			return new XY(this.x - d.dx, this.y - d.dy);
 		}
 		this.getDst = function(xy)
 		{
@@ -148,6 +179,61 @@ window.InternetRuntime.UI = new function(){
 				return PosXY;
 		}
 		
+		this.RightTopXY = function(xy)
+		{
+			if (isNotNullOrUndefined(xy))
+			{
+				PosXY.x = xy.x - SizeDXY.dx;
+				PosXY.y = xy.y;
+				Obj.style.left = PosXY.x + 'px';
+				Obj.style.top = PosXY.y + 'px';
+				return this;
+			}
+			else
+				return new XY(PosXY.x + SizeDXY.dx, PosXY.y);
+		}
+		this.LeftBottomXY = function(xy)
+		{
+			if (isNotNullOrUndefined(xy))
+			{
+				PosXY.x = xy.x;
+				PosXY.y = xy.y - SizeDXY.dy;
+				Obj.style.left = PosXY.x + 'px';
+				Obj.style.top = PosXY.y + 'px';
+				return this;
+			}
+			else
+				return new XY(PosXY.x, PosXY.y + SizeDXY.dy);
+		}
+		
+		this.RightBottomXY = function(xy)
+		{
+			if (isNotNullOrUndefined(xy))
+			{
+				PosXY.x = xy.x - SizeDXY.dx;
+				PosXY.y = xy.y - SizeDXY.dy;
+				Obj.style.left = PosXY.x + 'px';
+				Obj.style.top = PosXY.y + 'px';
+				return this;
+			}
+			else
+				return new XY(PosXY.x + SizeDXY.dx, PosXY.y + SizeDXY.dy);
+		}
+
+
+		
+		this.CenterXY =function(xy)
+		{
+			if (isNotNullOrUndefined(xy))
+			{
+				PosXY = xy.minus(SizeDXY.scale(0.5));
+				Obj.style.left = PosXY.x + 'px';
+				Obj.style.top = PosXY.y + 'px';
+				return this;
+			}
+			else
+				return PosXY.plus(SizeDXY.scale(0.5));
+		}
 		
 		
 		var Id = Obj.id;
@@ -195,7 +281,7 @@ window.InternetRuntime.UI = new function(){
 			if (isNotNullOrUndefined(src))
 			{
 				Src = src;
-				Class.src = Src;
+				Obj.src = Src;
 				return this;
 			}
 			else
@@ -314,6 +400,7 @@ window.InternetRuntime.UI = new function(){
 				return CallBack;
 		}
 		
+		//why this. ???
 		this.Anime = function(tween, time, func, callback)
 		{
 			var AnimeObject = this;
@@ -321,7 +408,6 @@ window.InternetRuntime.UI = new function(){
 			{					
 				func(AnimeObject, 1);
 				callback(AnimeObject);	
-				CallBack = function(){};
 				return;
 			}
 			var StartTime = new Date().getTime();
@@ -339,7 +425,6 @@ window.InternetRuntime.UI = new function(){
 				{
 					func(AnimeObject, 1);
 					callback(AnimeObject);	
-					CallBack = function(){};
 				}
 			}
 			Run();
@@ -354,6 +439,7 @@ window.InternetRuntime.UI = new function(){
 			var Move_Tween = Tween;
 			var Move_Route = Route;
 			var Move_CallBack = CallBack;
+			CallBack = function(){};
 			
 			this.Anime(Move_Tween, Move_Time, 
 				function(obj, d)
@@ -372,6 +458,7 @@ window.InternetRuntime.UI = new function(){
 			var Opacity_Time = Time;;
 			var Opacity_Tween = Tween;
 			var Opacity_CallBack = CallBack;
+			CallBack = function(){};
 			
 			this.Anime(Opacity_Tween, Opacity_Time, 
 				function(obj, d)
@@ -384,18 +471,6 @@ window.InternetRuntime.UI = new function(){
 		}
 		
 		var SizeDXY = new DXY(parseInt(Obj.style.width), parseInt(Obj.style.height));	
-		this.Size = function(dxy)
-		{
-			if (isNotNullOrUndefined(dxy))
-			{
-				SizeDXY = dxy;
-				Obj.style.width = SizeDXY.dx + 'px';
-				Obj.style.height = SizeDXY.dy + 'px';
-				return this;
-			}
-			else
-				return SizeDXY;
-		}
 		
 		function ComponentSearcher(obj)
 		{
@@ -410,40 +485,47 @@ window.InternetRuntime.UI = new function(){
 		function ResizeAll(objs, dxy, d)
 		{
 			for (var i = 0; i < objs.length; i++)		
-				Resize(objs[i], dxy, d);
+				objs[i].Resize(dxy, d);
 		}
 		
-		function Resize(Obj, dxy, d)
+		this.Resize = function(dxy, d)
 		{
 			if (d == 1)
 			{
-				Obj.SizeDXY = dxy;
-				Obj.DOMObject.style.width = Obj.SizeDXY.dx + 'px';
-				Obj.DOMObject.style.height = Obj.SizeDXY.dy + 'px';
+				SizeDXY = dxy;
+				Obj.style.width = SizeDXY.dx + 'px';
+				Obj.style.height = SizeDXY.dy + 'px';
 			}
 			else
 			{
-				Obj.DOMObject.style.width = Obj.SizeDXY.dx + (dxy.dx -  Obj.SizeDXY.dx) * d + 'px';
-				Obj.DOMObject.style.height = Obj.SizeDXY.dy + (dxy.dy -  Obj.SizeDXY.dy) * d + 'px';
+				Obj.style.width = SizeDXY.dx + (dxy.dx - SizeDXY.dx) * d + 'px';
+				Obj.style.height = SizeDXY.dy + (dxy.dy - SizeDXY.dy) * d + 'px';
 			}
 		}
+				
 		
 		
 		this.Size = function(dxy)
 		{			
-			
-			var Resize_Objects = ComponentSearcher(this);
-			var Resize_Time = Time;
-			var Resize_Tween = Tween;
-			var Resize_CallBack = CallBack;
-			
-			this.Anime(Resize_Tween, Resize_Time, 
-				function(obj, d)
-				{
-					ResizeAll(Resize_Objects, dxy, d);
-				},
-				Resize_CallBack);
-			return this;
+			if (isNotNullOrUndefined(dxy))
+			{
+				var Resize_Objects = ComponentSearcher(this);
+				var Resize_Time = Time;
+				var Resize_Tween = Tween;
+				var Resize_CallBack = CallBack;
+				CallBack = function(){};
+				
+				this.Anime(Resize_Tween, Resize_Time, 
+					function(obj, d)
+					{
+						ResizeAll(Resize_Objects, dxy, d);
+					},
+					Resize_CallBack);
+				
+				return this;
+			}
+			else
+				return SizeDXY;
 		}
 		
 		var InFunc = function(){};
@@ -457,8 +539,12 @@ window.InternetRuntime.UI = new function(){
 		this.HoverIn = function(inf)
 		{
 			InFunc = inf;
-			Obj.onmouseover = function()
-			{			
+			Obj.onmouseover = function(e)
+			{		
+				testbox.value+=e.relatedTarget.style.width;
+				if (checkContain(Obj, e.relatedTarget))				
+					return;					
+
 				MouseState = IN;
 				if (AnimeState == REST)
 				{
@@ -472,8 +558,12 @@ window.InternetRuntime.UI = new function(){
 		this.HoverOut = function(outf)
 		{
 			OutFunc = outf;
-			Obj.onmouseout = function()
-			{
+			Obj.onmouseout = function(e)
+			{	
+				
+				if (checkContain(Obj, e.relatedTarget))				
+					return;			
+
 				MouseState = OUT;
 				if (AnimeState == REST)
 				{
@@ -485,6 +575,7 @@ window.InternetRuntime.UI = new function(){
 		}								
 		function InFuncDone()
 		{			
+			testbox.value+= MouseState;
 			if (MouseState == OUT)
 				OutFunc(OutFuncDone);
 			else
@@ -516,6 +607,27 @@ window.InternetRuntime.UI = new function(){
 		{				
 			AnimeState = REST;			
 		}
+		
+		
+		this.isContained = function(simpleobj)
+		{
+			return checkContain(simpleobj);
+		}
+		function checkContain(Obj, simpleobj)
+		{
+			var childs = Obj.childNodes;
+			if (Obj == simpleobj)
+				return true;
+			if (childs)	
+				for (var i = 0; i < childs.length; i++)
+				{
+					if (checkContain(childs[i], simpleobj))
+						return true;
+				}
+			return false;
+		}
+		
+		
 	
 		
 	}
@@ -526,13 +638,175 @@ window.InternetRuntime.UI = new function(){
 	}
 };
 
-
-	
-
-
-
+/*
+	Pos: InternetRuntime.UI.DXY(x, y)
+			plus(XY): XY
+			minus(XY): XY
+			getDst(XY): DXY		
+	Distance: InternetRuntime.UI.DXY(Int x, Int y)
+			scale(Int): DXY
+	Create: InternetRuntime.UI.Create(Lib_SimpleObject)
+	Object:	InternetRuntime.UI.DOM_Object()
+			DOMObject
+			XY(XY)
+			RightTopXY(XY)
+			LeftBottomXY(XY)
+			RightBottomXY(XY)
+			CenterXY(XY)
+			Id(String)
+			Class(String)
+			Style(Lib_Style)
+			Sec(String)
+			Father(DOM_Object)
+			WindowFather()
+			Child(DOM_Object)
+			Childs(DOM_Object[])
+			Time(Int)
+			Tween(Lib_Tween)
+			To(XY)
+			Route(Lib_Route)
+			CallBack(Function)
+			Move()
+			Opacity(Float)
+			Size(DXY)
+			HoverIn(Function(done))
+			HoverOut(Function(done))
+			Click(Function(done))
+*/
 function test1()
 {	
+	
+
+	var XY = InternetRuntime.UI.XY;
+	var DXY = InternetRuntime.UI.DXY;
+	var Create = InternetRuntime.UI.Create;
+
+	var Point = new function()
+	{	
+		this.fresh = function()
+		{
+			this.ScreenCenter = new XY
+							(document.body.scrollLeft + window.innerWidth / 2
+							,document.body.scrollTop + window.innerHeight / 2);
+			this.ScreenRightbottom = new XY
+							(document.body.scrollLeft + document.body.clientWidth
+							,document.body.scrollTop + document.body.clientHeight);
+		}
+		this.fresh();
+		
+	}
+
+	
+	//CenterXY();
+	function load()
+	{
+		var LoadingPanel = new function()
+		{
+			var LoadingPanelSize = new DXY(250, 70);
+			var LoadingPanelCenterXY = Point.ScreenCenter;
+			var LoadingLogoSize = new DXY(231, 24);
+			var LoadingLogoCenterXY = new XY(125, 30);
+			var	LoadingLogo = Create('img')
+			.Size(LoadingLogoSize)
+			.CenterXY(LoadingLogoCenterXY)
+			.Src('InternetRuntime.png');
+			return Create('div')
+			.Size(LoadingPanelSize)
+			.CenterXY(LoadingPanelCenterXY)
+			.Style('first')
+			.Child(LoadingLogo);
+		}
+		function showLoadingPanel()
+		{
+			LoadingPanel
+			.WindowFather()
+			.Opacity(0)
+			.Time(600)
+			.CallBack(hideLoadingPanel)
+			.Opacity(1)
+		}
+		function hideLoadingPanel()
+		{
+			
+			var SmallSize = new InternetRuntime.UI.DXY(23, 10);
+			LoadingPanel
+			.Time(300)
+			.To(Point.ScreenRightbottom.minus(SmallSize.scale(1.2)))
+			.Opacity(0)
+			.Move()
+			.CallBack(InitUserPanel)
+			.Size(SmallSize);
+		}
+		
+		var UserPanelTag = new function()
+		{
+			var UserPanelTagSize = new DXY(25, 70);			
+			return Create('div')
+			.Size(UserPanelTagSize)
+			.Style('tag')			
+		}
+		var UserPanel = new function()
+		{			
+			var UserPanelSize = new DXY(250, 150);
+			var UserPanelTagLeftBottomXY = new XY(-2, UserPanelSize.dy);
+			UserPanelTag.RightBottomXY(UserPanelTagLeftBottomXY);
+			return Create('div')
+			.Size(UserPanelSize).Style('first')
+			.Child(UserPanelTag);
+			
+		}
+		var UserPanelWrapper = new function()
+		{
+			var UserPanelWrapperSize = new DXY(UserPanel.Size().dx + UserPanelTag.Size().dx, UserPanel.Size().dy); 
+			return Create('div')
+			.Size(UserPanelWrapperSize)
+			.Style('wraper')
+		}
+		var UserPanelInitPos = new XY(UserPanelWrapper.Size().dx, 0);
+		function InitUserPanel()
+		{	
+			LoadingPanel.Style('hidden');
+			UserPanel
+			.XY(UserPanelInitPos);
+			UserPanelWrapper.WindowFather()
+			.Child(UserPanel)
+			.XY(Point.ScreenRightbottom.minus(UserPanelWrapper.Size()));
+			document.body.onscroll = function()
+			{
+				Point.fresh();
+				UserPanelWrapper.XY(Point.ScreenRightbottom.minus(UserPanelWrapper.Size()));
+			}
+			
+			UserPanelTag
+			.HoverIn(showUserPanel);
+			UserPanelWrapper
+			.HoverOut(hideUserPanel);
+			
+		}
+		function showUserPanel(done)
+		{
+			var ShowTargetXY = new XY(UserPanelTag.Size().dx, 0);
+			UserPanel
+			.Time(300)
+			.To(ShowTargetXY)
+			.CallBack(done)
+			.Move();
+		}
+		function hideUserPanel(done)
+		{
+			UserPanel
+			.Time(300)
+			.To(UserPanelInitPos)
+			.CallBack(done)
+			.Move();			
+		}
+		showLoadingPanel();
+	}
+	load();
+	
+	/*
+	var a = {};
+
 	var aSize = new InternetRuntime.UI.DXY(100, 100);
 	var aXY = new InternetRuntime.UI.XY(200, 200);
 	var zeroSize = new InternetRuntime.UI.DXY(50, 50);
@@ -564,8 +838,6 @@ function test1()
 		
 	})
 	.Size(aSize);
+	*/
 }
 </script>
-<button onclick = "test1()" >Test!!</button>
-<div id = 'box'; style="border: 1px solid #666666; height:400px; width:500px; left:0px; top:200px; position: absolute" >
-</div>

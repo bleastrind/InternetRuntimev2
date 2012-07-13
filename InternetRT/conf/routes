@@ -6,10 +6,10 @@
 GET     /                           controllers.Application.index
 
 # Signal Processing API
-GET		/signal/init/thirdpart/*signalname     org.internetrt.driver.SignalController.initfromthirdpart(signalname:String)
-GET		/signal/init/client/*signalname     org.internetrt.driver.SignalController.initfromclient(signalname:String)
-GET		/signal/initOption/thirdpart/*signalname     org.internetrt.driver.SignalController.initOptionfromthirdpart(signalname:String)
-GET		/signal/initOption/client/*signalname     org.internetrt.driver.SignalController.initOptionfromclient(signalname:String)
+GET		/signal/init/thirdpart/*signalname     org.internetrt.driver.SignalController.init(signalname:String)
+GET		/signal/init/client/*signalname     org.internetrt.driver.userinterface.SignalAPI.init(signalname:String)
+GET		/signal/initOption/thirdpart/*signalname     org.internetrt.driver.SignalController.initOption(signalname:String)
+GET		/signal/initOption/client/*signalname     org.internetrt.driver.userinterface.SignalAPI.initOption(signalname:String)
 POST	/signal/register/*signalname     org.internetrt.driver.SignalController.registerSignal(signalname:String)
 GET		/signal/querydef/*signalname     org.internetrt.driver.SignalController.getSignalDef(signalname:String)
 
@@ -17,13 +17,15 @@ GET		/signal/querydef/*signalname     org.internetrt.driver.SignalController.get
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 # Client Communication API
-
-
 GET		/clients/longpollingjsonp	org.internetrt.driver.userinterface.Client.longpollingjsonp
 #maintain uid,cid
 GET		/clients/longpolling	org.internetrt.driver.userinterface.Client.longpolling
 #reponse a question
 GET		/clients/response		org.internetrt.driver.userinterface.Client.response
+GET		/clients/test				org.internetrt.driver.userinterface.Client.test
+
+# Client API
+
 #login
 POST		/clients/login			org.internetrt.driver.userinterface.BrowserBaseClientInputs.login
 #register
@@ -37,7 +39,6 @@ GET		/clients/register		org.internetrt.driver.userinterface.BrowserBaseClientInp
 #installApp
 GET		/clients/installapp		org.internetrt.driver.userinterface.BrowserBaseClientInputs.installRootApp
 
-GET		/clients/test				org.internetrt.driver.userinterface.Client.test
 
 #Configurition API 
 GET		/config/apps                           org.internetrt.driver.ConfigController.appsList
@@ -50,6 +51,8 @@ GET		/config/confirmrouting		org.internetrt.driver.ConfigController.confirmRouti
 GET		/oauth/authorize						org.internetrt.driver.userinterface.OAuthAPI.authorize
 GET		/oauth/accesstoken						org.internetrt.driver.OAuthAPI.token
 GET		/oauth/workflow							org.internetrt.driver.OAuthAPI.authorizebyworkflow
+GET		/oauth/getuserid/:accessToken			org.internetrt.driver.OAuthAPI.getUserIdByToken(accessToken :String)
 
 #Auth
 GET		/auth/appregister		org.internetrt.driver.AppRegister.register
+

@@ -35,27 +35,10 @@ public class FeedStub implements Runnable{
 				}
 			}
 		}
-		UserSpace t = new UserSpace(sessionKey,renrenUserId,messages);
+		UserSpace t = new UserSpace(sessionKey,renrenUserId,messages,token);
 		up.add(t);
-		ApiInitListener.User.put(token, t);
-	}
-	
-	public void addFeedUser(String sessionKey,String renrenUserId){
-		RenrenApiClient apiClient = RenrenApiClient.getInstance();
-		JSONArray feedInfo = apiClient.getFeedService().getFeed("10", Integer.parseInt(renrenUserId), 1, 10,new SessionKey(sessionKey));
-		Set<String>	messages = new HashSet<String>();
-		if (feedInfo != null && feedInfo.size()>0) {
-			for (int i=0;i<feedInfo.size();i++)
-			{
-				JSONObject currentFeed = (JSONObject) feedInfo.get(i);
-				if (currentFeed != null){
-					String message = (String) currentFeed.get("message");
-					messages.add(message);
-				}
-			}
-		}
-		UserSpace t = new UserSpace(sessionKey,renrenUserId,messages);
-		up.add(t);
+		ApiInitListener.User.put(config.properties.irt.getUserIdByToken(token),
+				t);
 	}
 	
 	public void publish(String message,String sessionkey){
