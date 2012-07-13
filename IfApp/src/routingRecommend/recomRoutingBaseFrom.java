@@ -1,7 +1,7 @@
-package ScriptEditor;
+package routingRecommend;
+
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -9,19 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.internetrt.sdk.util.AppXmlParser;
-import org.internetrt.sdk.util.Application;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-
-public class GetAppsServlet extends HttpServlet {
+public class recomRoutingBaseFrom extends HttpServlet {
 
 	/**
 	 * Constructor of the object.
 	 */
-	public GetAppsServlet() {
+	public recomRoutingBaseFrom() {
 		super();
 	}
 
@@ -45,45 +38,17 @@ public class GetAppsServlet extends HttpServlet {
 	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		System.out.println("Coming into get apps servlet");
 
-		InternetRuntime rt = new InternetRuntime();
+		String fromAppIDString = "7cbb842f-738d-402a-9eaa-75669a66c413";
+		
 		HttpSession session = request.getSession();
 		String accessToken = session.getAttribute("accessToken").toString();
-		List<String> appIDList  = rt.getApps(accessToken);
-		System.out.println("appsIDLIist"+appIDList);
+		session.setAttribute("fromApp", fromAppIDString);
 		
-		JSONArray applications= new JSONArray();
-		JSONObject appsObject = new JSONObject();
-		
-		for(String str: appIDList)
-		{
-			String xmlString = rt.getAppDetail(str, accessToken);
-			
-			System.out.println(xmlString);
-			
-			AppXmlParser appXmlParser = new AppXmlParser(xmlString);
-			
-			Application application  = appXmlParser.createApplication();
-			
-			
-			JSONObject appObject = TermToJson.ApplicationToJson(application);
-			
-			
-			applications.put(appObject);
-		}
-		
-		
-		try {
-			appsObject.put("applications", applications);
-		} catch (JSONException e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-		
-		String result = appsObject.toString();
-		System.out.println(result);
+		RoutingRecommender routingRecommender = new RoutingRecommender();
+		String result = routingRecommender.RecomRoutingBaseFrom(fromAppIDString, accessToken);
+		System.out.println("result "+result);
+
 		PrintWriter out = response.getWriter();
 		out.write(result);
 		out.flush();
@@ -102,21 +67,7 @@ public class GetAppsServlet extends HttpServlet {
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		out
-				.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
-		out.println("<HTML>");
-		out.println("  <HEAD><TITLE>A Servlet</TITLE></HEAD>");
-		out.println("  <BODY>");
-		out.print("    This is ");
-		out.print(this.getClass());
-		out.println(", using the POST method");
-		out.println("  </BODY>");
-		out.println("</HTML>");
-		out.flush();
-		out.close();
+		
 	}
 
 	/**
