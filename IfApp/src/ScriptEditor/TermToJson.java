@@ -72,4 +72,40 @@ public class TermToJson
 		}
 		return result;
 	}
+	
+	public static JSONObject signalAndAppListToJson(String signalName, JSONArray toAppList)
+	{
+		JSONObject result = new JSONObject();
+		try {
+			result.put("signalName", signalName);
+			result.put("toAppList", toAppList);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public static JSONObject appAndSignalListToJson(JSONObject application, JSONArray signalsNameList){
+		JSONObject result = new JSONObject();
+		try {
+			result.put("signalNameList", signalsNameList);
+			result.put("application", application);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public static JSONObject jsonArrayToJsonObject(String arrayName, JSONArray list){
+		JSONObject result = new JSONObject();
+		try {
+			result.put(arrayName, list);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
 }

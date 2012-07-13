@@ -1,5 +1,5 @@
 package org.internetrt.sdk.util
-
+import scala.xml.XML$
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 case class ListenerConfig(node:scala.xml.Node){}
@@ -8,6 +8,7 @@ case class DataAdapter(node:scala.xml.Node){}
 class RoutingXmlParser(xml:String)  {
  
      val xmlFile = scala.xml.XML.loadString(xml);
+
 
     def getFrom(): String = {
       val signal = xmlFile \ "signal";
@@ -21,11 +22,26 @@ class RoutingXmlParser(xml:String)  {
 	  requestType.toString();
 	}
     
+
+//	def getMap() : java.util.Map[String, String]= {
+//	  val map = scala.collection.mutable.Map.empty[String, String];
+//	  val adapter = xmlFile \ "Adapter"
+//	  adapter \ "mapper" foreach{(mapper)=>
+//	    val key = mapper \ "key"
+//	   val fromParam = key \ "@from"
+//	   val toParam = key \ "@to"
+//	   map += (fromParam.toString() -> toParam.toString());
+//	  }
+//	  return scala.collection.JavaConversions.asMap(map);
+//	}
+	
+	
 	def getReqType(listener:ListenerConfig = null): String = {
 	  
 	  val signalListener = if (listener == null) getRequestListener.node else listener.node;
 	  val requestType = signalListener \ "@type";
 	  requestType.toString();
+
 	}
 	
 	def getReqUrl(listener:ListenerConfig = null): String = {
@@ -58,6 +74,7 @@ class RoutingXmlParser(xml:String)  {
 	   Map(params:_*);
 	}
 
+
 	   def getRequestListener() = {
 	     ListenerConfig(xmlFile\ "RequestListener" head)
 	   }
@@ -69,6 +86,7 @@ class RoutingXmlParser(xml:String)  {
 
 	
 	  def getRoutingInstanceId () ={
+
 	    ( xmlFile \ "id").text
 	   }
 }

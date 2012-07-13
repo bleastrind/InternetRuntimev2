@@ -5,6 +5,11 @@ import java.util.ArrayList
 class AppXmlParser (xml:String){
   //val xmlFile = scala.xml.XML.loadFile("renrenApplication.txt");
   val xmlFile = scala.xml.XML.loadString(xml)
+  
+  def createApplication() =  {
+     Application((xmlFile \ "Name").text, (xmlFile \ "AppID").text, getRequests()) 
+  }
+  
   def getUrl(signal:String): String= {
     var result = new String
     val RequestListener = xmlFile \ "SignalHanlders"
@@ -36,4 +41,47 @@ class AppXmlParser (xml:String){
     }
     scala.collection.JavaConversions.asList[Signal](Signals)
   }
+  
+  def getRequestListenerForRequest(request: String) = {
+	  	scala.collection.JavaConversions.asList[String]((xmlFile \ "SignalHanlders"\ "RequestListener" map{
+	  	  (requestListener) =>
+	  	    if( (requestListener \ "Adapter" \ "Signalname").text == request)
+	  	    {
+	  	       (requestListener \ "@runat").text 
+	  	    }
+	  	    else
+	  	    {
+	  	      null
+	  	    }
+	  	    
+	  	}) filter (n => n != null))
+  }
+  
+  def getAppIdBaseRunat(runatAppId : String) :String = {
+    
+    var result = new String
+	  xmlFile \  "SignalHanlders"\ "RequestListener" foreach{
+      (requestListener)=> 
+        if((requestListener \ "@runat").text == runatAppId){
+           result =   (xmlFile \ "AppID").text
+        }
+    }
+    return result
+  }
+  
+  def getSignalNameBaseRunat(runatAppId : String) = {
+    scala.collection.JavaConversions.asList[String]((xmlFile \ "SignalHanlders"\ "RequestListener" map{
+	  	  (requestListener) =>
+	  	    if(  (requestListener \ "@runat").text == runatAppId)
+	  	    {
+	  	        (requestListener \ "Adapter" \ "Signalname").text
+	  	    }
+	  	    else
+	  	    {
+	  	      null
+	  	    }
+	  	    
+	  	}) filter (n => n != null))
+  }
+  
 }

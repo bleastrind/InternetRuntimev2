@@ -123,6 +123,7 @@ public class InternetRuntime {
 		String param = "accessToken="+accessToken;
 		
 		String requestUrl = "http://localhost:9000/config/apps/"+appID+"?"+param;
+		
 		String result = httpClientGet(requestUrl);
 		int i = result.indexOf("appDetail:")+("appDetail:").length()+1;
 		String xmlString = result.substring(i,result.length()-2);
