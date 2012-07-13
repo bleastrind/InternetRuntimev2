@@ -21,6 +21,7 @@ import weibo4j.model.Comment;
 import weibo4j.model.CommentWapper;
 import weibo4j.model.Status;
 import weibo4j.model.StatusWapper;
+import weibo4j.model.WeiboException;
 import weibo4j.org.json.JSONArray;
 import weibo4j.org.json.JSONObject;
 
@@ -60,6 +61,14 @@ public class FeedStub implements Runnable{
         urlConn.setReadTimeout(5000);// （单位：毫秒）jdk 1.5换成这个,读操作超时
         urlConn.setDoOutput(true);
         urlConn.connect();
+	}
+	
+	public void publish(String Message,String token) throws WeiboException{
+		synchronized(this){
+			weibo.setToken(token);
+			Timeline tl = new Timeline();
+			tl.UpdateStatus(Message);
+		}
 	}
 	
 	@Override

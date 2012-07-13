@@ -26,7 +26,7 @@ public class AppController extends Controller {
 		return Cache.get(session.getId() + "-token", String.class);
 	}
 
-	@Before(only={"listAllApps","listAllApp","deleteUserApp","addUserAppSave"})
+	@Before(only={"listAllApp","deleteUserApp","addUserAppSave"})
 	public static void checkUser(){
 		String token = getAccessToken();
 		if(token == null){
@@ -41,7 +41,8 @@ public class AppController extends Controller {
 	
 	public static void listAllApps(){
 		List<App> applist = AppService.getAllApps();
-		Boolean flag = AppService.market(getAccessToken());
+		//Boolean flag = AppService.market(getAccessToken());
+		Boolean flag = false;
         render("AppService/listAllApps.html", applist,flag);
 	}
 	

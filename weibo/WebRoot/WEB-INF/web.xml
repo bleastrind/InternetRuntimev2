@@ -13,6 +13,10 @@
   <servlet-name>HomeServlet</servlet-name>
   <servlet-class>Servlet.HomeServlet</servlet-class>
  </servlet>
+ <servlet>
+  <servlet-name>message</servlet-name>
+  <servlet-class>Servlet.MessageReciver</servlet-class>
+ </servlet>
  <servlet-mapping>
   <servlet-name>WelcomeServlet</servlet-name>
   <url-pattern>/weibot/welcome</url-pattern>
@@ -20,6 +24,10 @@
  <servlet-mapping>
   <servlet-name>HomeServlet</servlet-name>
   <url-pattern>/weibot/home</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+  <servlet-name>message</servlet-name>
+  <url-pattern>/weibot/message</url-pattern>
  </servlet-mapping>
  <welcome-file-list>
   <welcome-file>index.jsp</welcome-file>
