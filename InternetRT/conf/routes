@@ -38,7 +38,8 @@ GET		/clients/login			org.internetrt.driver.userinterface.BrowserBaseClientInput
 GET		/clients/register		org.internetrt.driver.userinterface.BrowserBaseClientInputs.register
 #installApp
 GET		/clients/installapp		org.internetrt.driver.userinterface.BrowserBaseClientInputs.installRootApp
-
+#confirm routing
+GET		/clients/confirmrouting	   org.internetrt.driver.userinterface.BrowserBaseClientInputs.confirmRouting
 
 #Configurition API 
 GET		/config/apps                           org.internetrt.driver.ConfigController.appsList

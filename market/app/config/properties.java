@@ -10,7 +10,7 @@ public class properties {
 	static {
 		try {
 			InternetRTConfig config = new InternetRTConfig();
-
+			
 			config.updatePropertiy("appID",appID );
 			config.updatePropertiy("appSecret",appSecret
 					);
