@@ -33,8 +33,7 @@ public class Application extends Controller {
     public static void loginUser(String code) throws HttpException, IOException{
 		InternetRT irt = properties.irt;
 		String accessToken = irt.setAccessTokenWithCode(code);
-		Cache.set(session.getId() + "-token",accessToken , "30mn");
-		
+		session.put("token", accessToken);
 		System.out.println("Access Token:" + accessToken);
 		index();
     }

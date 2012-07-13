@@ -22,7 +22,7 @@ public class AppController extends Controller {
 
 	public static String getAccessToken() {
 		System.out.println("get token!!!!!!!!!!!!!!!!!");
-		return Cache.get(session.getId() + "-token", String.class);
+		return session.get("token");
 	}
 
 	@Before(only = { "listAllApp", "deleteUserApp", "addUserAppSave" })
