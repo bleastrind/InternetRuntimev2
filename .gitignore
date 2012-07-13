@@ -1,0 +1,8 @@
+dist
+*.class
+*.jar
+*.project
+*.classpath
+*.cache
+*.war
+*.prefs
