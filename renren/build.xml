@@ -1,146 +1,99 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!-- Build file for project -->
-
-<project name="renren" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant"  >
-  <property file="${user.home}/.ant.properties" />
-  <!-- ant build properties -->
-  <property file="build.properties"/>
-  <property name="project" value="renren"/>
-  <property name="version" value="1.0"/>
-  <property name="build.dir"  value=".."/>
-  <property name="build.src"  value="${build.dir}/renren/src/"/>
-  <property name="build.dest" value="${build.dir}/renren/bin"/>
-  <property name="build.lib"  value="${build.dir}/renren/lib"/>
-  <property name="build.ext"  value="./lib"/>
-  <property name="build.encoding" value="UTF-8"/>  
-
-  <property name="src.java.dir" value="../src/java"/>
-  <property name="javadoc.destdir" value="../docs/api"/>
-  <property name="javadoc.link" value="http://www.tangtang.org/java/docs/api/"/>
-  <property name="final.name" value="${project}-${version}"/>
-  <property name="dist.root" value="${build.dir}/dist"/>
-  <property name="dist.dir" value="${dist.root}/${final.name}"/>
-
-  <path id="classpath">    
-    <pathelement path="${java.class.path}/"/>
-    <fileset dir="${build.lib}">    
-      <include name="*.jar"/>
-    </fileset>    
-    <fileset dir="${build.ext}">    
-      <include name="*.jar"/>
-    </fileset>    
-  </path>
-  
-	 <target name="resolve" description="--> retrieve dependencies with ivy">
-	        <ivy:retrieve/>
-	 </target>
-	
-  <property name="classpath" refid="classpath"/>
-  <!-- =================================================================== -->
-  <!-- prints the environment                                        -->
-  <!-- =================================================================== -->
-  <target name="env">    
-    <echo message="build.compiler = ${build.compiler}"/>
-    <echo message="java.home = ${java.home}"/>
-    <echo message="user.home = ${user.home}"/>
-    <!--echo message="java.class.path = ${java.class.path}"/-->
-    <echo message="classpath = ${classpath}"/>
-  </target>
-
-  <!-- =================================================================== -->
-  <!-- Prepares the build directory                                        -->
-  <!-- =================================================================== -->
-  <target name="prepare" depends="env,resolve">
-    <tstamp/>
-    <filter token="year" value="${year}"/>
-    <filter token="version" value="${version}"/>
-    <filter token="date" value="${DSTAMP}"/>            
-    <!--
-    <mkdir dir="${build.dir}"/>
-    <mkdir dir="${build.dest}"/>
-    <mkdir dir="${build.src}"/> 
-    -->
-    <!--  chose a class that's from j2ee.jar -->
-  </target>
-  <target name="J2EE-error" depends="prepare"  unless="J2EE.present">
-  
-<echo>
-********************************************************
-**
-**  J2EE has not been found and is needed for the target
-**  you have chosen
-**
-**  Since CLASSPATH is an evil idea, just link or drop
-**  a copy of your j2ee.jar into build/lib directory.
-**
-*********************************************************
-</echo>
-</target>
-
-  <target name="init">
-      <echo>
-      build init
-      build compile
-      </echo>
-    <mkdir dir="${build.dir}/data"/>      
-    <mkdir dir="${build.dir}/logs"/>
-    <mkdir dir="${build.dir}/dist"/>         
-  </target>
-
-  <target name="jar" depends="compile">
-    <mkdir dir="${dist.root}"/>
-    <delete dir="${dist.root}/${project}-${version}.jar"/>  
-    <jar jarfile="${dist.root}/${project}-${version}.jar">
-      <fileset dir="${build.dest}">
-        <include  name="com/renren/api/client/**"/>
-           	<include  name="com/yourdomain/webcanvas/**"/>
-      	<!--<exclude  name="org/tangtang/test/**"/>  -->      
-      </fileset>     
-    </jar>
-  </target>
-
-  <target name="srcjar" depends="prepare">
-    <delete dir="${dist.root}/${project}-${version}-src.jar"/>
-    <jar jarfile="${dist.root}/${project}-${version}-src.jar">
-      <fileset dir="${build.src}">
-        <include  name="com/renren/api/client/**"/>
-           	<include  name="com/yourdomain/webcanvas/**"/>
-      </fileset>     
-    </jar>
-  </target>
-  
-  <target name="compile" depends="prepare">    
-    <mkdir dir="${build.dest}"/>
-
-    <!-- 检查依赖性 -->
-    <depend srcdir="${build.src}"
-            destdir="${build.dest}"
-            cache="${build.dest}">
-        <classpath refid="classpath"/>
-    </depend>
-    
-    <javac srcdir="${build.src}"
-      destdir="${build.dest}"
-      debug="${debug}"
-      deprecation="${deprecation}"
-      optimize="${optimize}">      
-      <classpath refid="classpath"/>
-    </javac>
-  </target>
-
-  <target name="clean">
-    <delete>
-        <fileset dir="${build.dest}">
-            <include name="**/*.class"/>
-        </fileset>
-    </delete>    
-  </target>
-
-  <target name="clean_dist">
-    <delete>
-      <fileset dir="${dist.root}" includes="*"/>
-    </delete>
-    <delete dir="${dist.dir}" quiet="false"/>    
-  </target>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="renren">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="../../../myeclipse"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+    <path id="Java EE 5 Libraries.libraryclasspath">
+        <pathelement location="C:/Users/Administrator/AppData/Local/Genuitec/Common/plugins/com.genuitec.eclipse.j2eedt.core_8.5.0.me201003231033/data/libraryset/EE_5/javaee.jar"/>
+        <pathelement location="C:/Users/Administrator/AppData/Local/Genuitec/Common/plugins/com.genuitec.eclipse.j2eedt.core_8.5.0.me201003231033/data/libraryset/EE_5/jsf-impl.jar"/>
+        <pathelement location="C:/Users/Administrator/AppData/Local/Genuitec/Common/plugins/com.genuitec.eclipse.j2eedt.core_8.5.0.me201003231033/data/libraryset/EE_5/jsf-api.jar"/>
+        <pathelement location="C:/Users/Administrator/AppData/Local/Genuitec/Common/plugins/com.genuitec.eclipse.j2eedt.core_8.5.0.me201003231033/data/libraryset/EE_5/jstl-1.2.jar"/>
+    </path>
+    <path id="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=renren&amp;ivyXmlPath=ivy.xml&amp;confs=*.libraryclasspath"/>
+    <path id="renren.classpath">
+        <pathelement location="WebRoot/WEB-INF/classes"/>
+        <path refid="Java EE 5 Libraries.libraryclasspath"/>
+        <pathelement location="WebRoot/WEB-INF/lib/Json-simple-1.1.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/servlet-api.jar"/>
+        <path refid="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=renren&amp;ivyXmlPath=ivy.xml&amp;confs=*.libraryclasspath"/>
+        <pathelement location="lib/internetrtsdk-0.11235.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/internetrtsdk-0.11235.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-codec.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-httpclient-3.1.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-logging-1.1.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/jackson-all-1.8.5.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/log4j-1.2.16.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/scala-library-2.9.2-javadoc.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/scala-library-2.9.2-sources.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/scala-library-2.9.2.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/json-lib-0.8.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/ezmorph-0.8.1.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/ezmorph.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-beanutils-1.7.0.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-beanutils-1.7.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-cli-1.0-javadoc.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-cli-1.0-sources.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-cli-1.0.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-codec-1.2.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-codec-1.6-javadoc.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-codec-1.6-sources.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-codec-1.6.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-collections.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-httpclient-3.1-sources.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-lang-2.0-javadoc.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-lang-2.0-sources.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-lang-2.0.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-lang-2.1-javadoc.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-lang-2.1-sources.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-lang-2.1.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-lang-2.4.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-lang.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-logging-1.0.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-logging-1.1.1-javadoc.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-logging-1.1.1-sources.jar"/>
+        <pathelement location="WebRoot/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="WebRoot/WEB-INF/classes"/>
+        <copy includeemptydirs="false" todir="WebRoot/WEB-INF/classes">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="WebRoot/WEB-INF/classes"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="WebRoot/WEB-INF/classes" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="renren.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
 </project>
