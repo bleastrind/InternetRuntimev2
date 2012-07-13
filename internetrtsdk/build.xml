@@ -16,7 +16,7 @@
   <property name="build.src"  value="${build.dir}/internetrtsdk/src/"/>
   <property name="build.dest" value="${build.dir}/internetrtsdk/bin"/>
   <property name="build.lib"  value="${build.dir}/internetrtsdk/lib"/> 
-  <property name="build.ext"  value="./lib"/>
+  <!--<property name="build.ext"  value="./lib"/> -->
   <property name="build.encoding" value="UTF-8"/>  
 
   <property name="src.java.dir" value="../src/java"/>
@@ -25,27 +25,16 @@
   <property name="dist.root" value="${build.dir}/internetrtsdk"/>
   <property name="dist.dir" value="${dist.root}/${final.name}"/>
 
-  <path id="classpath">    
-    <pathelement path="${java.class.path}/"/>
-  	<fileset dir="${build.lib}">    
-      <include name="*.jar"/>
-     
-    </fileset>    
-    <fileset dir="${build.ext}">    
-      <include name="*.jar"/>
-    </fileset>    
-  </path>
   
 	 <target name="resolve" description="--> retrieve dependencies with ivy">
-	        <ivy:retrieve/>
+	        <ivy:retrieve pattern="${build.lib}/[artifact]-[type]-[revision].[ext]"/>
 	 </target>
-	
-  <property name="classpath" refid="classpath"/>
+
   <!-- =================================================================== -->
   <!-- prints the environment                                        -->
   <!-- =================================================================== -->
   <target name="env">    
-    <mkdir dir="${build.lib}"/>
+
     <echo message="build.compiler = ${build.compiler}"/>
     <echo message="java.home = ${java.home}"/>
     <echo message="user.home = ${user.home}"/>
@@ -89,7 +78,8 @@
       </echo>
     <mkdir dir="${build.dir}/data"/>      
     <mkdir dir="${build.dir}/logs"/>
-    <mkdir dir="${build.dir}/dist"/>    
+    <mkdir dir="${build.dir}/dist"/>   
+    <mkdir dir="${build.lib}"/>
   	
     <property
       name="scala-library.jar"
@@ -114,6 +104,7 @@
   <target name="deploy" depends="jar">
 	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/market/lib"/>
   	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/InternetRT/lib"/>
+  	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/renren/WebRoot/WEB-INF/lib"/>
   </target>
 	
   <target name="jar" depends="compile">
@@ -137,6 +128,19 @@
   </target>
   
   <target name="compile" depends="prepare">    
+    <path id="classpath">    
+  	    <pathelement path="${java.class.path}/"/>
+  	  	<fileset dir="${build.lib}">    
+  	      <include name="*.jar"/>
+  	     
+  	    </fileset>   
+  	  	<!--
+  	    <fileset dir="${build.ext}">    
+  	      <include name="*.jar"/>
+  	    </fileset>    -->
+    </path>
+    <property name="classpath" refid="classpath"/>
+  	
     <mkdir dir="${build.dest}"/>
 
     <!-- 检查依赖性 -->

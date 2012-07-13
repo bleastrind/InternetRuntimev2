@@ -4,96 +4,64 @@
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. -->
-<project basedir="." default="build" name="renren">
+<project basedir="." default="war" name="renren"  xmlns:ivy="antlib:org.apache.ivy.ant">
     <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="../../../myeclipse"/>
+	<property name="tomcat.app" value="${env.TOMCAT_HOME}/webapps"/>
+	
+	  <property name="project" value="renrenstub"/>
+	  <property name="version" value="0.11235"/>
+	  <property name="build.dir"  value=".."/>
+	  <property name="build.src"  value="${build.dir}/renren/src/"/>
+	  <property name="build.webroot" value="${build.dir}/renren/WebRoot"/>
+	  <property name="build.dest" value="${build.dir}/renren/WebRoot/WEB-INF/classes"/>
+	  <property name="build.lib"  value="${build.dir}/renren/WebRoot/WEB-INF/lib"/> 
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
-    <path id="Java EE 5 Libraries.libraryclasspath">
-        <pathelement location="C:/Users/Administrator/AppData/Local/Genuitec/Common/plugins/com.genuitec.eclipse.j2eedt.core_8.5.0.me201003231033/data/libraryset/EE_5/javaee.jar"/>
-        <pathelement location="C:/Users/Administrator/AppData/Local/Genuitec/Common/plugins/com.genuitec.eclipse.j2eedt.core_8.5.0.me201003231033/data/libraryset/EE_5/jsf-impl.jar"/>
-        <pathelement location="C:/Users/Administrator/AppData/Local/Genuitec/Common/plugins/com.genuitec.eclipse.j2eedt.core_8.5.0.me201003231033/data/libraryset/EE_5/jsf-api.jar"/>
-        <pathelement location="C:/Users/Administrator/AppData/Local/Genuitec/Common/plugins/com.genuitec.eclipse.j2eedt.core_8.5.0.me201003231033/data/libraryset/EE_5/jstl-1.2.jar"/>
-    </path>
-    <path id="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=renren&amp;ivyXmlPath=ivy.xml&amp;confs=*.libraryclasspath"/>
-    <path id="renren.classpath">
-        <pathelement location="WebRoot/WEB-INF/classes"/>
-        <path refid="Java EE 5 Libraries.libraryclasspath"/>
-        <pathelement location="WebRoot/WEB-INF/lib/Json-simple-1.1.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/servlet-api.jar"/>
-        <path refid="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=renren&amp;ivyXmlPath=ivy.xml&amp;confs=*.libraryclasspath"/>
-        <pathelement location="lib/internetrtsdk-0.11235.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/internetrtsdk-0.11235.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-codec.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-httpclient-3.1.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-logging-1.1.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/jackson-all-1.8.5.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/log4j-1.2.16.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/scala-library-2.9.2-javadoc.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/scala-library-2.9.2-sources.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/scala-library-2.9.2.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/json-lib-0.8.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/ezmorph-0.8.1.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/ezmorph.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-beanutils-1.7.0.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-beanutils-1.7.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-cli-1.0-javadoc.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-cli-1.0-sources.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-cli-1.0.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-codec-1.2.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-codec-1.6-javadoc.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-codec-1.6-sources.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-codec-1.6.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-collections.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-httpclient-3.1-sources.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-lang-2.0-javadoc.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-lang-2.0-sources.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-lang-2.0.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-lang-2.1-javadoc.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-lang-2.1-sources.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-lang-2.1.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-lang-2.4.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-lang.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-logging-1.0.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-logging-1.1.1-javadoc.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-logging-1.1.1-sources.jar"/>
-        <pathelement location="WebRoot/WEB-INF/lib/commons-logging-1.1.1.jar"/>
-    </path>
+
+	
+	 <target name="resolve" description="--> retrieve dependencies with ivy">
+	        <ivy:retrieve pattern="${build.lib}/[artifact]-[type]-[revision].[ext]"/>
+	 </target>
     <target name="init">
-        <mkdir dir="WebRoot/WEB-INF/classes"/>
-        <copy includeemptydirs="false" todir="WebRoot/WEB-INF/classes">
-            <fileset dir="src">
+        <mkdir dir="${build.dest}"/>
+    	<mkdir dir="${build.lib}"/>
+        <copy includeemptydirs="false" todir="${build.dest}">
+            <fileset dir="${build.src}">
                 <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
     </target>
     <target name="clean">
-        <delete dir="WebRoot/WEB-INF/classes"/>
+        <delete dir="${build.dest}"/>
     </target>
     <target depends="clean" name="cleanall"/>
     <target depends="build-subprojects,build-project" name="build"/>
     <target name="build-subprojects"/>
-    <target depends="init" name="build-project">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="WebRoot/WEB-INF/classes" source="${source}" target="${target}">
-            <src path="src"/>
+    <target depends="init,resolve" name="build-project">
+    	  <path id="renren.classpath">
+    	        <pathelement location="${build.lib}"/>
+
+    	    </path>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="${build.dest}" source="${source}" target="${target}">
+            <src path="${build.src}"/>
             <classpath refid="renren.classpath"/>
         </javac>
     </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-        <copy todir="${ant.library.dir}">
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </copy>
-        <unzip dest="${ant.library.dir}">
-            <patternset includes="jdtCompilerAdapter.jar"/>
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </unzip>
-    </target>
-    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-        <antcall target="build"/>
-    </target>
+	<target depends="build" name="war">
+		<war destfile="${project}-${version}.war" webxml="${build.webroot}/WEB-INF/web.xml">
+		  <fileset dir="${build.webroot}">
+		  	<exclude name="**/*.class"/>
+		  	<exclude name="**/*.jar"/>
+		  </fileset>
+		  <lib dir="${build.lib}">
+		  </lib>
+		  <classes dir="${build.dest}"/>
+		</war>
+	</target>
+	
+	<target depends="war" name="deploy">
+		<copy file="${project}-${version}.war" todir="${tomcat.app}"/>
+	</target>
 </project>
