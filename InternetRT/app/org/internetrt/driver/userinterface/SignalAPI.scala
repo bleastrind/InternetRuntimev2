@@ -21,9 +21,12 @@ object SignalAPI extends Controller{
 	    case Some(list) => list.head == "browserredirect"
 	    case _ => false
 	  }){
-	      val urlGenerator = new ListenerRequestGenerator(new RoutingXmlParser(response.getResponse))
+	      val parser = new RoutingXmlParser(response.getResponse)
 	      //TODO the data should be Map[String,Map[String]]
-	      val url = urlGenerator.generateSignalListenerUrl(request.queryString.mapValues( seq => seq.headOption.getOrElse("")),null)
+	      val url = ListenerRequestGenerator.generateSignalListenerUrl(
+	          request.queryString.mapValues( seq => seq.headOption.getOrElse("")),
+	          parser.getRequestListener(),
+	          parser.getExtData())
 		  Redirect(url)
 	  }else
 		  Ok(response.getResponse)

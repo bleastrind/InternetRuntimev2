@@ -8,12 +8,15 @@ import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
 import org.internetrt.core.signalsystem.workflow.OkState
 import org.internetrt.Cassandra
+import org.specs2.mock.Mockito
+import org.internetrt.core.InternetRuntime
 
 @RunWith(classOf[JUnitRunner])
-class WorkflowUnitTest extends Specification{
+class WorkflowUnitTest extends Specification with Mockito{
 	"The workflow initActionOption" should{
 	  "return missingOptions when multi route and no option" in {
 	    val workflowEngine = new WorkflowEngineImpl{
+	      val global = mock[InternetRuntime]
 	      val routingInstancePool = Cassandra.routingInstancePool
 	    }
 	    workflowEngine.checkStatus(Seq(rout1,rout2),Map.empty)
@@ -52,6 +55,7 @@ class WorkflowUnitTest extends Specification{
 	  
 	  "return OkState when multi route with proper option" in {
 	    val workflowEngine = new WorkflowEngineImpl{
+	      val global = mock[InternetRuntime]
 	      val routingInstancePool = new StubRoutingInstancePool()
 	    }
 	    workflowEngine.checkStatus(Seq(rout1,rout2),Map("requestListenerIndex" ->( <Choice><RoutingId>12</RoutingId><RequestListenerId>2</RequestListenerId></Choice>).toString))
