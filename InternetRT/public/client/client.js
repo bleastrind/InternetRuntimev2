@@ -10,17 +10,20 @@ window.InternetRuntime.Client = new function()
 	var CONST = 
 	{
 		BASE_URL: 'http://localhost:9000',
-		CORE_IFRAME_SRC: this.BASE_URL + '/assets/client/Client.html';
+		CORE_IFRAME_SRC: '/assets/client/Client.html'
 	}
 	
-	function loadCore = 
+	var CoreIframe;
+	
+	function loadCore()
 	{
-		var CoreIframe = document.createElement('iframe');
-		CoreIframe.onready = function()
-		{
-			CORS.start();
+		CoreIframe = document.createElement('iframe');
+		CoreIframe.onload = function()
+		{	
+			CORS.installRootApp();
+			//CORS.start();
 		}
-		CoreIframe.src = CONST.CORE_IFRAME_SRC;
+		CoreIframe.src = CONST.BASE_URL + CONST.CORE_IFRAME_SRC;
 		CoreIframe.style.width = 1 + 'px';
 		CoreIframe.style.height = 1 + 'px';
 		document.body.appendChild(CoreIframe);
@@ -34,8 +37,26 @@ window.InternetRuntime.Client = new function()
 	}
 	
 	
+	function showIframe(xy, size)
+	{
+		if (xy == 'center')
+		{
+			CoreIframe.style.left = document.body.scrollLeft + window.innerWidth / 2 - size.dx / 2 + 'px';
+			CoreIframe.style.top = document.body.scrollTop + window.innerHeight / 2 - size.dy / 2 + 'px';
+		}
+		else
+		{
+			CoreIframe.style.left = xy.x + 'px';
+			CoreIframe.style.top = xy.y + 'px';
+		}
+		CoreIframe.style.width = size.dx + 20 + 'px';
+		CoreIframe.style.height = size.dy + 20 + 'px';	
+		CoreIframe.style.position = 'absolute';
+		CoreIframe.frameBorder = 0;
+	}
 	
-	var CORS = new function
+	
+	var CORS = new function()
 	{
 		//	Receive
 		window.onmessage = function(e)
@@ -44,6 +65,10 @@ window.InternetRuntime.Client = new function()
 		}
 		var MessageHandler = 
 		{
+			showIframe: function(data)
+			{
+				showIframe(data.xy, data.size);
+			},			
 			jumpToUrl: function(data)
 			{
 				jumpToUrl(data.url);
@@ -66,7 +91,7 @@ window.InternetRuntime.Client = new function()
 		//	Send
 		function postMessage(msg)
 		{
-			window.top.postMessage(msg, CONST.BASE_URL);
+			CoreIframe.contentWindow.postMessage(msg, CONST.BASE_URL);
 		}
 		this.loginByJump = function()
 		{
@@ -84,6 +109,15 @@ window.InternetRuntime.Client = new function()
 			}
 			postMessage(msg);
 		}
+		this.installRootApp = function()
+		{
+			
+			var msg = 
+			{
+				type: 'installRootApp'
+			}
+			postMessage(msg);
+		}
 		this.start = function()
 		{
 			var msg = 
@@ -93,9 +127,17 @@ window.InternetRuntime.Client = new function()
 			postMessage(msg);
 		}
 	}
+	
+	
+	
 
 	
+	
+	
 	loadCore();
+	
+	
+	
 }
 
 

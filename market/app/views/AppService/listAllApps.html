@@ -2,7 +2,7 @@
 <html>
 
 #{if !flag}
-	<a href="http://localhost:9000/clients/installapp">Install Market</a>
+	<a href="javascript:void(document.body.appendChild(document.createElement('script')).src='http://localhost:9000/assets/client/installRootApp.js');">Install Market</a>
 	#{/if}
 #{if applist.size()}
 	<h1>There are the apps:</h1>

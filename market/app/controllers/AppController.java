@@ -21,15 +21,20 @@ import config.properties;
 public class AppController extends Controller {
 
 	public static String getAccessToken() {
+		System.out.println("get token!!!!?????!!!!");
+		System.out.println(session.get("token"));
 		System.out.println("get token!!!!!!!!!!!!!!!!!");
-		return Cache.get(session.getId() + "-token", String.class);
+		return session.get("token");
 	}
 
 	@Before(only = { "listAllApp", "deleteUserApp", "addUserAppSave" })
 	public static void checkUser() {
+		System.out.println("checkUser");
 		String token = getAccessToken();
 		if (token == null) {
+			System.out.println(properties.irt.getAuthCodeUrl(config.properties.appID,config.properties.redirect));
 			Controller.redirect(properties.irt.getAuthCodeUrl(config.properties.appID,config.properties.redirect));
+			System.out.println("checkUser!!!!");
 		}
 	}
 
@@ -61,13 +66,14 @@ public class AppController extends Controller {
 			String information, String installUrl, String updated,
 			String updateUrl, String secret) {
 		String token = getAccessToken();
+		System.out.println(id);
+		
 		System.out.println(token + "******************");
 		App app = new App(id, name, information, installUrl, updated,
 				updateUrl, secret);
-		System.out.println("AAAAAAAAA" + app.getId());
-		if (AppService.addUserApp(app, token))
-		Controller.redirect(config.properties.irt.getAuthCodeUrl(
-		"6939c74b-9228-4a04-b97c-e8e8f3368595", "http://localhost:8080/IfApp/servlet/ToGetAccessToken"));
+		if (AppService.addUserApp(app, token)){
+			System.out.println("succes");
+			RoutingRecomController.index(id);}
 		else
 			render("AppService/addfail.html");
 	}

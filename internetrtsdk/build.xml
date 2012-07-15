@@ -23,7 +23,7 @@
   <property name="javadoc.destdir" value="../docs/api"/>
   <property name="final.name" value="${project}-${version}"/>
 
-  <property name="dist.root" value="${build.dir}/IfApp/WebRoot/WEB-INF/lib"/>
+  <property name="dist.root" value="${build.dir}/internetrtsdk"/>
 
   <property name="dist.dir" value="${dist.root}/${final.name}"/>
 

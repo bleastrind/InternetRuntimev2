@@ -159,6 +159,7 @@ public class InternetRT {
 
 		String requestUrl = internetRTConfig.getValue("baseURL")+"/config/apps/" + appID + "?"
 				+ param;
+		System.out.println("getAppDetail"+requestUrl);
 		String result = HttpHelper.httpClientGet(requestUrl);
 		int i = result.indexOf("appDetail:") + ("appDetail:").length() + 1;
 		String xmlString = result.substring(i, result.length() - 2);
