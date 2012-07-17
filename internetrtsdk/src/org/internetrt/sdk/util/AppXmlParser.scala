@@ -42,19 +42,25 @@ class AppXmlParser (xml:String){
     scala.collection.JavaConversions.asList[Signal](Signals)
   }
   
-  def getRequestListenerForRequest(request: String) = {
-	  	scala.collection.JavaConversions.asList[String]((xmlFile \ "SignalHanlders"\ "RequestListener" map{
-	  	  (requestListener) =>
-	  	    if( (requestListener \ "Adapter" \ "Signalname").text == request)
-	  	    {
-	  	       (requestListener \ "@runat").text 
-	  	    }
-	  	    else
-	  	    {
-	  	      null
-	  	    }
-	  	    
-	  	}) filter (n => n != null))
+  def getMatchedListeners(signalName:String) = {
+     scala.collection.JavaConversions.asList[ListenerConfig](
+        xmlFile \ "SignalHanlders" 
+           map(signalListener => ListenerConfig(signalListener))
+	  	   filter ( config =>  (config.node \\ "Adapter" \ "Signalname").text == signalName)
+	  	)
+  }
+  
+  def getListeners() = {
+     scala.collection.JavaConversions.asList[ListenerConfig](
+        xmlFile \ "SignalHanlders" 
+           map(signalListener => ListenerConfig(signalListener))
+	  	)
+  }
+  
+  def getExceptedSignals() = {
+     scala.collection.JavaConversions.asList[String](
+        xmlFile \"SignalHanlders" \\ "Adapter" \ "Signalname" map (node => node text)
+     )
   }
   
   def getAppIdBaseRunat(runatAppId : String) :String = {

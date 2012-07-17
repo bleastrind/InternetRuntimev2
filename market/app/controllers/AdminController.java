@@ -13,7 +13,7 @@ import models.*;
 public class AdminController extends Controller {
 
 	public static String getAccessToken(){
-		return Cache.get(session.getId() + "-token", String.class);
+		return session.get("token");
 	}
 	
     public static void welcome() {   

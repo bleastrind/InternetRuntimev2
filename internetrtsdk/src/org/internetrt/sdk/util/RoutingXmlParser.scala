@@ -27,7 +27,7 @@ object RoutingXmlParser{
 	
 	def getReqUrl(listener:ListenerConfig): String = {
 	  val signalListener = listener.node;
-	  val requestUrl = (signalListener \ "url").text;
+	  val requestUrl = (signalListener \ "URL").text;
 	  requestUrl.toString();
 	}
 	
@@ -117,8 +117,12 @@ class RoutingXmlParser(xml:String)  {
 	}
 
 
-	   def getRequestListener() = {
+	   def getRequestListener():ListenerConfig = {
+	   try{
 	     ListenerConfig(xmlFile\ "RequestListener" head)
+	     }catch{
+	        case _ => null
+	     }
 	   }
 	   
 	   def getEventListeners():java.util.List[ListenerConfig] = {

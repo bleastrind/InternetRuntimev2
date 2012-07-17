@@ -11,18 +11,22 @@ class RoutingGenerator (signalXmlString:String, appXmlString:String){
 	def generateRouting(signal:String, from:String, to:String) = {
 	  val signalNode =  generateSignalNode(signal, from, to)
 	  val RequestListenerNodes  =  generateRequestListenerNodes(from,to)
-
-	  (<Routing>{signalNode}{RequestListenerNodes}</Routing>).toString()
+	  val EventListenerNodes = appXml \ "SignalHanlders" \ "EventListener"
+	  (<Routing>{signalNode}{RequestListenerNodes}{EventListenerNodes}</Routing>).toString()
 	}
 	
-	def generateSignalNode(signalName:String, from:String, to:String): NodeSeq = 
+	def generateRouting(signalname:String,listener: ListenerConfig) = {
+	  <Routing><signal><name>{signalname}</name></signal>{listener.node}</Routing> toString
+	}
+	
+	private def generateSignalNode(signalName:String, from:String, to:String): NodeSeq = 
 	{
 	  val signalNode = 
 	    <signal><from>{from}</from><user></user><name>{signalName}</name>{  (signalXml \ "vars" )}</signal>
 	 scala.xml.NodeSeq.fromSeq(signalNode)
 	}
 	
-	def generateRequestListenerNodes(from:String, to:String): NodeSeq = {
+	private def generateRequestListenerNodes(from:String, to:String): NodeSeq = {
 	  val RequestListener = appXml \ "SignalHanlders" \ "RequestListener" 
 	  val DescriptionNode = RequestListener \ "Description"
 	  val URLNode = RequestListener \ "URL"
