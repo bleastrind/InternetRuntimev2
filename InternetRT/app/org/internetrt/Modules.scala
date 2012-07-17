@@ -56,6 +56,7 @@ trait MemoryAuthCenter extends AuthCenterImpl {
 
 trait MemorySignalSystem extends SignalSystemImpl {
   object workflowEngine extends WorkflowEngineImpl {
+    val global = SiteInternetRuntime
     object routingInstancePool extends StubRoutingInstancePool
   }
   object signalDefinationPool extends StubSignalDefinationPool
@@ -78,6 +79,7 @@ trait CassandraAuthCenter extends AuthCenterImpl {
 
 trait CassandraSignalSystem extends SignalSystemImpl {
   object workflowEngine extends WorkflowEngineImpl {
+    val global = SiteInternetRuntime
     val routingInstancePool = Cassandra.routingInstancePool
   }
   val signalDefinationPool = Cassandra.signalDefinationPool

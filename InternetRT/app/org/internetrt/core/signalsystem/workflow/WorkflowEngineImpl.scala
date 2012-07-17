@@ -6,9 +6,16 @@ import org.internetrt.core.model.RoutingInstance
 import org.internetrt.persistent.RoutingInstancePool
 import java.util.UUID
 import org.internetrt.exceptions.RoutingInstanceInitException
+import org.internetrt.sdk.util.ListenerConfig
+import org.internetrt.sdk.util.ListenerRequestGenerator
+import org.internetrt.sdk.exceptions.DataNotEnoughException
+import org.internetrt.sdk.util.GlobalData
+import org.internetrt.sdk.util.RoutingXmlParser
 
 abstract class WorkflowEngineImpl extends WorkflowEngine {
 
+  import global.ioManager
+  
   val routingInstancePool: RoutingInstancePool
 
   def initWorkflow(userID: String, vars:Map[String,Seq[String]],routings: Seq[Routing], options: Map[String, String]): RoutingInstance = {
@@ -70,9 +77,21 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
 	routingInstancePool.get(workflowID)
   }
 
+  def tryEventListener(workflowID:String, vars:Map[String,Seq[String]],uid:String,config:ListenerConfig)={
+    try{
+      val url = ListenerRequestGenerator.generateSignalListenerUrl(vars,config, GlobalData(Map(RoutingXmlParser.ROUTING_INSTANCE_ID_KEY -> workflowID)))
+      ioManager.sendToUrl(uid,url, null)
+      None
+    }catch{
+      case e:DataNotEnoughException=> Some(config)
+    }
+  }
+  
   def dispatchEvents(workflowID:String, vars:Map[String,Seq[String]],userID:String, routings:Seq[Routing])={
     val eventListenerNodes = routings map ( r => r.xml \ "EventListener" toSeq ) flatten;
-    eventListenerNodes
+    val eventListenerConfigs = eventListenerNodes map (node => ListenerConfig(node));
+    val leftEventHandlers = eventListenerConfigs map( config => tryEventListener(workflowID,vars,userID,config)) flatten;
+    leftEventHandlers map (config => config.node) 
   }
   def generateInstanceByRouting(userID: String,vars:Map[String,Seq[String]], routings: Seq[Routing], options: Map[String, String]): RoutingInstance = {
 

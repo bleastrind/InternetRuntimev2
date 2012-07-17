@@ -113,15 +113,14 @@ public class InternetRT {
 		String xml = initActionFromThirdPart(accesstoken, signalName, sourceMap);
 		System.out.println(xml);
 		RoutingXmlParser parser = new RoutingXmlParser(xml);
-		ListenerRequestGenerator generator = new ListenerRequestGenerator(parser);
 
 		//Event signals
 		for(ListenerConfig config: parser.getEventListeners()){
-			String eventUrl = generator.generateSignalListenerUrl(adapter(sourceMap), config);
+			String eventUrl = ListenerRequestGenerator.generateSignalListenerUrl(adapter(sourceMap), config , parser.getExtData());
 			HttpHelper.httpClientGet(eventUrl);
 		}
 		//Request signal
-		String urlstr = generator.generateSignalListenerUrl(adapter(sourceMap),null);	
+		String urlstr = ListenerRequestGenerator.generateSignalListenerUrl(adapter(sourceMap), parser.getRequestListener(), parser.getExtData());	
 		return HttpHelper.httpClientGet(urlstr);
 	}
 	
