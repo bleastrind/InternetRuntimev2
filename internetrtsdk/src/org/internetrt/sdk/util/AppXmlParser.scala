@@ -1,6 +1,9 @@
 package org.internetrt.sdk.util
 import java.util.ArrayList
 
+case class DescribedListenerConfig(appName:String,description:String,override val node:scala.xml.Node) extends ListenerConfig(node){
+  
+}
 
 class AppXmlParser (xml:String){
   //val xmlFile = scala.xml.XML.loadFile("renrenApplication.txt");
@@ -42,18 +45,33 @@ class AppXmlParser (xml:String){
     scala.collection.JavaConversions.asList[Signal](Signals)
   }
   
+  def getMatchedRequestSignals(config:ListenerConfig) = {
+    val Signals = (xmlFile \ "Signals" \ "Request" ) ++ (xmlFile \ "Signals" \ "Event" ) filter{
+      request => config.matchSignalName(request \ "Signalname" text) 
+    }map{
+      Request =>      
+      val Signalname = (Request \ "Signalname").text
+      val Description = (Request \ "Description").text
+      val Require = (Request \ "Require").text
+      Signal(Signalname, Description, Require)
+    }
+    scala.collection.JavaConversions.asList[Signal](Signals)
+  }
+  
   def getMatchedListeners(signalName:String) = {
-     scala.collection.JavaConversions.asList[ListenerConfig](
+     val appName = xmlFile \ "Name" text;
+     scala.collection.JavaConversions.asList[DescribedListenerConfig](
         xmlFile \ "SignalHanlders" 
-           map(signalListener => ListenerConfig(signalListener))
-	  	   filter ( config =>  (config.node \\ "Adapter" \ "Signalname").text == signalName)
+           map(signalListener => DescribedListenerConfig(appName,signalListener \ "Description" text,signalListener))
+	  	   filter ( config =>  config.matchSignalName(signalName))
 	  	)
   }
   
   def getListeners() = {
-     scala.collection.JavaConversions.asList[ListenerConfig](
-        xmlFile \ "SignalHanlders" 
-           map(signalListener => ListenerConfig(signalListener))
+     val appName = xmlFile \ "Name" text;
+     scala.collection.JavaConversions.asList[DescribedListenerConfig](
+      xmlFile \ "SignalHanlders" 
+           map(signalListener => DescribedListenerConfig(appName,signalListener \ "Description" text,signalListener))
 	  	)
   }
   

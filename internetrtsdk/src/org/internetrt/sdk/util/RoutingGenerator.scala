@@ -3,6 +3,12 @@ import scala.xml.XML
 import scala.xml.Node
 import scala.xml.NodeSeq
 
+object RoutingGenerator{
+  	def generateRouting(signalname:String,listener: ListenerConfig):String = {
+	  <Routing><signal><name>{signalname}</name></signal>{listener.node}</Routing> toString
+	}
+}
+
 class RoutingGenerator (signalXmlString:String, appXmlString:String){
   
 	val signalXml = scala.xml.XML.loadString(signalXmlString);
@@ -13,10 +19,6 @@ class RoutingGenerator (signalXmlString:String, appXmlString:String){
 	  val RequestListenerNodes  =  generateRequestListenerNodes(from,to)
 	  val EventListenerNodes = appXml \ "SignalHanlders" \ "EventListener"
 	  (<Routing>{signalNode}{RequestListenerNodes}{EventListenerNodes}</Routing>).toString()
-	}
-	
-	def generateRouting(signalname:String,listener: ListenerConfig) = {
-	  <Routing><signal><name>{signalname}</name></signal>{listener.node}</Routing> toString
 	}
 	
 	private def generateSignalNode(signalName:String, from:String, to:String): NodeSeq = 

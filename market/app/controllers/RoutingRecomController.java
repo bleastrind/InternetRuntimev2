@@ -1,7 +1,13 @@
 package controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.internetrt.sdk.InternetRT;
+import org.internetrt.sdk.util.DescribedListenerConfig;
+import org.internetrt.sdk.util.ListenerConfig;
 import org.internetrt.sdk.util.RoutingGenerator;
+import org.internetrt.sdk.util.Signal;
 
 import config.properties;
 
@@ -12,7 +18,53 @@ import play.mvc.Controller;
 import play.mvc.Scope.Session;
 import models.App;
 import models.RoutingRecommender;
-
+class RoutingChoice{
+	private String signalName;
+	private String signalDescription;
+	private String listener;
+	private String listenerDescription;
+	private String routing;
+	
+	public RoutingChoice(String signalName,String signalDescription,String listener,String listenerDescription,String routing){
+		this.signalName =signalName ;
+		this.signalDescription=signalDescription;
+		this.listener=listener;
+		this.listenerDescription=listenerDescription;
+		this.routing=routing;
+	}
+	
+	public void setSignalName(String signalName) {
+		this.signalName = signalName;
+	}
+	public String getSignalName() {
+		return signalName;
+	}
+	public void setSignalDescription(String signalDescription) {
+		this.signalDescription = signalDescription;
+	}
+	public String getSignalDescription() {
+		return signalDescription;
+	}
+	public void setListener(String listener) {
+		this.listener = listener;
+	}
+	public String getListener() {
+		return listener;
+	}
+	public void setListenerDescription(String listenerDescription) {
+		this.listenerDescription = listenerDescription;
+	}
+	public String getListenerDescription() {
+		return listenerDescription;
+	}
+	public void setRouting(String routing) {
+		this.routing = routing;
+	}
+	public String getRouting() {
+		return routing;
+	}
+	
+}
 public class RoutingRecomController extends Controller{
 	
 	
@@ -21,7 +73,7 @@ public class RoutingRecomController extends Controller{
 			return session.get("token");
 		}
 		
-		   @Before(only = { "index", "recomRoutingBaseFrom", "recomRoutingBaseTo" })
+		   @Before(only = { "index","ConfirmRecomRouting" })
 		public static void checkUser() {
 			System.out.println("checkUser");
 			String token = getAccessToken();
@@ -32,101 +84,38 @@ public class RoutingRecomController extends Controller{
 			}
 		}
 	   
-		public static void index(String id){
-			session.put("installappid",id);
-			render("Routing/recomRouting.html");
-		}
-		
-		public static void recomRoutingBaseFrom(){
-			String fromAppIDString = session.get("installappid");
+		public static void index(String fromAppIDString){
 			String accessToken = getAccessToken();
 			
-			//session.setAttribute("fromApp", fromAppIDString);
-			session.put("fromApp", fromAppIDString);
-			
 			RoutingRecommender routingRecommender = new RoutingRecommender();
-			String result = routingRecommender.RecomRoutingBaseFrom(fromAppIDString, accessToken);
-			System.out.println("result "+result);
-			response.print(result);
-			render("Routing/recomRouting.html");
-			/*PrintWriter out = response.getWriter();
-			out.write(result);
-			out.flush();
-			out.close();*/
+			List<scala.Tuple2<Signal,DescribedListenerConfig>> result = routingRecommender.getPossibleRoutings(fromAppIDString, accessToken);
+			List<RoutingChoice> choices = generateChoieces(result);
+			render("Routing/recomRouting.html",choices);
 		}
 		
-		public static void recomRoutingBaseTo(){
-			String toAppId  = session.get("installappid");
-			
-			//HttpSession session = request.getSession();
-			String accessToken = getAccessToken();
-			session.put("toApp", toAppId);
-			
-			RoutingRecommender routingRecommender = new RoutingRecommender();
-			String result = routingRecommender.recomRoutingBaseTo(toAppId, accessToken);
-			System.out.println("result "+result);
-			response.print(result);
-			/*PrintWriter out = response.getWriter();
-			out.write(result);
-			out.flush();
-			out.close();*/
-			
+		private static List<RoutingChoice> generateChoieces(List<scala.Tuple2<Signal,DescribedListenerConfig>> possibleRoutings){
+			List<RoutingChoice> res = new ArrayList<RoutingChoice>();
+			for(scala.Tuple2<Signal,DescribedListenerConfig> data:possibleRoutings){
+				String routing = RoutingGenerator.generateRouting(data._1.name(),data._2);
+				String signalName = data._1.name();
+				String signaldes = data._1.description();
+				String listenerApp = data._2.appName();
+				String listenerDes = data._2.description();
+				res.add(new RoutingChoice(signalName,signaldes,listenerApp,listenerDes,routing));
+			}
 		}
-		
-		public static void GenRecomRouting(){
-			String triggerChannel = null;
-			String actionChannel = null;
 
-			String trigger = request.params.get("signal");
-			String receiver = request.params.get("receiver");
-			String sender = request.params.get("sender");
-			String type = request.params.get("type");
-			
-			System.out.println("signal: "+trigger);
-			System.out.println("receiver: "+receiver);
-			System.out.println("sender: "+sender);
-			System.out.println("type: "+type);
-			
-			if(type.equals("receiver"))
-			{
-				triggerChannel = receiver;
-				actionChannel = (String) session.get("installappid");
-			}
-			else {
-				triggerChannel = sender;
-				actionChannel = (String) session.get("installappid");
-			}
-			
-			InternetRT rt = config.properties.irt;
-			
-			
-			String accessToken = session.get("accessToken").toString();
-			
-			String signalXml = rt.getSignalDefination(trigger);
-			String appXml = rt.getAppDetail(actionChannel, accessToken);
-			
-			RoutingGenerator routingGenerator = new RoutingGenerator(signalXml, appXml);
-			String routingXml = routingGenerator.generateRouting(trigger, triggerChannel, actionChannel);
-			
-			String resultString = TermToJson.stringToJson("routingXml", routingXml).toString();
-			
-			response.print(resultString);
-			/*PrintWriter out = response.getWriter();
-			out.write(resultString);
-			out.flush();
-			out.close();*/
-		}
-		
 		public static void ConfirmRecomRouting(){
-			String routing = request.params.get("routing");
+			String[] routings = request.params.getAll("choices");
 			InternetRT rt = config.properties.irt;
-			
-			System.out.println(routing);
 			
 			String accessToken = getAccessToken();
 			
-			rt.ConfirmRouting(accessToken,routing);
-			
+			for(String routing:routings){
+				System.out.println(routing);
+				
+				rt.ConfirmRouting(accessToken,routing);
+			}
 			/*PrintWriter out = response.getWriter();
 			out.flush();
 			out.close();*/
