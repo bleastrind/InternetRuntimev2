@@ -173,22 +173,15 @@ function confirmRouting(data)
   </head>
   
   <body onload>
- 
-    This is my HTML page. <br>
-    <div id = "start">
-    <a href="#" onclick = "recomRoutingBaseFrom()">If this App is the signal sender, choose possible routing for it.</a><br/>
-    <a href="#" onclick = "recomRoutingBaseTo()">If this App is the signal receiver, choose possible routing for it.</a>
-    </div>
-    
-    <div>
-    	the following is the signal this App can send:<br/>
-    </div>
-    
-    <div id = "recomRoutingBaseFrom">
-    </div>
-    
-    <div id = "recomRoutingBaseTo">
-    </div>
+ #{form @RoutingRecomController.ConfirmRecomRouting()}
+
+ 	#{list items:choices, as:'choice'}
+               <input type="checkbox" name="choices" value="${choice.routing}" checked/> 
+               <span alt="${choice.signalDescription}">${choice.signalName}</span>:
+               <span alt="${choice.listenerDescription}">${choice.listenerAppName}<br/>
+    #{/list}
+    <input type = "submit" value = "confirm">
+ #{/form}
     
   </body>
 </html>

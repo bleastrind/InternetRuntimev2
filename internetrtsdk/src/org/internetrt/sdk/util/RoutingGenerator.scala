@@ -32,4 +32,11 @@ class RoutingGenerator (signalXmlString:String, appXmlString:String){
 	  <RequestListener type = {RequestListener \ "@type"} runat = {to}>{DescriptionNode}{URLNode}{AdapterNode}</RequestListener>
 	}
 
+
+}
+
+object FreeRoutingGenerator{
+  	def generateRouting(signalname:String,appname:String,listener: ListenerConfig):String = {
+	  <Routing><signal><from>{appname}</from><name>{signalname}</name></signal>{listener.node}</Routing> toString
+	}
 }

@@ -2,9 +2,6 @@ package org.internetrt.sdk.util
 import scala.xml.XML$
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
-case class ListenerConfig(node:scala.xml.Node){}
-case class GlobalData(map:Map[String,String]){}
-case class DataAdapter(node:scala.xml.Node){}
 
 object RoutingXmlParser{
   

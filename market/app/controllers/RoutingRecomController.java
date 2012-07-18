@@ -1,7 +1,9 @@
 package controllers;
 
 import org.internetrt.sdk.InternetRT;
-import org.internetrt.sdk.util.RoutingGenerator;
+import org.internetrt.sdk.util.DescribedListenerConfig;
+import org.internetrt.sdk.util.FreeRoutingGenerator;
+import org.internetrt.sdk.util.Signal;
 
 import config.properties;
 
@@ -9,8 +11,7 @@ import cn.edu.act.internetos.appmarket.service.TermToJson;
 
 import play.mvc.Before;
 import play.mvc.Controller;
-import play.mvc.Scope.Session;
-import models.App;
+import models.RoutingChoice;
 import models.RoutingRecommender;
 
 public class RoutingRecomController extends Controller{
@@ -26,8 +27,8 @@ public class RoutingRecomController extends Controller{
 			System.out.println("checkUser");
 			String token = getAccessToken();
 			if (token == null) {
-				System.out.println(properties.irt.getAuthCodeUrl(config.properties.appID,config.properties.redirect));
-				Controller.redirect(properties.irt.getAuthCodeUrl(config.properties.appID,config.properties.redirect));
+				System.out.println(properties.irt.getAuthCodeUrl());
+				Controller.redirect(properties.irt.getAuthCodeUrl());
 				System.out.println("checkUser!!!!");
 			}
 		}
@@ -45,32 +46,27 @@ public class RoutingRecomController extends Controller{
 			session.put("fromApp", fromAppIDString);
 			
 			RoutingRecommender routingRecommender = new RoutingRecommender();
-			String result = routingRecommender.RecomRoutingBaseFrom(fromAppIDString, accessToken);
-			System.out.println("result "+result);
-			response.print(result);
-			render("Routing/recomRouting.html");
-			/*PrintWriter out = response.getWriter();
-			out.write(result);
-			out.flush();
-			out.close();*/
+			List<scala.Tuple3<String,Signal,DescribedListenerConfig>> result = routingRecommender.getPossibleRoutings(fromAppIDString, accessToken);
+			List<RoutingChoice> choices = generateChoieces(result);
+			System.out.println(choices.size());
+			if(choices.size()> 0)
+				render("Routing/recomRouting.html",choices);
+			else
+				render("Routing/success.html");
 		}
 		
-		public static void recomRoutingBaseTo(){
-			String toAppId  = session.get("installappid");
-			
-			//HttpSession session = request.getSession();
-			String accessToken = getAccessToken();
-			session.put("toApp", toAppId);
-			
-			RoutingRecommender routingRecommender = new RoutingRecommender();
-			String result = routingRecommender.recomRoutingBaseTo(toAppId, accessToken);
-			System.out.println("result "+result);
-			response.print(result);
-			/*PrintWriter out = response.getWriter();
-			out.write(result);
-			out.flush();
-			out.close();*/
-			
+		private static List<RoutingChoice> generateChoieces(List<scala.Tuple3<String,Signal,DescribedListenerConfig>> possibleRoutings){
+			List<RoutingChoice> res = new ArrayList<RoutingChoice>();
+			for(scala.Tuple3<String,Signal,DescribedListenerConfig> data:possibleRoutings){
+				String routing = FreeRoutingGenerator.generateRouting(data._2().name(),data._1(),data._3());
+				String signalName = data._2().name();
+				String signaldes = data._2().description();
+				String signalApp = data._1();
+				String listenerApp = data._3().appName();
+				String listenerDes = data._3().description();
+				res.add(new RoutingChoice(signalName,signalApp,signaldes,listenerApp,listenerDes,routing));
+			}
+			return res;
 		}
 		
 		public static void GenRecomRouting(){
@@ -125,9 +121,14 @@ public class RoutingRecomController extends Controller{
 			
 			String accessToken = getAccessToken();
 			
-			rt.ConfirmRouting(accessToken,routing);
-			
-			/*PrintWriter out = response.getWriter();
+			for(String routing:routings){
+				System.out.println(routing);
+				
+				rt.ConfirmRouting(accessToken,routing);
+			}
+			render("Routing/success.html");
+			/*PrintWriter out 
+			 * = response.getWriter();
 			out.flush();
 			out.close();*/
 		}
