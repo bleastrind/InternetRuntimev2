@@ -6,7 +6,7 @@ import java.util.List;
 import org.internetrt.sdk.InternetRT;
 import org.internetrt.sdk.util.DescribedListenerConfig;
 import org.internetrt.sdk.util.ListenerConfig;
-import org.internetrt.sdk.util.RoutingGenerator;
+import org.internetrt.sdk.util.FreeRoutingGenerator;
 import org.internetrt.sdk.util.Signal;
 
 import config.properties;
@@ -96,13 +96,14 @@ public class RoutingRecomController extends Controller{
 		private static List<RoutingChoice> generateChoieces(List<scala.Tuple2<Signal,DescribedListenerConfig>> possibleRoutings){
 			List<RoutingChoice> res = new ArrayList<RoutingChoice>();
 			for(scala.Tuple2<Signal,DescribedListenerConfig> data:possibleRoutings){
-				String routing = RoutingGenerator.generateRouting(data._1.name(),data._2);
+				String routing = FreeRoutingGenerator.generateRouting(data._1.name(),data._2);
 				String signalName = data._1.name();
 				String signaldes = data._1.description();
 				String listenerApp = data._2.appName();
 				String listenerDes = data._2.description();
 				res.add(new RoutingChoice(signalName,signaldes,listenerApp,listenerDes,routing));
 			}
+			return res;
 		}
 
 		public static void ConfirmRecomRouting(){
