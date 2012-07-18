@@ -12,6 +12,7 @@ object ListenerRequestGenerator{
  
     val paramdata = ListenerRequestGenerator.generateDataByFormat(signalData, paramFormats, extData)
     val baseurl = parser.getReqUrl(listenerconfig);
+    System.out.println("BaseUrl"+baseurl)
     baseurl + "?" + HttpHelper.generatorParamString(scala.collection.JavaConversions.asJavaMap(paramdata));
   }
   
@@ -30,10 +31,14 @@ object ListenerRequestGenerator{
   
   private def generateDataByAdapter(key:String, data:Option[Seq[String]], adapter:DataAdapter, extData:GlobalData)={
     adapter  match {
-      case DataAdapter(<var/>) => (key,data.get.head)
-      case DataAdapter(<var><newkey>{newkey}</newkey></var>)=>(newkey.text,data.get.head)
-      case DataAdapter(<var><ID/></var>) => (key,extData.map.get(RoutingXmlParser.ROUTING_INSTANCE_ID_KEY).get)
-      case _ => throw new FormatErrorException("Format Error!")
+      case DataAdapter(<value><var/></value>) => (key,data.get.head)
+      case DataAdapter(<value><var><newkey>{newkey}</newkey></var></value>)=>(newkey.text,data.get.head)
+      case DataAdapter(<value><var><ID/></var></value>) => (key,extData.map.get(RoutingXmlParser.ROUTING_INSTANCE_ID_KEY).get)
+      case DataAdapter(<value>{text}</value>) => (key, text.text)
+      case DataAdapter(x) => {
+          System.out.println("Not supported format:"+x)
+    	  throw new FormatErrorException("Format Error!"+x)
+      }
     }
   }
 }

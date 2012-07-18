@@ -10,185 +10,19 @@
     
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
     
-<script>
-var html = ""
-var signal;
-var receiver;
-var sender;
-
-function recomRoutingBaseFrom()
-{
-	$.ajax({
-		url:'@{RoutingRecomController.recomRoutingBaseFrom()}',
-		type: 'GET',
-		dataType: 'json',
-		success : function(data)
-		{
-			result = eval(data);
-			for(var i in result)
-			{
-				var term = result[i];
-				render_signalAndApps(term);
-			}
-		}
-	
-	}
-			)
-}
-
-function recomRoutingBaseTo()
-{
-	html = "";
-	$.ajax({
-		url:'@{RoutingRecomController.recomRoutingBaseTo()',
-		type: 'GET',
-		dataType: 'json',
-		success : function(data)
-		{
-			result = eval(data);
-			for(var i in result)
-			{
-				var term = result[i];
-				render_appAndsignals(term);
-			}
-		}
-	
-	}
-			)
-}
-
-function render_signalAndApps(data)
-{
-	
-	html += '<a href="#" onclick = "chooseSignal('+"'"+data.signalName+"'"+')">'
-			+data.signalName+'</a>';
-	
-	html += '<div>this signal can be received by the following apps.<br/></div>';
-	
-	var terms = data.toAppList;
-	for(var i = 0; i< terms.length; i++)
-	{
-		html += '<a onclick="chooseAppFromApps('+"'"+terms[i].appID+"'" + ')">'
-						+'<img src="'+ "../images/"+terms[i].appName+"_logo.jpg" +'">'
-					+'</a>';
-	}
-	
-	$("#recomRoutingBaseFrom").html(html);
-	html = "";
-}
-
-function chooseSignal(data)
-{
-	 signal = data;
-}
-
-function chooseAppFromApps(data)
-{
-	receiver = data;
-	genRouting("receiver");
-}
-
-
-
-function render_appAndsignals(data)
-{
-	
-	html += '<a onclick="chooseApp('+"'"+data.application.appID+"'"+')">'
-						+'<img src="'+ "../images/"+data.application.appName+"_logo.jpg" +'">'
-					+'</a>';
-	
-	var terms = data.signalNameList;
-	for(var i = 0; i< terms.length; i++)
-	{
-		alert(terms.length);
-		alert(terms[i]);
-		html += '<a href="#" onclick = "chooseSignalFromSignalList('+"'"+terms[i]+"'"+')">'
-			+terms[i]+'</a>';
-	}
-	
-	$("#recomRoutingBaseTo").html(html);
-}
-
-function chooseApp(data)
-{
-	sender = data;
-}
-
-function chooseSignalFromSignalList(data)
-{
-	signal = data;
-	genRouting("sender")
-}
-
-function genRouting(data)
-{
-	alert("SUBMIT")
-	var params={
-			'signal':signal,
-			'receiver':receiver,
-			'sender':sender,
-			'type': data
-			}
-	$.ajax({
-		url:'@{RoutingRecomController.GenRecomRouting()}',
-		type: 'POST',
-		data: params,
-		dataType: 'json',
-		success : function(data)
-		{
-			alert("SUCCESS");
-			result = eval(data);
-			routing = result.routingXml;
-			var r = confirm(routing);
-			if(r == true)
-			{
-				confirmRouting(routing);
-			}
-		}
-	
-	}
-			)
-}
-
-function confirmRouting(data)
-{
-	var params={
-			'routing':data,
-	}
-	$.ajax({
-		url:'ConfirmRecomRouting',
-		type: 'POST',
-		data: params,
-		dataType: 'json',
-		success : function()
-		{
-			alert("SUCCESS");
-		}
-	
-	}
-			)
-}
-</script>
-
   </head>
   
   <body onload>
- 
-    This is my HTML page. <br>
-    <div id = "start">
-    <a href="#" onclick = "recomRoutingBaseFrom()">If this App is the signal sender, choose possible routing for it.</a><br/>
-    <a href="#" onclick = "recomRoutingBaseTo()">If this App is the signal receiver, choose possible routing for it.</a>
-    </div>
-    
-    <div>
-    	the following is the signal this App can send:<br/>
-    </div>
-    
-    <div id = "recomRoutingBaseFrom">
-    </div>
-    
-    <div id = "recomRoutingBaseTo">
-    </div>
+ #{form @RoutingRecomController.ConfirmRecomRouting()}
+	<input type = "submit" value = "back">
+
+ 	#{list items:choices, as:'choice'}
+               <input type="checkbox" name="choices" value="${choice.routing}" checked/> 
+               <span alt="${choice.signalDescription}">${choice.signalName}</span>:
+               <span alt="${choice.listenerDescription}">${choice.listener}<br/>
+    #{/list}
+    <input type = "submit" value = "confirm">
+ #{/form}
     
   </body>
 </html>

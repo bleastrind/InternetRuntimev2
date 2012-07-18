@@ -1,6 +1,9 @@
 package org.internetrt.sdk.util
 import java.util.ArrayList
 
+case class DescribedListenerConfig(appName:String,description:String,override val node:scala.xml.Node) extends ListenerConfig(node){
+  
+}
 
 class AppXmlParser (xml:String){
   //val xmlFile = scala.xml.XML.loadFile("renrenApplication.txt");
@@ -42,19 +45,40 @@ class AppXmlParser (xml:String){
     scala.collection.JavaConversions.asList[Signal](Signals)
   }
   
-  def getRequestListenerForRequest(request: String) = {
-	  	scala.collection.JavaConversions.asList[String]((xmlFile \ "SignalHanlders"\ "RequestListener" map{
-	  	  (requestListener) =>
-	  	    if( (requestListener \ "Adapter" \ "Signalname").text == request)
-	  	    {
-	  	       (requestListener \ "@runat").text 
-	  	    }
-	  	    else
-	  	    {
-	  	      null
-	  	    }
-	  	    
-	  	}) filter (n => n != null))
+  def getMatchedRequestSignals(config:ListenerConfig) = {
+    val Signals = (xmlFile \ "Signals" \ "Request" ) ++ (xmlFile \ "Signals" \ "Event" ) filter{
+      request => config.matchSignalName(request \ "Signalname" text) 
+    }map{
+      Request =>      
+      val Signalname = (Request \ "Signalname").text
+      val Description = (Request \ "Description").text
+      val Require = (Request \ "Require").text
+      Signal(Signalname, Description, Require)
+    }
+    scala.collection.JavaConversions.asList[Signal](Signals)
+  }
+  
+  def getMatchedListeners(signalName:String) = {
+     val appName = xmlFile \ "Name" text;
+     scala.collection.JavaConversions.asList[DescribedListenerConfig](
+        xmlFile \ "SignalHanlders" 
+           map(signalListener => DescribedListenerConfig(appName,signalListener \ "Description" text,signalListener))
+	  	   filter ( config =>  config.matchSignalName(signalName))
+	  	)
+  }
+  
+  def getListeners() = {
+     val appName = xmlFile \ "Name" text;
+     scala.collection.JavaConversions.asList[DescribedListenerConfig](
+      xmlFile \ "SignalHanlders" 
+           map(signalListener => DescribedListenerConfig(appName,signalListener \ "Description" text,signalListener))
+	  	)
+  }
+  
+  def getExceptedSignals() = {
+     scala.collection.JavaConversions.asList[String](
+        xmlFile \"SignalHanlders" \\ "Adapter" \ "Signalname" map (node => node text)
+     )
   }
   
   def getAppIdBaseRunat(runatAppId : String) :String = {

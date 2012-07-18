@@ -11,7 +11,6 @@
                 <th>Name</th>
                 <th>information</th>
 				<th>Delete</th>
-				<th>Edit</th>
             </tr>
         </thead>
         <tbody>
@@ -22,9 +21,6 @@
                     <td>
                         <a href="@{AdminController.deleteApp(app,app.getId())}">Delete The App</a>
                     </td>
-					<td>
-						<a href="@{AdminController.editApp(app)}">Edit</a>
-					</td>
                 </tr>
             #{/list}
         </tbody>

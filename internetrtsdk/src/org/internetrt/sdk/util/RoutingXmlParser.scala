@@ -2,7 +2,11 @@ package org.internetrt.sdk.util
 import scala.xml.XML$
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
-case class ListenerConfig(node:scala.xml.Node){}
+case class ListenerConfig(node:scala.xml.Node){
+  def matchSignalName(signalName:String)={
+    (node \\ "Adapter" \ "Signalname").text == signalName
+  }
+}
 case class GlobalData(map:Map[String,String]){}
 case class DataAdapter(node:scala.xml.Node){}
 
@@ -27,7 +31,7 @@ object RoutingXmlParser{
 	
 	def getReqUrl(listener:ListenerConfig): String = {
 	  val signalListener = listener.node;
-	  val requestUrl = (signalListener \ "url").text;
+	  val requestUrl = (signalListener \ "URL").text;
 	  requestUrl.toString();
 	}
 	
@@ -117,8 +121,12 @@ class RoutingXmlParser(xml:String)  {
 	}
 
 
-	   def getRequestListener() = {
+	   def getRequestListener():ListenerConfig = {
+	   try{
 	     ListenerConfig(xmlFile\ "RequestListener" head)
+	     }catch{
+	        case _ => null
+	     }
 	   }
 	   
 	   def getEventListeners():java.util.List[ListenerConfig] = {
