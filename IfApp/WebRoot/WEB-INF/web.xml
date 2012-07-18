@@ -8,37 +8,37 @@
     <description>This is the description of my J2EE component</description>
     <display-name>This is the display name of my J2EE component</display-name>
     <servlet-name>accessTokenServlet</servlet-name>
-    <servlet-class>accessTokenServlet</servlet-class>
+    <servlet-class>ScriptEditor.accessTokenServlet</servlet-class>
   </servlet>
   <servlet>
     <description>This is the description of my J2EE component</description>
     <display-name>This is the display name of my J2EE component</display-name>
     <servlet-name>GenXmlStringServlet</servlet-name>
-    <servlet-class>GenXmlStringServlet</servlet-class>
+    <servlet-class>ScriptEditor.GenXmlStringServlet</servlet-class>
   </servlet>
   <servlet>
     <description>This is the description of my J2EE component</description>
     <display-name>This is the display name of my J2EE component</display-name>
     <servlet-name>GenRoutingServlet</servlet-name>
-    <servlet-class>GenRoutingServlet</servlet-class>
+    <servlet-class>ScriptEditor.GenRoutingServlet</servlet-class>
   </servlet>
   <servlet>
     <description>This is the description of my J2EE component</description>
     <display-name>This is the display name of my J2EE component</display-name>
     <servlet-name>GetAppsServlet</servlet-name>
-    <servlet-class>GetAppsServlet</servlet-class>
+    <servlet-class>ScriptEditor.GetAppsServlet</servlet-class>
   </servlet>
   <servlet>
     <description>This is the description of my J2EE component</description>
     <display-name>This is the display name of my J2EE component</display-name>
     <servlet-name>RestoreRoutingServlet</servlet-name>
-    <servlet-class>RestoreRoutingServlet</servlet-class>
+    <servlet-class>ScriptEditor.RestoreRoutingServlet</servlet-class>
   </servlet>
   <servlet>
     <description>This is the description of my J2EE component</description>
     <display-name>This is the display name of my J2EE component</display-name>
     <servlet-name>InstallRootAppServlet</servlet-name>
-    <servlet-class>InstallRootAppServlet</servlet-class>
+    <servlet-class>ScriptEditor.InstallRootAppServlet</servlet-class>
   </servlet>
   <servlet>
     <description>This is the description of my J2EE component</description>
@@ -70,17 +70,18 @@
     <servlet-name>ConfirmRecomRouting</servlet-name>
     <servlet-class>routingRecommend.ConfirmRecomRouting</servlet-class>
   </servlet>
-
-
-
-
-
-
-
-
-
-
-
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>test</servlet-name>
+    <servlet-class>test</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>ttt</servlet-name>
+    <servlet-class>ttt</servlet-class>
+  </servlet>
 
 
 
@@ -127,6 +128,14 @@
   <servlet-mapping>
     <servlet-name>ConfirmRecomRouting</servlet-name>
     <url-pattern>/servlet/ConfirmRecomRouting</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>test</servlet-name>
+    <url-pattern>/servlet/test</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ttt</servlet-name>
+    <url-pattern>/servlet/ttt</url-pattern>
   </servlet-mapping>
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>

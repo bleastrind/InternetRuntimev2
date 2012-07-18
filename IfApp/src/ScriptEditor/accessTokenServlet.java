@@ -51,12 +51,15 @@ public class accessTokenServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		//{id:"c481fba3-866d-4c4e-ae36-6acd4262017a",secret:"f490c634-34bd-44fd-9a70-8de447103e50"}
+		
+		System.out.println("accessTokenServletAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		String code = null;
-		String appID = "6735ee88-7e0c-4adc-8a30-76138b89a17c";
-		String appSecret = "91ff02fd-c2c9-48e9-8f0f-6c91fb45d8e7";
+		String appID = "c481fba3-866d-4c4e-ae36-6acd4262017a";
+		String appSecret = "f490c634-34bd-44fd-9a70-8de447103e50";
 		
 		if(request.getParameter("code") == null){
-			response.sendRedirect("http://localhost:9000/oauth/authorize?appID=6735ee88-7e0c-4adc-8a30-76138b89a17c&redirect_uri=http://localhost:8080/IfApp/servlet/accessTokenServlet");
+			response.sendRedirect("http://localhost:9000/oauth/authorize?appID=c481fba3-866d-4c4e-ae36-6acd4262017a&redirect_uri=http://localhost:8080/IfApp/servlet/accessTokenServlet");
 		}
 		else {
 			code = request.getParameter("code");
