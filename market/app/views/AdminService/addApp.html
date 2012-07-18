@@ -1,77 +1,261 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
 #{extends 'main.html' /}
 #{set title:'Home' /}
 
+<head>
+    <title></title>
+</head>
+
 <h1>Hello Admin!You can manage every appliacation here!</h1>
-	<h3> Your Appid:${id} ,Your Secret:$	{secret}</h3>
-      #{form @AdminController.addAppSave()}  
-	 <input type="hidden" name="id" value="${id}">
-	 <input type="hidden" name="secret" value="${secret}">
-    <div>
-        <p>
-          <label for="name">name: </label>
-          <input type="text" name="name" id="name" value="${params.name}" />
-        </p>
-          <p>
-          <label for="installUrl">installurl: </label>
-          <input type="text" name="installUrl" id="installUrl"  value="${params.installUrl}">
+<h3> Your Appid:${id} ,Your Secret:$	{secret}</h3>
+
+#{form @AdminController.addAppSave()}
+<input type="hidden" name="id" value="${id}">
+<input type="hidden" name="secret" value="${secret}">
+<input type="hidden" name="signal" value="${signal}">
+
+<body>
+<div>
+    <p>
+        <label for="name">name: </label>
+        <input type="text" name="name" id="name" value="${params.name}" />
+    </p>
+    <p>
+        <label for="installUrl">installurl: </label>
+        <input type="text" name="installUrl" id="installUrl"  value="${params.installUrl}">
     </p>
 
-	<p>
-          <label for="updated">updated: </label>
-          <input type="radio"  name="updated" id="updated" value="true">true</input>
-		  <input type ="radio" name="updated" id="updated" value="false" checked>false</input>
-    </p>	
-	
-	<p>
-          <label for="updateUrl">updatedUrl: </label>
-          <input type="text" name="updateUrl" id="updateUrl" value="${params.updateUrl}">
+    <p>
+        <label for="updated">updated: </label>
+        <input type="radio" id="updated" value="true">true</input>
+        <input type ="radio"  value="false" checked>false</input>
     </p>
-	
-	<p> 
-          <label for="updateUrl">email: </label> 
-          <input type="text" name="email" id="email" value="${params.email}"></p><p><br> 
+
+    <p>
+        <label for="updateUrl">updatedUrl: </label>
+        <input type="text" name="updateUrl" id="updateUrl" value="${params.updateUrl}">
     </p>
-    </div>
 
-	
-	<div id = "signals">
-	<h2>Signal</h2>
-	<script type = "text/javascript">
-		var col = 0;
-		function $Name(tagName) { 
-		return document.getElementsByTagName(tagName); 
-		} 
-		
-		fuction addsignal(){
-			alert(123)
-			$("signals"}.append("
-			<p> 
-         	 <label for="updateUrl">runat: </label> 
-         	 <input type="text" name="email" id="email" value="${params.email}"></p><p><br> 
-   		    </p>
-			")
-		}
-		
-	</script>
-		<p>
-			
-		</p>
-		<button onclick ="addsignal()"></button>
-	</div>
-	 <p>   
-	  <label>AccessRequest</label>
-      <select name="AccessRequest" id="AccessRequest">   
-        <option value="${params.AccessRequest}">getApplications</option>          
-      </select>   
-     </p>  
-	 
+    <p>
+        <label for="updateUrl">email: </label>
+        <input type="text" name="email" id="email" value="${params.email}"></p><p><br>
+    </p>
+</div>
 
-          <input type = "submit" value = "save">
+<div id = "signals">
+    <h2>Signal</h2>
+    <script type = "text/javascript">
+        signal = 0;
+        var col = 0;
+        function $Name(id) {
+            doucument.getElementById(id);
+        };
 
-     #{/form}
-	 <h1></h1>
-	#{form @AdminController.welcome()}
-		<input type = "submit" value = "back">
-	#{/form}	 
-   
+        function addsignal(){
+            var mytable = document.getElementById("signals");
+            var label1 = document.createElement("label");
+            label1.style.visibility = "visible";
+            label1.innerHTML = "runat";
+            mytable.appendChild(label1);
 
+            var input1 = document.createElement("input");
+            input1.name = "signalRunat"+signal;
+            input1.style.visibility = "visible";
+            mytable.appendChild(input1);
+
+            var label2 = document.createElement("label");
+            label2.style.visibility = "visible";
+            label2.innerHTML = "Signalname";
+            mytable.appendChild(label2);
+
+            var input2 = document.createElement("input");
+            input2.name = "Signalname"+signal;
+            input2.style.visibility = "visible";
+            mytable.appendChild(input2);
+
+            var label3 = document.createElement("label");
+            label3.style.visibility = "visible";
+            label3.innerHTML = "Description";
+            mytable.appendChild(label3);
+
+            var input3 = document.createElement("input");
+            input3.name = "signalDescription"+signal;
+            input3.style.visibility = "visible";
+            mytable.appendChild(input3);
+
+
+            var label4 = document.createElement("label");
+            label4.style.visibility = "visible";
+            label4.innerHTML = "Require";
+            mytable.appendChild(label4);
+
+            var input4 = document.createElement("input");
+            input4.name = "signalRequire"+signal;
+            input4.style.visibility = "visible";
+            mytable.appendChild(input4);
+
+            var br = document.createElement("br");
+            mytable.appendChild(br);
+
+            signal++;
+            alert(signal)
+        }
+
+    </script>
+
+
+</div>
+<button onclick ="addsignal()" >Add Signal</button>
+
+
+<div id="listener">
+    <h2>Listener</h2>
+    <script type = "text/javascript">
+        var listener = 0;
+        var event = 0;
+        function addparameter(obj,r){
+            var input1 = document.createElement("input");
+            input1.style.visibility = "visible";
+            input1.name = obj.parentNode.id+"param"+ r.value;
+            alert(r.value);
+            r.value++;
+            obj.appendChild(input1);
+        }
+
+        function addeventlistner(obj){
+            obj.value++;
+            var count = 0;
+            var mytable = document.getElementById("listener");
+
+            var br = document.createElement("br");
+            mytable.appendChild(br);
+
+            var label1 = document.createElement("label");
+            label1.style.visibility = "visible";
+            label1.innerHTML = "Description";
+            mytable.appendChild(label1);
+
+            var input1 = document.createElement("input");
+            input1.name = "listenerDescription"+listener;
+            input1.style.visibility = "visible";
+            mytable.appendChild(input1);
+
+            var label2 = document.createElement("label");
+            label2.style.visibility = "visible";
+            label2.innerHTML = "URL";
+            mytable.appendChild(label2);
+
+            var input2 = document.createElement("input");
+            input2.name = "listenerURL"+listener;
+            input2.style.visibility = "visible";
+            mytable.appendChild(input2);
+
+            var label3 = document.createElement("label");
+            label3.style.visibility = "visible";
+            label3.innerHTML = "Signalname";
+            mytable.appendChild(label3);
+
+            var input3 = document.createElement("input");
+            input3.name = "listenerSignalname"+listener;
+            input3.style.visibility = "visible";
+            mytable.appendChild(input3);
+
+
+            var label4 = document.createElement("label");
+            label4.style.visibility = "visible";
+            label4.innerHTML = "Params";
+            mytable.appendChild(label4);
+
+            var input4 = document.createElement("div");
+            input4.name = "listenerParams"+listener;
+            input4.id ="listenerParams"+listener;
+            input4.style.visibility = "visible";
+            input4.innerHTML = "params";
+            mytable.appendChild(input4);
+
+            var addpara = document.createElement("button");
+            addpara.style.visibility = "visible";
+            addpara.onclick = function(){addparameter(this.parentNode,this);}
+            addpara.innerHTML ="add param";
+            alert(listener);
+            mytable.appendChild(addpara);
+
+            listener++;
+            mytable.appendChild(document.createElement("br").style.visibility = "visible");
+        }
+
+        function addrequestlistener(obj){
+            obj.value++;
+            var mytable = document.getElementById("listener");
+
+            var br = document.createElement("br");
+            mytable.appendChild(br);
+
+            var label1 = document.createElement("label");
+            label1.style.visibility = "visible";
+            label1.innerHTML = "Description";
+            mytable.appendChild(label1);
+
+            var input1 = document.createElement("input");
+            input1.name = "listenerDescription"+listener;
+            input1.style.visibility = "visible";
+            mytable.appendChild(input1);
+
+            var label2 = document.createElement("label");
+            label2.style.visibility = "visible";
+            label2.innerHTML = "URL";
+            mytable.appendChild(label2);
+
+            var input2 = document.createElement("input");
+            input2.name = "listenerURL"+listener;
+            input2.style.visibility = "visible";
+            mytable.appendChild(input2);
+
+            var label3 = document.createElement("label");
+            label3.style.visibility = "visible";
+            label3.innerHTML = "Signalname";
+            mytable.appendChild(label3);
+
+            var input3 = document.createElement("input");
+            input3.name = "listenerSignalname"+listener;
+            input3.style.visibility = "visible";
+            mytable.appendChild(input3);
+
+
+            var label4 = document.createElement("label");
+            label4.style.visibility = "visible";
+            label4.innerHTML = "Params";
+            mytable.appendChild(label4);
+
+            var input4 = document.createElement("div");
+            input4.name = "listenerParams"+listener;
+            input4.id ="listenerParams"+listener;
+            input4.style.visibility = "visible";
+            input4.innerHTML = "params";
+            mytable.appendChild(input4);
+
+            var addpara = document.createElement("button");
+            addpara.style.visibility = "visible";
+            addpara.value = 0;
+            addpara.innerHTML ="add param";
+            addpara.onclick = function(){addparameter(this.parentNode,this);}
+            alert(listener);
+            mytable.appendChild(addpara);
+
+            listener++;
+            mytable.appendChild(document.createElement("br").style.visibility = "visible");
+        }
+    </script>
+
+</div>
+
+<button name="eventlistener" onclick ="addeventlistner(this)" value="0">Add event listener</button>
+<button name="requestlistener" onclick ="addrequestlistener(this)" value="0" >Add request listener</button>
+</body>
+
+<input type = "submit" value = "save">
+
+#{/form}
+</html>
