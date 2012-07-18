@@ -33,8 +33,8 @@ public class AppController extends Controller {
 		System.out.println("checkUser");
 		String token = getAccessToken();
 		if (token == null) {
-			System.out.println(properties.irt.getAuthCodeUrl(config.properties.appID,config.properties.redirect));
-			Controller.redirect(properties.irt.getAuthCodeUrl(config.properties.appID,config.properties.redirect));
+			System.out.println(properties.irt.getAuthCodeUrl());
+			Controller.redirect(properties.irt.getAuthCodeUrl());
 			System.out.println("checkUser!!!!");
 		}
 	}
