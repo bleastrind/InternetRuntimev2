@@ -18,54 +18,9 @@ import play.mvc.Before;
 import play.mvc.Controller;
 import play.mvc.Scope.Session;
 import models.App;
+import models.RoutingChoice;
 import models.RoutingRecommender;
-class RoutingChoice{
-	private String signalName;
-	private String signalDescription;
-	private String listener;
-	private String listenerDescription;
-	private String routing;
-	
-	public RoutingChoice(String signalName,String signalDescription,String listener,String listenerDescription,String routing){
-		this.signalName =signalName ;
-		this.signalDescription=signalDescription;
-		this.listener=listener;
-		this.listenerDescription=listenerDescription;
-		this.routing=routing;
-	}
-	
-	public void setSignalName(String signalName) {
-		this.signalName = signalName;
-	}
-	public String getSignalName() {
-		return signalName;
-	}
-	public void setSignalDescription(String signalDescription) {
-		this.signalDescription = signalDescription;
-	}
-	public String getSignalDescription() {
-		return signalDescription;
-	}
-	public void setListener(String listener) {
-		this.listener = listener;
-	}
-	public String getListener() {
-		return listener;
-	}
-	public void setListenerDescription(String listenerDescription) {
-		this.listenerDescription = listenerDescription;
-	}
-	public String getListenerDescription() {
-		return listenerDescription;
-	}
-	public void setRouting(String routing) {
-		this.routing = routing;
-	}
-	public String getRouting() {
-		return routing;
-	}
-	
-}
+
 public class RoutingRecomController extends Controller{
 	
 	
@@ -89,20 +44,25 @@ public class RoutingRecomController extends Controller{
 			String accessToken = getAccessToken();
 			
 			RoutingRecommender routingRecommender = new RoutingRecommender();
-			List<scala.Tuple2<Signal,DescribedListenerConfig>> result = routingRecommender.getPossibleRoutings(fromAppIDString, accessToken);
+			List<scala.Tuple3<String,Signal,DescribedListenerConfig>> result = routingRecommender.getPossibleRoutings(fromAppIDString, accessToken);
 			List<RoutingChoice> choices = generateChoieces(result);
-			render("Routing/recomRouting.html",choices);
+			System.out.println(choices.size());
+			if(choices.size()> 0)
+				render("Routing/recomRouting.html",choices);
+			else
+				render("Routing/success.html");
 		}
 		
-		private static List<RoutingChoice> generateChoieces(List<scala.Tuple2<Signal,DescribedListenerConfig>> possibleRoutings){
+		private static List<RoutingChoice> generateChoieces(List<scala.Tuple3<String,Signal,DescribedListenerConfig>> possibleRoutings){
 			List<RoutingChoice> res = new ArrayList<RoutingChoice>();
-			for(scala.Tuple2<Signal,DescribedListenerConfig> data:possibleRoutings){
-				String routing = FreeRoutingGenerator.generateRouting(data._1.name(),data._2);
-				String signalName = data._1.name();
-				String signaldes = data._1.description();
-				String listenerApp = data._2.appName();
-				String listenerDes = data._2.description();
-				res.add(new RoutingChoice(signalName,signaldes,listenerApp,listenerDes,routing));
+			for(scala.Tuple3<String,Signal,DescribedListenerConfig> data:possibleRoutings){
+				String routing = FreeRoutingGenerator.generateRouting(data._2().name(),data._1(),data._3());
+				String signalName = data._2().name();
+				String signaldes = data._2().description();
+				String signalApp = data._1();
+				String listenerApp = data._3().appName();
+				String listenerDes = data._3().description();
+				res.add(new RoutingChoice(signalName,signalApp,signaldes,listenerApp,listenerDes,routing));
 			}
 			return res;
 		}
@@ -118,7 +78,9 @@ public class RoutingRecomController extends Controller{
 				
 				rt.ConfirmRouting(accessToken,routing);
 			}
-			/*PrintWriter out = response.getWriter();
+			render("Routing/success.html");
+			/*PrintWriter out 
+			 * = response.getWriter();
 			out.flush();
 			out.close();*/
 		}

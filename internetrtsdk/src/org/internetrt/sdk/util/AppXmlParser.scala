@@ -1,9 +1,6 @@
 package org.internetrt.sdk.util
 import java.util.ArrayList
 
-case class DescribedListenerConfig(appName:String,description:String,override val node:scala.xml.Node) extends ListenerConfig(node){
-  
-}
 
 class AppXmlParser (xml:String){
   //val xmlFile = scala.xml.XML.loadFile("renrenApplication.txt");
@@ -47,7 +44,7 @@ class AppXmlParser (xml:String){
   
   def getMatchedRequestSignals(config:ListenerConfig) = {
     val Signals = (xmlFile \ "Signals" \ "Request" ) ++ (xmlFile \ "Signals" \ "Event" ) filter{
-      request => config.matchSignalName(request \ "Signalname" text) 
+      request => (config.node \\ "Adapter" \ "Signalname").text == (request \ "Signalname" text) 
     }map{
       Request =>      
       val Signalname = (Request \ "Signalname").text
@@ -61,16 +58,16 @@ class AppXmlParser (xml:String){
   def getMatchedListeners(signalName:String) = {
      val appName = xmlFile \ "Name" text;
      scala.collection.JavaConversions.asList[DescribedListenerConfig](
-        xmlFile \ "SignalHanlders" 
+        xmlFile \ "SignalHanlders" \ "RequestListener" ++ xmlFile \ "SignalHanlders" \ "EventListener" 
            map(signalListener => DescribedListenerConfig(appName,signalListener \ "Description" text,signalListener))
-	  	   filter ( config =>  config.matchSignalName(signalName))
+	  	   filter ( config =>  (config.node \\ "Adapter" \ "Signalname").text == (signalName))
 	  	)
   }
   
   def getListeners() = {
      val appName = xmlFile \ "Name" text;
      scala.collection.JavaConversions.asList[DescribedListenerConfig](
-      xmlFile \ "SignalHanlders" 
+      xmlFile \ "SignalHanlders" \ "RequestListener" ++ xmlFile \ "SignalHanlders" \ "EventListener" 
            map(signalListener => DescribedListenerConfig(appName,signalListener \ "Description" text,signalListener))
 	  	)
   }

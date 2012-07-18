@@ -89,7 +89,7 @@ trait CassandraAccessControlSystem extends AccessControlSystemImpl{
 }
 
 object Cassandra{
-	val testCluster = HFactory.getOrCreateCluster("Test Cluster", "127.0.0.1:9160")
+	val testCluster = HFactory.getOrCreateCluster("Test Cluster", "192.168.3.145:9160")
 	
 	val accessTokenPool = new AccessTokenCassandraPool(testCluster)
 	val applicationAccessPool = new ApplicationAccessCassandraPool(testCluster)

@@ -14,12 +14,11 @@
   
   <body onload>
  #{form @RoutingRecomController.ConfirmRecomRouting()}
-	<input type = "submit" value = "back">
 
  	#{list items:choices, as:'choice'}
                <input type="checkbox" name="choices" value="${choice.routing}" checked/> 
                <span alt="${choice.signalDescription}">${choice.signalName}</span>:
-               <span alt="${choice.listenerDescription}">${choice.listener}<br/>
+               <span alt="${choice.listenerDescription}">${choice.listenerAppName}<br/>
     #{/list}
     <input type = "submit" value = "confirm">
  #{/form}
