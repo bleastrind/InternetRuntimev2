@@ -52,11 +52,11 @@ class RoutingCassandraPool(cluster: Cluster)
 
   def getRoutingsBySignal(signal: Signal): Seq[Routing] = {
     val key = getKey(signal)
+    System.out.println("Routing key"+key)
     val query = HFactory.createSliceQuery(keyspace, StringSerializer.get(), StringSerializer.get(), StringSerializer.get())
       .setKey(key)
       .setColumnFamily(cfname)
       .setRange(null, null, false, 1000)
-
     //val iterator =  new ColumnSliceIterator[String,String,Routing](query, null, "\uFFFF", false);
 
     val scalaseq = scala.collection.JavaConversions.collectionAsScalaIterable(query.execute().get().getColumns()).toSeq

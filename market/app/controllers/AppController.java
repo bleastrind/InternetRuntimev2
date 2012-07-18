@@ -24,6 +24,7 @@ public class AppController extends Controller {
 		System.out.println("get token!!!!?????!!!!");
 		System.out.println(session.get("token"));
 		System.out.println("get token!!!!!!!!!!!!!!!!!");
+		System.out.println("token:"+session.get("token"));
 		return session.get("token");
 	}
 

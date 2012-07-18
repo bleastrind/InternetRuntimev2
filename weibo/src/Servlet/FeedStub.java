@@ -49,20 +49,6 @@ public class FeedStub implements Runnable{
 		}
 	}
 	
-	public void sendMessage(String uid,String to,String message) throws Exception{
-		URL url = new URL("http://127.0.0.1/messageTransfer/transfer/message?uid="+uid+
-				"&from=Sina"+"&to="+to+"&message="+message);
-		HttpURLConnection urlConn = null;
-		urlConn = (HttpURLConnection) url.openConnection();
-		urlConn.setRequestProperty("accept", "*/*"); 
-		urlConn.setRequestProperty("connection", "Keep-Alive"); 
-        urlConn.setRequestMethod("GET");
-        urlConn.setConnectTimeout(5000);// （单位：毫秒）jdk
-        urlConn.setReadTimeout(5000);// （单位：毫秒）jdk 1.5换成这个,读操作超时
-        urlConn.setDoOutput(true);
-        urlConn.connect();
-	}
-	
 	public void publish(String Message,String token) throws WeiboException{
 		synchronized(this){
 			weibo.setToken(token);
@@ -89,9 +75,10 @@ public class FeedStub implements Runnable{
 						if (!status.contains(x)) {						
 							System.out.println("*******"+x.getText());
 							try {
+								System.out.println("token:"+us.getToken());
 								Map<String,String> map = new HashMap();
 								map.put("message", x.getText());
-								config.properties.irt.send(us.getToken(), "sina", "share", map);
+								config.properties.irt.send(us.getToken(),"updateStatus", map);
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();

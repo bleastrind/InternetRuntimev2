@@ -3,8 +3,11 @@ package controllers;
 import org.internetrt.sdk.InternetRT;
 import org.internetrt.sdk.util.RoutingGenerator;
 
+import config.properties;
+
 import cn.edu.act.internetos.appmarket.service.TermToJson;
 
+import play.mvc.Before;
 import play.mvc.Controller;
 import play.mvc.Scope.Session;
 import models.App;
@@ -12,11 +15,23 @@ import models.RoutingRecommender;
 
 public class RoutingRecomController extends Controller{
 	
+	
 		public static String getAccessToken() {
 			System.out.println("get token!!!!!!!!!!!!!!!!!");
 			return session.get("token");
 		}
 		
+		   @Before(only = { "index", "recomRoutingBaseFrom", "recomRoutingBaseTo" })
+		public static void checkUser() {
+			System.out.println("checkUser");
+			String token = getAccessToken();
+			if (token == null) {
+				System.out.println(properties.irt.getAuthCodeUrl(config.properties.appID,config.properties.redirect));
+				Controller.redirect(properties.irt.getAuthCodeUrl(config.properties.appID,config.properties.redirect));
+				System.out.println("checkUser!!!!");
+			}
+		}
+	   
 		public static void index(String id){
 			session.put("installappid",id);
 			render("Routing/recomRouting.html");
