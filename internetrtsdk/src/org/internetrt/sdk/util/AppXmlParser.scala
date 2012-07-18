@@ -1,7 +1,6 @@
 package org.internetrt.sdk.util
 import java.util.ArrayList
 
-
 class AppXmlParser (xml:String){
   //val xmlFile = scala.xml.XML.loadFile("renrenApplication.txt");
   val xmlFile = scala.xml.XML.loadString(xml)
