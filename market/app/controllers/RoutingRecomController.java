@@ -7,7 +7,7 @@ import org.internetrt.sdk.InternetRT;
 import org.internetrt.sdk.util.DescribedListenerConfig;
 import org.internetrt.sdk.util.FreeRoutingGenerator;
 import org.internetrt.sdk.util.ListenerConfig;
-import org.internetrt.sdk.util.RoutingGenerator;
+import org.internetrt.sdk.util.FreeRoutingGenerator;
 import org.internetrt.sdk.util.Signal;
 
 import config.properties;
