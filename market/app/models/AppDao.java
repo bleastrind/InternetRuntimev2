@@ -22,7 +22,7 @@ public class AppDao {
 	final static String CF = "App";
 	final static StringSerializer se = new StringSerializer();
 	
-	Cluster cluster = getOrCreateCluster("Test Cluster", "192.168.3.145:9160");
+	Cluster cluster = getOrCreateCluster("Test Cluster", "127.0.0.1:9160");
 	Keyspace keyspace = createKeyspace(KEYSPACE, cluster);	
 	Mutator<String> m = createMutator(keyspace, se);
 	

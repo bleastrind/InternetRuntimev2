@@ -94,7 +94,7 @@ public class HttpHelper {
 			}
 		}catch (IOException e) {
 			// TODO: handle exception
-			System.out.println("执行Http Post请求"+url+"时，发生异常！"+e);
+			System.out.println("Exception happened when sending Http Post to:"+url+"\n"+e);
 		}finally{
 			method.releaseConnection();
 		}

@@ -39,6 +39,6 @@ class RoutingGenerator (signalXmlString:String, appXmlString:String){
 
 object FreeRoutingGenerator{
   	def generateRouting(signalname:String,appid:String,listener: ListenerConfig):String = {
-	  <Routing><signal><from>{appid}</from><name>{signalname}</name></signal>{listener.node}</Routing> toString
+	  <Routing><Signal><from>{appid}</from><name>{signalname}</name></Signal>{listener.node}</Routing> toString
 	}
 }
