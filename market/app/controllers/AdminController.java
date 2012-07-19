@@ -49,11 +49,11 @@ public class AdminController extends Controller {
     
     public static void addAppSave(String id,String name, String AccessRequest, String installUrl,String email,String updated,String updateUrl,String secret)
     {
-    	System.out.println(Controller.request.params.get("ListenerSignalname0"));
+    	System.out.println("listener"+Controller.request.params.get("ListenerSignalname0"));
     	String information = "<Application><Name>"+name+"</Name><AppID>"+id +
     			"</AppID><AccessRequests><AccessRequest>"+AccessRequest+"</AccessRequest></AccessRequests></Application>";
     	System.out.println("id:"+id+"secret:"+secret+"information:"+information);
-    	AdminService.addAppSave(id,name, information, installUrl,email,updated,updateUrl,secret);
+    	//AdminService.addAppSave(id,name, information, installUrl,email,updated,updateUrl,secret);
         welcome();
     }
     

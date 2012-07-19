@@ -11,12 +11,11 @@ import net.sf.json.JSONObject;
 import org.internetrt.sdk.InternetRT;
 import org.internetrt.sdk.util.AppXmlParser;
 import org.internetrt.sdk.util.Application;
+import org.internetrt.sdk.util.DescribedListenerConfig;
 import org.internetrt.sdk.util.ListenerConfig;
 import org.internetrt.sdk.util.Signal;
 
 
-
-/*
 public class RoutingRecommender {
 	
 	private InternetRT rt = config.properties.irt;
@@ -72,26 +71,5 @@ public class RoutingRecommender {
 				}
 			}
 		}
-//			List<String> runatList = appXmlParser.getRequestListenerForRequest(signalName);
-//			JSONArray toAppList= new JSONArray();
-//			
-//			for(String runatAppID : runatList){
-//				
-//				System.out.println("RUNATAPPID"+runatAppID);
-//				
-//				String toAppXmlString = rt.getAppDetail(runatAppID, accessToken);
-//				AppXmlParser toAppXmlParser = new AppXmlParser(toAppXmlString);
-//				Application application = toAppXmlParser.createApplication();
-//				JSONObject applicationJsonObject = TermToJson.ApplicationToJson(application);
-//				toAppList.put(applicationJsonObject);
-//			}
-			
-			if(runatList.size()>0){
-				JSONObject tempObject = TermToJson.signalAndAppListToJson(signalName, toAppList);
-				resultString = (resultArray.put(tempObject)).toString();
-			}
-		}
-		return resultString;
 	}
 }
-*/
