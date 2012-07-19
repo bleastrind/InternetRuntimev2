@@ -27,7 +27,7 @@
  </servlet-mapping>
  <servlet-mapping>
   <servlet-name>message</servlet-name>
-  <url-pattern>/weibot/message</url-pattern>
+  <url-pattern>/weibot/reciver</url-pattern>
  </servlet-mapping>
  <welcome-file-list>
   <welcome-file>index.jsp</welcome-file>

@@ -67,6 +67,7 @@ class AppCassandraPool(cluster: Cluster) extends AppPool {
   }
   def getApp(userID: String, id: String): Option[Application] ={
     val res = template.queryColumns(userID)
+
     if (res.hasResults()){
       val xml = res.getString(id)
       println(id)

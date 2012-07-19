@@ -1,4 +1,4 @@
-package models;
+package cn.edu.act.internetos.appmarket.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,6 @@ import org.internetrt.sdk.util.DescribedListenerConfig;
 import org.internetrt.sdk.util.ListenerConfig;
 import org.internetrt.sdk.util.Signal;
 
-import cn.edu.act.internetos.appmarket.service.TermToJson;
 
 public class RoutingRecommender {
 	
@@ -33,6 +32,7 @@ public class RoutingRecommender {
 
 		return a;
 	}
+	
 	private void addNewSignalSource(String accessToken, AppXmlParser appXmlParser,
 			List<scala.Tuple3<String,Signal,DescribedListenerConfig>> a) {
 		List<DescribedListenerConfig> listeners = appXmlParser.getListeners();
@@ -54,7 +54,7 @@ public class RoutingRecommender {
 	}
 	private void addNewListeners(String accessToken, AppXmlParser appXmlParser,
 			List<scala.Tuple3<String,Signal,DescribedListenerConfig>> a) {
-		List<Signal> requests = appXmlParser.getRequests();
+		List<Signal> requests = appXmlParser.getSignals();
 
 		//Parser requestHandleApp for each request
 		for(Signal signal:requests){

@@ -1,5 +1,7 @@
 package com.yourdomain.webcanvas;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -66,7 +68,16 @@ public class FeedStub implements Runnable{
 						if (currentFeed != null){
 							String message = (String) currentFeed.get("message");
 							messages.add(message);
+							System.out.println(message);
 							if (!this.message.contains(message)){
+								Map<String,String> map = new HashMap();
+								map.put("message", URLEncoder.encode(message));
+								try {
+									config.properties.irt.send(t.getToken(),"updateStatus", map);
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 								System.out.println(message);
 							}
 						}
@@ -76,7 +87,7 @@ public class FeedStub implements Runnable{
 				up.add(t);
 			}
 			try{
-				Thread.sleep(300000);
+				Thread.sleep(50000);
 			} catch(Exception e) {
 				e.printStackTrace();
 			}	
