@@ -6,12 +6,14 @@ class URI(uri:String){
   var query:String=""
   try{
     val parts = uri.split("://")
+    
     protocal = parts(0)
-    val leftparts = parts(1).split("?")
+    val leftparts = parts(1).split("\\?")
+    
     content = leftparts(0)
     query = if (leftparts.length > 1) leftparts(1) else ""
   }catch{
-    case _ => throw new Exception("Bad Formated URI!")
+    case e =>e.printStackTrace(); throw new Exception("Bad Formated URI!"+uri)
   }
   
 }

@@ -35,7 +35,6 @@ object ListenerRequestGenerator{
       case DataAdapter(<value><var/></value>) => (key,data.get.head)
       case DataAdapter(<value><var><newkey>{newkey}</newkey></var></value>)=>(newkey.text,data.get.head)
       case DataAdapter(<value><var><ID/></var></value>) => (key,extData.map.get(RoutingXmlParser.ROUTING_INSTANCE_ID_KEY).get)
-      case DataAdapter(<value>{text}</value>) => (key, text.text)
       case DataAdapter(x) => {
           System.out.println("Not supported format:"+x)
     	  throw new FormatErrorException("Format Error!"+x)
