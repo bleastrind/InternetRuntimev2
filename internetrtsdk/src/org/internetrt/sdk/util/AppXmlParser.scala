@@ -35,7 +35,7 @@ class AppXmlParser (xml:String){
       val Signalname = (Request \ "Signalname").text
       val Description = (Request \ "Description").text
       val Require = (Request \ "Require").text
-      val from = (Request \ "From").text
+      val from = (Request \ "@runat").text
       val From = if( from == "" ) xmlFile \ "AppID" text else from
       val Type = "Request"
       Signal(Signalname, Description, Require, From, Type)
@@ -44,7 +44,7 @@ class AppXmlParser (xml:String){
       val Signalname = (Request \ "Signalname").text
       val Description = (Request \ "Description").text
       val Require = (Request \ "Require").text
-      val from = (Request \ "From").text
+      val from = (Request \ "@runat").text
       val From = if( from == "" ) xmlFile \ "AppID" text else from
       val Type = "Event"
       Signal(Signalname, Description, Require, From, Type)
