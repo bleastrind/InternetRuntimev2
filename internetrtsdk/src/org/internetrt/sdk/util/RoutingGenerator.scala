@@ -2,7 +2,7 @@ package org.internetrt.sdk.util
 import scala.xml.XML
 import scala.xml.Node
 import scala.xml.NodeSeq
-
+ 
 class RoutingGenerator (signalXmlString:String, appXmlString:String){
   
 	val signalXml = scala.xml.XML.loadString(signalXmlString);

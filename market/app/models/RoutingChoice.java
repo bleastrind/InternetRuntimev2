@@ -59,4 +59,13 @@ public class RoutingChoice{
 		return listenerAppName;
 	}
 	
+	@Override
+	public boolean equals(Object obj){
+		return routing.equals(((RoutingChoice)obj).routing);
+	}
+	
+	@Override
+	public int hashCode(){
+		return routing.hashCode();
+	}
 }
