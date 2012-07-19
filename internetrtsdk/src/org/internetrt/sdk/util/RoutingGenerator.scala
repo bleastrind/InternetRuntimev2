@@ -24,7 +24,6 @@ class RoutingGenerator (signalXmlString:String, appXmlString:String){
 	
 	def generateRequestListenerNodes(from:String, to:String): NodeSeq = {
 	  val RequestListener = appXml \ "SignalHanlders" \ "RequestListener" 
-	  val RequestListener = appXml \ "SignalHanlders" \ "RequestListener" 
 	  val DescriptionNode = RequestListener \ "Description"
 	  val URLNode = RequestListener \ "URL"
 	  val AdapterNode = RequestListener \ "Adapter"
