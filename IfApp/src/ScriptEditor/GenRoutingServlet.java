@@ -1,79 +1,46 @@
 package ScriptEditor;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.internetrt.sdk.InternetRT;
 import org.internetrt.sdk.util.RoutingGenerator;
 
-
-
-
-
-
+/**
+ * Servlet implementation class GenRoutingServlet
+ */
+@WebServlet("/GenRoutingServlet")
 public class GenRoutingServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public GenRoutingServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
 	/**
-	 * Constructor of the object.
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	public GenRoutingServlet() {
-		super();
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 	}
 
 	/**
-	 * Destruction of the servlet. <br>
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	public void destroy() {
-		super.destroy(); // Just puts "destroy" string in log
-		// Put your code here
-	}
-
-	/**
-	 * The doGet method of the servlet. <br>
-	 *
-	 * This method is called when a form has its tag value method equals to get.
-	 * 
-	 * @param request the request send by the client to the server
-	 * @param response the response send by the server to the client
-	 * @throws ServletException if an error occurred
-	 * @throws IOException if an error occurred
-	 */
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-
-		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		out
-				.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
-		out.println("<HTML>");
-		out.println("  <HEAD><TITLE>A Servlet</TITLE></HEAD>");
-		out.println("  <BODY>");
-		out.print("    This is ");
-		out.print(this.getClass());
-		out.println(", using the GET method");
-		out.println("  </BODY>");
-		out.println("</HTML>");
-		out.flush();
-		out.close();
-	}
-
-	/**
-	 * The doPost method of the servlet. <br>
-	 *
-	 * This method is called when a form has its tag value method equals to post.
-	 * 
-	 * @param request the request send by the client to the server
-	 * @param response the response send by the server to the client
-	 * @throws ServletException if an error occurred
-	 * @throws IOException if an error occurred
-	 */
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		String trigger = request.getParameter("trigger");
 		String triggerChannel = request.getParameter("triggerChannel");
 		String actionChannel = request.getParameter("actionChannel");
@@ -82,7 +49,7 @@ public class GenRoutingServlet extends HttpServlet {
 		System.out.println("TRIGGERCHANNEL: "+triggerChannel);
 		System.out.println("ACTIONCHANNEL: "+actionChannel);
 		
-		InternetRuntime rt = new InternetRuntime();
+		InternetRT rt = config.properties.irt;
 		
 		HttpSession session = request.getSession();
 		String accessToken = session.getAttribute("accessToken").toString();
@@ -90,8 +57,14 @@ public class GenRoutingServlet extends HttpServlet {
 		String signalXml = rt.getSignalDefination(trigger);
 		String appXml = rt.getAppDetail(actionChannel, accessToken);
 		
+		System.out.println("SIGNALXMLSTRING"+signalXml);
+		System.out.println("APPXML"+appXml);
+		
+		String routingID = UUID.randomUUID().toString();
+		String userID = rt.getUserIdByToken(accessToken);
+		  
 		RoutingGenerator routingGenerator = new RoutingGenerator(signalXml, appXml);
-		String routingXml = routingGenerator.generateRouting(trigger, triggerChannel, actionChannel);
+		String routingXml = routingGenerator.generateRouting(trigger, triggerChannel, actionChannel, routingID, userID);
 		
 		String resultString = TermToJson.stringToJson("routingXml", routingXml).toString();
 		
@@ -99,15 +72,6 @@ public class GenRoutingServlet extends HttpServlet {
 		out.write(resultString);
 		out.flush();
 		out.close();
-	}
-
-	/**
-	 * Initialization of the servlet. <br>
-	 *
-	 * @throws ServletException if an error occurs
-	 */
-	public void init() throws ServletException {
-		// Put your code here
 	}
 
 }
