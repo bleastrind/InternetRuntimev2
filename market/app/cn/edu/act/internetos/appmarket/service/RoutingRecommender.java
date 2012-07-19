@@ -1,4 +1,4 @@
-package models;
+package cn.edu.act.internetos.appmarket.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,6 @@ import org.internetrt.sdk.util.Application;
 import org.internetrt.sdk.util.ListenerConfig;
 import org.internetrt.sdk.util.Signal;
 
-import cn.edu.act.internetos.appmarket.service.TermToJson;
 
 
 /*

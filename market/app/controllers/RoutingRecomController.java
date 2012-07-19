@@ -5,6 +5,8 @@ import org.internetrt.sdk.util.DescribedListenerConfig;
 import org.internetrt.sdk.util.FreeRoutingGenerator;
 import org.internetrt.sdk.util.Signal;
 
+import cn.edu.act.internetos.appmarket.service.RoutingRecommender;
+
 import config.properties;
 
 import cn.edu.act.internetos.appmarket.service.TermToJson;
@@ -12,7 +14,6 @@ import cn.edu.act.internetos.appmarket.service.TermToJson;
 import play.mvc.Before;
 import play.mvc.Controller;
 import models.RoutingChoice;
-import models.RoutingRecommender;
 
 public class RoutingRecomController extends Controller{
 	
