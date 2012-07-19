@@ -11,6 +11,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -80,30 +81,24 @@ public class HttpHelper {
 		return result;
 	}
 
-	public static String httpClientPost(String url, Map<String, String> params) {
+	public static String httpClientPost(String url, NameValuePair[] data)
+	{
 		String response = null;
 		HttpClient client = new HttpClient();
-		HttpMethod method = new PostMethod(url);
-		// Set Http Post Data
-		if (params != null) {
-			HttpMethodParams p = new HttpMethodParams();
-			for (Map.Entry<String, String> entry : params.entrySet()) {
-				p.setParameter(entry.getKey(), entry.getValue());
-			}
-			method.setParams(p);
-		}
-		try {
+		PostMethod method = new PostMethod (url);
+		method.setRequestBody(data);
+		try{
 			client.executeMethod(method);
-			if (method.getStatusCode() == HttpStatus.SC_OK) {
+			if(method.getStatusCode()== HttpStatus.SC_OK){
 				response = method.getResponseBodyAsString();
 			}
-		} catch (IOException e) {
+		}catch (IOException e) {
 			// TODO: handle exception
-			System.out.println("Http Post:" + url + "\terror:" + e);
-		} finally {
+			System.out.println("执行Http Post请求"+url+"时，发生异常！"+e);
+		}finally{
 			method.releaseConnection();
 		}
-
+		
 		return response;
 	}
 }

@@ -2,11 +2,10 @@ package org.internetrt.sdk.util
 import java.util.ArrayList
 
 class AppXmlParser (xml:String){
-  //val xmlFile = scala.xml.XML.loadFile("renrenApplication.txt");
   val xmlFile = scala.xml.XML.loadString(xml)
   
   def createApplication() =  {
-     Application((xmlFile \ "Name").text, (xmlFile \ "AppID").text, getRequests()) 
+     Application((xmlFile \ "Name").text, (xmlFile \ "AppID").text, getSignals()) 
   }
   
   def getUrl(signal:String): String= {
@@ -30,28 +29,37 @@ class AppXmlParser (xml:String){
 		  (xmlFile \ "Name").text
   }
   
-  def getRequests(): java.util.List[Signal] = 
+  private def _getSignals()= 
   {
-    val Signals = xmlFile \ "Signals" \ "Request" map{(Request)=>
+    val RequestSignals = xmlFile \ "Signals" \ "Request" map{(Request)=>
       val Signalname = (Request \ "Signalname").text
       val Description = (Request \ "Description").text
       val Require = (Request \ "Require").text
-      Signal(Signalname, Description, Require)
+      val from = (Request \ "From").text
+      val From = if( from == "" ) xmlFile \ "AppID" text else from
+      val Type = "Request"
+      Signal(Signalname, Description, Require, From, Type)
     }
-    scala.collection.JavaConversions.asList[Signal](Signals)
+    val EventSignals = xmlFile \ "Signals" \ "Event" map{(Request)=>
+      val Signalname = (Request \ "Signalname").text
+      val Description = (Request \ "Description").text
+      val Require = (Request \ "Require").text
+      val from = (Request \ "From").text
+      val From = if( from == "" ) xmlFile \ "AppID" text else from
+      val Type = "Event"
+      Signal(Signalname, Description, Require, From, Type)
+    }
+    (RequestSignals ++ EventSignals)
   }
   
-
+  def getSignals():java.util.List[Signal]={
+    scala.collection.JavaConversions.asList[Signal](_getSignals) 
+  }
+  
   def getMatchedRequestSignals(config:ListenerConfig) = {
-    val Signals = (xmlFile \ "Signals" \ "Request" ) ++ (xmlFile \ "Signals" \ "Event" ) filter{
-      request => (config.node \\ "Adapter" \ "Signalname").text == (request \ "Signalname" text) 
-    }map{
-      Request =>      
-      val Signalname = (Request \ "Signalname").text
-      val Description = (Request \ "Description").text
-      val Require = (Request \ "Require").text
-      Signal(Signalname, Description, Require)
-    }
+    val Signals = _getSignals() filter(
+      signal => (config.node \\ "Adapter" \ "Signalname").text == signal.name
+   )
     scala.collection.JavaConversions.asList[Signal](Signals)
   }
   
@@ -61,17 +69,14 @@ class AppXmlParser (xml:String){
         xmlFile \ "SignalHanlders" \ "RequestListener" ++ xmlFile \ "SignalHanlders" \ "EventListener" 
            map(signalListener => DescribedListenerConfig(appName,signalListener \ "Description" text,signalListener))
 	  	   filter ( config =>  (config.node \\ "Adapter" \ "Signalname").text == (signalName))
-
 	  	)
   }
   
   def getListeners() = {
-
      val appName = xmlFile \ "Name" text;
      scala.collection.JavaConversions.asList[DescribedListenerConfig](
       xmlFile \ "SignalHanlders" \ "RequestListener" ++ xmlFile \ "SignalHanlders" \ "EventListener" 
            map(signalListener => DescribedListenerConfig(appName,signalListener \ "Description" text,signalListener))
-
 	  	)
   }
   
