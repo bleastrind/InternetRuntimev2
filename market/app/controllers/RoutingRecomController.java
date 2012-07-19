@@ -8,13 +8,14 @@ import org.internetrt.sdk.util.DescribedListenerConfig;
 import org.internetrt.sdk.util.FreeRoutingGenerator;
 import org.internetrt.sdk.util.Signal;
 
+import cn.edu.act.internetos.appmarket.service.RoutingRecommender;
+
 import config.properties;
 
 
 import play.mvc.Before;
 import play.mvc.Controller;
 import models.RoutingChoice;
-import models.RoutingRecommender;
 
 public class RoutingRecomController extends Controller{
 	
@@ -29,8 +30,8 @@ public class RoutingRecomController extends Controller{
 			System.out.println("checkUser");
 			String token = getAccessToken();
 			if (token == null) {
-				System.out.println(properties.irt.getAuthCodeUrl(config.properties.appID,config.properties.redirect));
-				Controller.redirect(properties.irt.getAuthCodeUrl(config.properties.appID,config.properties.redirect));
+				System.out.println(properties.irt.getAuthCodeUrl());
+				Controller.redirect(properties.irt.getAuthCodeUrl());
 				System.out.println("checkUser!!!!");
 			}
 		}
