@@ -2,15 +2,17 @@ package ScriptEditor;
 import java.util.List;
 import java.util.Iterator;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.internetrt.sdk.util.Application;
 import org.internetrt.sdk.util.Signal;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import org.omg.CORBA.portable.ApplicationException;
 
 public class TermToJson 
@@ -66,6 +68,42 @@ public class TermToJson
 		JSONObject result = new JSONObject();
 		try {
 			result.put(key, value);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public static JSONObject signalAndAppListToJson(String signalName, JSONArray toAppList)
+	{
+		JSONObject result = new JSONObject();
+		try {
+			result.put("signalName", signalName);
+			result.put("toAppList", toAppList);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public static JSONObject appAndSignalListToJson(JSONObject application, JSONArray signalsNameList){
+		JSONObject result = new JSONObject();
+		try {
+			result.put("signalNameList", signalsNameList);
+			result.put("application", application);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public static JSONObject jsonArrayToJsonObject(String arrayName, JSONArray list){
+		JSONObject result = new JSONObject();
+		try {
+			result.put(arrayName, list);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -6,6 +6,7 @@
 <p>${app.information}</p>
 #{form @AppController.addUserAppSave() }
 	<input type="hidden" name="userId" value="${token}">
+	<input type="hidden" name="id" value="${app.getId()}"/>"
 	<input type="hidden" name="name" value="${app.getName()}">
 	<input type="hidden" name="information" value="${app.getInformation()}">
 	<input type="hidden" name="installUrl" value="${app.getInstallUrl()}">

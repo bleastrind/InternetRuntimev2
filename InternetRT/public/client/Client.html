@@ -11,14 +11,17 @@ window.InternetRuntime.Client.Core = new function()
 		LOGIN_URL: '/clients/login',
 		REGISTER_URL: '/clients/register',
 		LONGPOLLING_URL: '/clients/longpolling',
+		INSTALL_ROOT_APP_URL: '/clients/installapp',
 		CID_PARAM_NAME: 'CID',
 		STATUS_PARAM_NAME: 'CLIENTSTATUS',		
 		STATUS_ACTIVE: 'Active',
 		STATUS_BACKGROUND: 'Backgroung',
-		STATUS_SLEEP: 'Sleep'
+		STATUS_SLEEP: 'Sleep',
+		
+		IFRAME_SIZE: {dx: 400, dy: 230}
 	}
 	
-	var CORS = new function
+	var CORS = new function()
 	{
 		//	Receive
 		window.onmessage = function(e)
@@ -34,6 +37,11 @@ window.InternetRuntime.Client.Core = new function()
 			registerByJump: function(data)
 			{
 				window.InternetRuntime.Client.Core.registerByJump();
+			},
+			installRootApp: function(data)
+			{
+				
+				window.InternetRuntime.Client.Core.installRootApp();
 			},
 			/*
 			initOption: function(data)
@@ -51,6 +59,19 @@ window.InternetRuntime.Client.Core = new function()
 		{
 			window.top.postMessage(msg, '*');
 		}
+		this.showIframe = function(xy, size)
+		{
+			var msg = 
+			{
+				type: 'showIframe',
+				xy: xy,
+				size: size
+			}
+				
+			postMessage(msg);
+		}
+		
+		
 		this.jumpToUrl = function(url)
 		{
 			var msg = 
@@ -65,7 +86,7 @@ window.InternetRuntime.Client.Core = new function()
 		{
 			var msg = 
 			{
-				type: 'knowUser',
+				type: 'knownUser',
 				username: 'Xu Peilong'	//need a username?
 			}
 			postMessage(msg);
@@ -102,14 +123,27 @@ window.InternetRuntime.Client.Core = new function()
 	
 	
 	
-
+	this.installRootApp = function()
+	{
+		
+		var Iframe = document.createElement('iframe');
+		Iframe.src = CONST.BASE_URL + CONST.INSTALL_ROOT_APP_URL;
+		Iframe.style.left = 0 + 'px';
+		Iframe.style.top = 0 + 'px';
+		Iframe.style.width = CONST.IFRAME_SIZE.dx - 30 + 'px';
+		Iframe.style.height = CONST.IFRAME_SIZE.dy - 30 + 'px';
+		Iframe.frameBorder = 0;
+		document.body.appendChild(Iframe);
+		CORS.showIframe('center', CONST.IFRAME_SIZE);
+	}
+	
 	
 	//	Client start to work
 	this.run = function()
 	{	
 		try
 		{
-			Communication.startLongpolling();
+			Communication.StartLongPolling();
 		}
 		catch(e)
 		{
@@ -200,7 +234,10 @@ window.InternetRuntime.Client.Core = new function()
 				else
 					request.send();
 			}
+			return this;
 		}
+		
+		
 		
 		
 		
@@ -250,11 +287,11 @@ window.InternetRuntime.Client.Core = new function()
 			{
 				try
 				{
-					new asynHttpRequest
+					new asynHttpRequest()
 					.setType('Get')
 					.setUrl(Url)
-					.pushParam(CID_PARAM_NAME, CId)
-					.pushParam(STATUS_PARAM_NAME, Status)
+					.pushParam(CONST.CID_PARAM_NAME, CId)
+					.pushParam(CONST.STATUS_PARAM_NAME, Status)
 					.setOKCallBack(handleLongpolling)
 					.setErrorCallBack(unknownUser)
 					.send();

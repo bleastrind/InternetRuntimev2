@@ -1,0 +1,10 @@
+dist
+.metadata
+*.class
+*.jar
+*.project
+*.classpath
+*.cache
+*.war
+*.prefs
+.metadata

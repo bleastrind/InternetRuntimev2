@@ -16,7 +16,10 @@ object BrowserBaseClientInputs extends Controller {
 	      Ok(SiteUserInterface.register(username, password));
       }
   }
-
+  def getName() = Action {
+  request =>
+	Ok(request.session.get("username").getOrElse(""))
+  }
   def login() = Action {
     implicit request =>
       System.out.println("Before Login:"+request.session)
@@ -35,7 +38,8 @@ object BrowserBaseClientInputs extends Controller {
 	
 	      System.out.println("UID in login" + uid);
 	      System.out.println("oldurl:" + oldurl);
-	      Redirect(oldurl).withSession(request.session + (CONSTS.SESSIONUID -> uid));
+	      Redirect(oldurl).withSession(request.session + 
+										(CONSTS.SESSIONUID -> uid) + ("username" -> username));
 	    //		}catch{
 	    //		  case e => {
 	    //		    e.printStackTrace();
@@ -44,7 +48,27 @@ object BrowserBaseClientInputs extends Controller {
 	    //		}
       }
   }
+  def confirmRouting() = Action {
+    implicit request =>
+      
+      request.session.get(CONSTS.SESSIONUID) match {
+        case Some(uid) => {
+          request.body.asFormUrlEncoded.get("xml") match {
+            case Seq(xml) => {
+              
+              val success = SiteUserInterface.confirmRouting(uid, xml);
 
+              Ok(success.toString());
+            }
+            case _ => InternalServerError
+          }
+        }
+        case None => {
+          val thispage = controllers.routes.Application.index().absoluteURL(false)
+          Ok(views.html.login(thispage))
+        }
+      }
+  }
   def installRootApp() = Action {
     implicit request =>
       

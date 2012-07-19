@@ -1,5 +1,6 @@
 .settings
 lib
+bin
 .classpath
 .mymetadata
 .project

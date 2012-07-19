@@ -29,8 +29,9 @@ public class HomeServlet extends HttpServlet{
 				System.out.print(Auth);
 				oauth.parseSignedRequest(Auth);
 				String sessionKey = oauth.getToken();
+				System.out.println("weibo"+sessionKey);
 				request.setAttribute("sessionkeyfromweibo", sessionKey);
-				System.out.println(sessionKey);
+				System.out.println("weibo"+sessionKey);
 				Initer.stub.suspend();
 				Initer.feedstub.addFeedUser(sessionKey,Token);
 				Initer.stub.resume();
@@ -39,10 +40,7 @@ public class HomeServlet extends HttpServlet{
 			}
 			
 			RequestDispatcher welcomeDispatcher = request.getRequestDispatcher("/views/home.jsp");
-			welcomeDispatcher.forward(request, response);
-			
-			
-			
+			welcomeDispatcher.forward(request, response);		
 		}
 
 }

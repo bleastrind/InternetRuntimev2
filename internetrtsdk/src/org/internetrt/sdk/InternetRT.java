@@ -107,22 +107,24 @@ public class InternetRT {
 				+ "&response_type=" + response_type;
 	}
 
-	public String send(String accesstoken, String from, String signalName,
+	public String send(String accesstoken,String signalName,
 			Map<String, String> sourceMap) throws IOException {
 
-		String xml = initActionFromThirdPart(accesstoken, signalName, sourceMap);
+		String xml = initActionFromThirdPart(accesstoken, signalName, null);
 		System.out.println(xml);
 		RoutingXmlParser parser = new RoutingXmlParser(xml);
-		ListenerRequestGenerator generator = new ListenerRequestGenerator(parser);
 
 		//Event signals
 		for(ListenerConfig config: parser.getEventListeners()){
-			String eventUrl = generator.generateSignalListenerUrl(adapter(sourceMap), config);
+			String eventUrl = ListenerRequestGenerator.generateSignalListenerUrl(adapter(sourceMap), config , parser.getExtData());
 			HttpHelper.httpClientGet(eventUrl);
 		}
-		//Request signal
-		String urlstr = generator.generateSignalListenerUrl(adapter(sourceMap),null);	
-		return HttpHelper.httpClientGet(urlstr);
+		if(parser.getRequestListener() != null){
+			//Request signal
+			String urlstr = ListenerRequestGenerator.generateSignalListenerUrl(adapter(sourceMap), parser.getRequestListener(), parser.getExtData());	
+			return HttpHelper.httpClientGet(urlstr);
+		}else
+			return null;
 	}
 	
 
@@ -160,6 +162,7 @@ public class InternetRT {
 
 		String requestUrl = internetRTConfig.getValue("baseURL")+"/config/apps/" + appID + "?"
 				+ param;
+		System.out.println("getAppDetail"+requestUrl);
 		String result = HttpHelper.httpClientGet(requestUrl);
 		int i = result.indexOf("appDetail:") + ("appDetail:").length() + 1;
 		String xmlString = result.substring(i, result.length() - 2);
@@ -241,5 +244,36 @@ public class InternetRT {
 		JSONObject json = JSONObject.fromObject(result);
 		System.out.println(json.get("user_id"));
 		return (String) json.get("user_id");
+	}
+	
+	public static void main(String args[]) throws IOException{
+		InternetRT irt = new InternetRT();
+	    String appID = "494c22aa-9dc9-41c8-8602-cedf64d793c1";
+		String appSecret ="99c0e983-41bb-436d-b2ab-5f8ffa77986a";
+			try {
+				InternetRTConfig config = new InternetRTConfig();
+
+				config.updatePropertiy("appID", appID);
+				config.updatePropertiy("appSecret",
+						appSecret);
+				config.updatePropertiy("redirect_URI",
+						"http://127.0.0.1:9001/Application/loginUser"); //Play 1.0 and Play 2.0 will conflict on session, if domain is same & port is different
+				config.updatePropertiy("baseURL", "http://localhost:9000");
+				config.updatePropertiy("accessTokenURL",
+						"http://localhost:9000/oauth/accesstoken");
+				config.updatePropertiy("routingInstanceURl",
+						"http://localhost:9000/oauth/workflow");
+				config.updatePropertiy("authorizeURL",
+						"http://localhost:9000/oauth/authorize");
+			
+				irt = InternetRT.create(config);
+			} catch (Exception e) {
+				System.out.println("Internet Runtime Creation Failure!");
+				e.printStackTrace();
+		}
+		Map<String,String> map = new HashMap();
+		map.put("message", "value");
+		String token = irt.setAccessTokenWithCode("066486c6-b6fc-4d60-9015-ad9a3052fcbb");
+		irt.send(token, "updateStatus", map);
 	}
 }

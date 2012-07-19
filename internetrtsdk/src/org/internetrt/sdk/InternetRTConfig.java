@@ -6,16 +6,17 @@ import java.util.Properties;
 
 public class InternetRTConfig {
 
-	private static Properties props = new Properties(); 
-	static{
+	private Properties props = new Properties(); 
+	private Map<String,String> dynamicProperties = new HashMap<String,String>();
+	
+	public InternetRTConfig(String propertiefile){
 		try {
-			props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties"));
+			props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertiefile));
 		} catch (Exception e) {
 			System.out.println("No config.properties");
 		}
 	}
-	
-	private Map<String,String> dynamicProperties = new HashMap<String,String>();
+	public InternetRTConfig(){}
 	
 	public String getValue(String key){
 		if(dynamicProperties.containsKey(key))

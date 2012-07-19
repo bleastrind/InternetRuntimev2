@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>start.html</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+    
+<script>
+var result;
+var apps;
+var triggerChannel;
+var actionChannel; 
+var trigger;
+var signals = new Array();
+var appsByTri = [];
+
+function accessToken()
+{
+	alert("START");
+	$.ajax({
+		url:'GetAppsServlet',
+		type: 'GET',
+		dataType: 'json',
+		success : function(data)
+		{
+			result = eval(data);
+			apps = result.applications;
+			for(var i in apps)
+			{
+				var tempSig = apps[i].signals;
+				signals = signals.concat(tempSig);
+			}
+			removeRepeat();
+			start();
+		}
+	
+	}
+			)
+			
+}
+
+function removeRepeat()
+{
+	for(var i = 0; i< signals.length; i++){
+		for(var j = i+1; j<signals.length;j++){
+			if(signals[i].signalName==signals[j].signalName)
+				{
+					signals.splice(j,1);
+					j--;
+				}
+		}
+	}
+	
+	
+}
+
+function start()
+{
+	choose_trigger();
+}
+
+function choose_trigger()
+{                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+	var html = "";
+	for(var i = 0; i< signals.length; i++)
+	{
+		html +='<div>'+'<a href="#" onclick="choose_trigger_id('+i+')">'
+						+signals[i].signalName
+					+'</a>'+'</div>';
+		html +='<div>'+signals[i].signalDescription+'<div>';
+	}
+		$("#choose_trigger").html(html);
+}
+
+function choose_trigger_id(id)
+{
+	trigger = signals[id].signalName;
+	getTriggerChannels(trigger);
+	render_triggerChannels();
+}
+
+function getTriggerChannels(trigger){
+	var signals;
+	var request;
+	
+	for(var j = 0; j<apps.length; j++)
+	{
+		signals = apps[j].signals;
+		for(var i = 0; i<signals.length; i++)
+		{
+			request = signals[i].signalName;
+			if(request==trigger)
+			{
+				appsByTri.push(apps[j]);
+			}
+		}
+	}
+}
+
+
+function render_triggerChannels()
+{
+	var html = "";
+	
+	for(var i = 0; i< appsByTri.length; i++)
+	{
+	
+		html += '<a onclick="choose_triggerChannel_id('+i+')">'
+						+'<img src="'+ "images/"+appsByTri[i].appName+"_logo.jpg" +'">'
+					+'</a>';
+	}
+		$("#choose_triggerChannel").html(html);
+}
+
+function choose_triggerChannel_id(id)
+{
+	triggerChannel = appsByTri[id].appID;
+	alert(triggerChannel);
+	render_actionChannels();
+}
+
+function render_actionChannels()
+{
+	var html = "";
+	
+	for(var i = 0; i< apps.length; i++)
+	{
+		html += '<a onclick="choose_actionChannel_id('+i+')">'
+						+'<img src="'+ "images/"+apps[i].appName+"_logo.jpg" +'">'
+					+'</a>';
+	}
+		$("#choose_actionChannel").html(html);
+	
+}
+
+function choose_actionChannel_id(id)
+{
+	actionChannel = apps[id].appID;
+	alert(actionChannel);
+	genRouting();
+}
+
+
+function genRouting() 
+{	
+	alert("SUBMIT")
+	var params={
+			'trigger':trigger,
+			'triggerChannel':triggerChannel,
+			'actionChannel':actionChannel
+	}
+	$.ajax({
+		url:'GenRoutingServlet',
+		type: 'POST',
+		data: params,
+		dataType: 'json',
+		success : function(data)
+		{
+			alert("SUCCESS");
+			result = eval(data);
+			routing = result.routingXml;
+			var r = confirm(routing);
+			if(r == true)
+			{
+				restoreRouting(routing);
+			}
+		}
+	
+	}
+			)
+}
+
+function restoreRouting(data)
+{
+	var params={
+			'routing':data,
+	}
+	$.ajax({
+		url:'RestoreRoutingServlet',
+		type: 'POST',
+		data: params,
+		dataType: 'json',
+		success : function()
+		{
+			alert("SUCCESS");
+		}
+	
+	}
+			)
+}
+</script>
+
+</head>
+<body onload = accessToken()>
+	
+	<div id = "choose_trigger">	
+	</div>
+	
+	<div id = "choose_triggerChannel">
+	</div>
+		
+	<div id = "choose_actionChannel">
+	</div>
+	
+</body>
+</html>
