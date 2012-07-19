@@ -32,6 +32,8 @@ POST		/clients/login			org.internetrt.driver.userinterface.BrowserBaseClientInpu
 POST		/clients/register		org.internetrt.driver.userinterface.BrowserBaseClientInputs.register
 #installApp
 POST		/clients/installapp		org.internetrt.driver.userinterface.BrowserBaseClientInputs.installRootApp
+#get user name
+GET		/clients/getName		org.internetrt.driver.userinterface.BrowserBaseClientInputs.getName
 #login
 GET		/clients/login			org.internetrt.driver.userinterface.BrowserBaseClientInputs.login
 #register
@@ -39,7 +41,7 @@ GET		/clients/register		org.internetrt.driver.userinterface.BrowserBaseClientInp
 #installApp
 GET		/clients/installapp		org.internetrt.driver.userinterface.BrowserBaseClientInputs.installRootApp
 #confirm routing
-GET		/clients/confirmrouting	   org.internetrt.driver.userinterface.BrowserBaseClientInputs.confirmRouting
+POST		/clients/confirmrouting	   org.internetrt.driver.userinterface.BrowserBaseClientInputs.confirmRouting
 
 #Configurition API 
 GET		/config/apps                           org.internetrt.driver.ConfigController.appsList

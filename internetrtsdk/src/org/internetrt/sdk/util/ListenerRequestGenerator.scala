@@ -13,7 +13,7 @@ object ListenerRequestGenerator{
     val paramdata = ListenerRequestGenerator.generateDataByFormat(signalData, paramFormats, extData)
     val baseurl = parser.getReqUrl(listenerconfig);
 	if (baseurl == null || baseurl == "")
-	    throw new FormatErrorException();
+	    throw new FormatErrorException("Listener URL not set!");
     baseurl + "?" + HttpHelper.generatorParamString(scala.collection.JavaConversions.asJavaMap(paramdata));
   }
   

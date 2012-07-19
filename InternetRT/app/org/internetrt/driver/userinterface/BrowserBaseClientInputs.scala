@@ -16,7 +16,10 @@ object BrowserBaseClientInputs extends Controller {
 	      Ok(SiteUserInterface.register(username, password));
       }
   }
-
+  def getName() = Action {
+  request =>
+	Ok(request.session.get("username").getOrElse(""))
+  }
   def login() = Action {
     implicit request =>
       System.out.println("Before Login:"+request.session)
@@ -35,7 +38,8 @@ object BrowserBaseClientInputs extends Controller {
 	
 	      System.out.println("UID in login" + uid);
 	      System.out.println("oldurl:" + oldurl);
-	      Redirect(oldurl).withSession(request.session + (CONSTS.SESSIONUID -> uid));
+	      Redirect(oldurl).withSession(request.session + 
+										(CONSTS.SESSIONUID -> uid) + ("username" -> username));
 	    //		}catch{
 	    //		  case e => {
 	    //		    e.printStackTrace();
