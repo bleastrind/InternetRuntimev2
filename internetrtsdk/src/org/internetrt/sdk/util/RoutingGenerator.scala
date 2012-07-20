@@ -2,6 +2,7 @@ package org.internetrt.sdk.util
 import scala.xml.XML
 import scala.xml.Node
 import scala.xml.NodeSeq
+import org.internetrt.sdk.exceptions.FormatErrorException
  
 class RoutingGenerator (signalXmlString:String, appXmlString:String){
   
@@ -30,7 +31,17 @@ class RoutingGenerator (signalXmlString:String, appXmlString:String){
 	
 	def generateRequestListenerNodes() = {
 		scala.xml.NodeSeq.fromSeq( (appXml \ "SignalHanlders" \ "RequestListener" map{  (RequestListener) =>
-		   RequestListener filter(RequestListener => ( RequestListener \ "Adapter" \ "Signalname").text == (signalXml \ "name").text) 
+		  val signalName = ( RequestListener \ "Adapter" \ "Signalname").text
+		    if (signalName == null || signalName == "")
+		  {
+			  throw new FormatErrorException("Error in App Xml: RequestListener.Adapter.Signalname not set!");
+		  }
+		  val signal = (signalXml \ "name").text
+		  if (signal == null || signal == "")
+		  {
+			  throw new FormatErrorException("Error in Signal Xml: signal Xml signalName not set!");
+		  }
+		   RequestListener filter(RequestListener => signalName == signal) 
 	    }).flatten)
 	}
 	
