@@ -3,6 +3,7 @@ import org.internetrt.persistent._
 import org.internetrt.core.signalsystem.workflow._
 import org.internetrt.core.I18n
 import org.internetrt.core.model.RoutingInstance
+import org.internetrt.exceptions.ConfigNotPreparedException
 
 abstract class SignalSystemImpl extends SignalSystem {
 
@@ -39,8 +40,8 @@ abstract class SignalSystemImpl extends SignalSystem {
       return new ObjectResponse(ins.xml)
     } catch {
       case e:Exception => {
-        e.printStackTrace()
-        new RejectResponse(I18n.REJECT)
+        //e.printStackTrace()
+        new RejectResponse(I18n.REJECT+":"+e.getMessage())
       }
     }
   }
@@ -52,7 +53,13 @@ abstract class SignalSystemImpl extends SignalSystem {
   }
 
   private def getRouting(s: Signal) = {
-    confSystem.getRoutingsBySignal(s)
+    assert(s != null)
+    val routings = confSystem.getRoutingsBySignal(s)
+    System.out.println("[SignalSystemImpl:getRouting]:"+routings)
+    System.out.println("[SignalSystemImpl:getRouting]:"+s)
+    if(routings == null || routings.size < 1)
+      throw new ConfigNotPreparedException("Signal:" + s);
+    routings
   }
 
 } 

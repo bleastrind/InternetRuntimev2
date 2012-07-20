@@ -7,6 +7,8 @@ case class ListenerConfig(node:scala.xml.Node){}
 case class GlobalData(map:Map[String,String]){}
 case class DataAdapter(node:scala.xml.Node){}
 
+case class ListenerDataFormat(kind:String, map:Map[String,DataAdapter])
+
 
 import java.util.List
 abstract class term

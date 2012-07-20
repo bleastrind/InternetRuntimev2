@@ -20,12 +20,11 @@ class RoutingGenerator (signalXmlString:String, appXmlString:String){
 	private def generateSignalNode(signalName:String, from:String, to:String, userID:String): NodeSeq = 
 	{
 	  val signalNode = 
-	    <signal>
+	    <Signal>
 		  	<from>{from}</from>
-	  		<user>{userID}</user>
 	  		<name>{signalName}</name>
 	  		{  (signalXml \ "vars" )}
-	  		</signal>
+	  		</Signal>
 	 scala.xml.NodeSeq.fromSeq(signalNode)
 	}
 	

@@ -5,8 +5,9 @@ import org.internetrt.CONSTS
 import org.internetrt.SiteInternetRuntime
 import org.internetrt.SiteUserInterface
 import org.internetrt.sdk.util.ListenerRequestGenerator
-import scala.collection.JavaConversions._;
+import scala.collection.JavaConversions._
 import org.internetrt.sdk.util.RoutingXmlParser
+import org.apache.commons.lang.NotImplementedException
 
 object SignalAPI extends Controller{
 	def init(signalname:String) = Action{
@@ -21,13 +22,7 @@ object SignalAPI extends Controller{
 	    case Some(list) => list.head == "browserredirect"
 	    case _ => false
 	  }){
-	      val parser = new RoutingXmlParser(response.getResponse)
-	      //TODO the data should be Map[String,Map[String]]
-	      val url = ListenerRequestGenerator.generateSignalListenerUrl(
-	          request.queryString.mapValues( seq => seq.headOption.getOrElse("")),
-	          parser.getRequestListener(),
-	          parser.getExtData())
-		  Redirect(url)
+	    tryRedirect(request, response)
 	  }else
 		  Ok(response.getResponse)
 	}
@@ -60,5 +55,28 @@ object SignalAPI extends Controller{
 	    Ok(Printer.pretty(JsonAST.render(Xml.toJson(resultxml))))
 	  }else
 	     Ok(resultxml)
+	}
+  
+  private def tryRedirect(request: play.api.mvc.Request[play.api.mvc.AnyContent], response: org.internetrt.core.signalsystem.SignalResponse): play.api.mvc.Result = {
+	    
+	  val parser = new RoutingXmlParser(response.getResponse)
+	  val config = parser.getRequestListener()
+	  
+	  if(parser.getEventListeners().size > 0 || parser.getReqType() != "httpget")
+	    throw new NotImplementedException("It's only possible when all event listeners are handled and requestListener is httpget")
+	  else{
+	    	  val baseurl = RoutingXmlParser.getListenerUrl(config);
+		      val params = RoutingXmlParser.getRequiredFormats(config)
+		      .filter(f => f.kind == "params")
+		      .headOption match{
+		        case Some(format)=> "?" + ListenerRequestGenerator.generateDataByFormat(
+			          request.queryString,
+			          format,
+			          null)
+		        case None=> ""
+			  }
+		      //TODO the data should be Map[String,Map[String]]
+		       Redirect(baseurl + params)
+		  };
 	}
 }
