@@ -94,7 +94,8 @@
                     xml+= '</SignalHanlders>'+
                 '</Application>';
                 alert(xml);
-                $.post(marketurl+"/admincontroller/addappsavexml",{information:xml,id:"${id}",secret:"${secret}"});            
+                $.post(marketurl+"/admincontroller/addappsavexml",{information:xml,id:"${id}",secret:"${secret}",email:$("attribute").("input[name='email']")
+                ,installUrl:$("attribute").find("input[name='installurl']"),updateurl:$("attribute").find("input[name='updateurl']")});            
             })
         });
     </script>
@@ -107,6 +108,9 @@
     <div id="attribute">
         <label>Name</label> <input type="text" name="name">
         <label>AppOwner</label> <input type="text" name="appowner">
+        <label>updateurl</label> <input type="text" name="updateurl">
+        <label>installurl</label> <input type="text" name="installurl">
+        <label>email</label> <input type="text" name="email">
     </div>
 
     <div id="signals">

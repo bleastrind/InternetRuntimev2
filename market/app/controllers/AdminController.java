@@ -49,7 +49,7 @@ public class AdminController extends Controller {
     
     public static void addAppSave(String id,String name, String AccessRequest, String installUrl,String email,String updated,String updateUrl,String secret)
     {
-    	System.out.println("listener"+Controller.request.params.get("ListenerSignalname0"));
+    	System.out.println("listener"+Controller.request.params.getAll("ListenerSignalname0"));
     	String information = "<Application><Name>"+name+"</Name><AppID>"+id +
     			"</AppID><AccessRequests><AccessRequest>"+AccessRequest+"</AccessRequest></AccessRequests></Application>";
     	System.out.println("id:"+id+"secret:"+secret+"information:"+information);
@@ -66,10 +66,13 @@ public class AdminController extends Controller {
         render("AdminService/addAppXml.html",id,secret);
     }
     
-    public static void addAppSaveXml(String id, String information,String secret)
+    public static void addAppSaveXml(String id, String information,String secret,String email,String installUrl,String updateurl)
     {
     	AppXmlParser parser = new AppXmlParser(information);
-    	AdminService.addAppSave(id,parser.getAppName(), information, "123","123","123","123",secret);
-        welcome();
+    	if (!"".equals(updateurl)&&updateurl!=null) 
+    		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"true",updateurl,secret);
+    	else 
+    		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"false","empty",secret);
+    	welcome();
     }
 }

@@ -21,7 +21,7 @@ public class WelcomeServlet extends HttpServlet {
 		String appSecret = config.properties.appSecret;
 		System.out.println("post code1:"+code);
 		if(request.getParameter("code") == null){
-			response.sendRedirect("http://localhost:9000/oauth/authorize?appID="+appID+"&redirect_uri=http://apps.weibo.com/vinsiatest/weibot/welcome");
+			response.sendRedirect("http://internetrt.org:9000/oauth/authorize?appID="+appID+"&redirect_uri=http://apps.weibo.com/vinsiatest/weibot/welcome");
 		} else 	{
 		code = request.getParameter("code");
 		System.out.println("post code2:"+code);
