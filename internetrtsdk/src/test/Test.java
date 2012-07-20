@@ -67,7 +67,7 @@ public class Test {
 		}
 		private void addNewListeners(String accessToken, AppXmlParser appXmlParser,
 				List<scala.Tuple3<String,Signal,DescribedListenerConfig>> a) {
-			List<Signal> requests = appXmlParser.getRequests();
+			List<Signal> requests = appXmlParser.getSignals();
 
 			//Parser requestHandleApp for each request
 			for(Signal signal:requests){

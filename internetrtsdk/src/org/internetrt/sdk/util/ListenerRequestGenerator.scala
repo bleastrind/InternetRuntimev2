@@ -5,13 +5,12 @@ import org.internetrt.sdk.exceptions.DataNotEnoughException
 
 object ListenerRequestGenerator{
   val parser = RoutingXmlParser;
-
   
   def generateSignalListenerUrl(signalData: scala.collection.Map[String, Seq[String]], listenerconfig: ListenerConfig, extData:GlobalData):String = { 
     val paramFormats = parser.paramsAdapter(listenerconfig);
  
     val paramdata = ListenerRequestGenerator.generateDataByFormat(signalData, paramFormats, extData)
-    val baseurl = parser.getReqUrl(listenerconfig);
+    val baseurl = parser.getListenerUrl(listenerconfig);
 	if (baseurl == null || baseurl == "")
 	    throw new FormatErrorException("Listener URL not set!");
     baseurl + "?" + HttpHelper.generatorParamString(scala.collection.JavaConversions.asJavaMap(paramdata));
@@ -22,7 +21,16 @@ object ListenerRequestGenerator{
     generateSignalListenerUrl(data,listenerconfig,extData)
   }
   
-  private def generateDataByFormat(signalData: scala.collection.Map[String, Seq[String]], format: Map[String, DataAdapter],extData:GlobalData): Map[String, String] = {
+  def generateDataByFormat(signalData: java.util.Map[String, String], format:ListenerDataFormat, extData:GlobalData):java.util.Map[String,String]={
+    val data = scala.collection.JavaConversions.asMap(signalData).mapValues(v => Seq(v)) 
+    val result = generateDataByFormat(data, format.map, extData)
+    scala.collection.JavaConversions.mapAsJavaMap(result)
+  }
+  def generateDataByFormat(signalData: scala.collection.Map[String, Seq[String]], format:ListenerDataFormat, extData:GlobalData):Map[String,String]={
+    generateDataByFormat(signalData, format.map, extData) 
+  }
+  
+  def generateDataByFormat(signalData: scala.collection.Map[String, Seq[String]], format: Map[String, DataAdapter],extData:GlobalData): Map[String, String] = {
     try{
       format map (p => (generateDataByAdapter(p._1, signalData.get(p._1), p._2 ,extData)))
     }catch{

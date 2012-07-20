@@ -11,6 +11,11 @@ import org.internetrt.sdk.util.ListenerRequestGenerator
 import org.internetrt.sdk.exceptions.DataNotEnoughException
 import org.internetrt.sdk.util.GlobalData
 import org.internetrt.sdk.util.RoutingXmlParser
+import org.internetrt.sdk.util.ListenerDataFormat
+import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
+import org.internetrt.sdk.util.HttpHelper
+
 
 abstract class WorkflowEngineImpl extends WorkflowEngine {
 
@@ -77,10 +82,20 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
     routingInstancePool.get(workflowID)
   }
 
-  def tryEventListener(workflowID: String, vars: Map[String, Seq[String]], uid: String, config: ListenerConfig) = {
+  def tryEventListener(workflowID: String, vars: Map[String, Seq[String]], uid: String, config: ListenerConfig):Option[ListenerConfig] = {
     try {
       System.out.println("ConfigXML:"+config.node)
-      val url = ListenerRequestGenerator.generateSignalListenerUrl(vars, config, GlobalData(Map(RoutingXmlParser.ROUTING_INSTANCE_ID_KEY -> workflowID)))
+      val formats:Seq[ListenerDataFormat] = RoutingXmlParser.getRequiredFormats(config)
+      
+      val paramdata = formats.map(format =>{
+        if(format.kind == "params")
+        	ListenerRequestGenerator.generateDataByFormat(vars,format,GlobalData(Map(RoutingXmlParser.ROUTING_INSTANCE_ID_KEY -> workflowID)))
+        else
+          return Some(config)
+      }).headOption.getOrElse(Map.empty[String,String]);
+      
+      val params = HttpHelper.generatorParamString(scala.collection.JavaConversions.mapAsJavaMap(paramdata));
+      val url = RoutingXmlParser.getListenerUrl(config) + "?" + params;
       ioManager.sendToUrl(uid, url, null)
       None
     } catch {

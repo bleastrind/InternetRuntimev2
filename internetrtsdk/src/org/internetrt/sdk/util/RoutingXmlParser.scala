@@ -14,7 +14,7 @@ object RoutingXmlParser{
 	}
     
 	
-	def getReqType(listener:ListenerConfig): String = {
+	def getListenerType(listener:ListenerConfig): String = {
 	  
 	  val signalListener = listener.node;
 	  val requestType = signalListener \ "@type";
@@ -22,7 +22,7 @@ object RoutingXmlParser{
 
 	}
 	
-	def getReqUrl(listener:ListenerConfig): String = {
+	def getListenerUrl(listener:ListenerConfig): String = {
 	  val signalListener = listener.node;
 	  val requestUrl = (signalListener \ "URL").text;
 	  requestUrl.toString();
@@ -61,6 +61,14 @@ object RoutingXmlParser{
 	   }
 	   Map(params:_*);
 	}	  
+	
+	def getRequiredFormats(listener:ListenerConfig):java.util.List[ListenerDataFormat] = {
+	  Seq(("params",paramsAdapter(listener)) , 
+	      ("headers",headersAdapter(listener)) ,
+	      ("body",bodyAdapter(listener))) map {
+	    p => ListenerDataFormat(p._1,p._2)
+	  }
+	}
 }
 
 class RoutingXmlParser(xml:String)  {
@@ -82,11 +90,11 @@ class RoutingXmlParser(xml:String)  {
 	}
 	
 	def getReqType(): String = {
-	  RoutingXmlParser.getReqType(getRequestListener)
+	  RoutingXmlParser.getListenerType(getRequestListener)
 	}
 	
 	def getReqUrl(): String = {
-	  RoutingXmlParser.getReqUrl(getRequestListener)
+	  RoutingXmlParser.getListenerUrl(getRequestListener)
 	}
 	
 	def getParamsAdapter(): java.util.Map[String,DataAdapter] = {
