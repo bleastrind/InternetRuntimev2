@@ -3,6 +3,7 @@ package org.internetrt.sdk.util;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -80,6 +81,15 @@ public class HttpHelper {
 		return result;
 	}
 
+	public static String httpClientPost(String url, Map<String,String> data){
+		ArrayList<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		for(Entry<String,String> entry : data.entrySet()){
+			pairs.add(new NameValuePair(entry.getKey(),entry.getValue()));
+		}
+		NameValuePair[] array = new NameValuePair[pairs.size()];
+		pairs.toArray(array);
+		return httpClientPost(url,array);
+	}
 	public static String httpClientPost(String url, NameValuePair[] data)
 	{
 		String response = null;
@@ -93,7 +103,7 @@ public class HttpHelper {
 			}
 		}catch (IOException e) {
 			// TODO: handle exception
-			System.out.println("执行Http Post请求"+url+"时，发生异常！"+e);
+			System.out.println("Exception happend when processing Http Post:"+url+"\n"+e);
 		}finally{
 			method.releaseConnection();
 		}

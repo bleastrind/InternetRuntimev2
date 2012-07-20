@@ -52,7 +52,7 @@ class RoutingCassandraPool(cluster: Cluster)
 
   def getRoutingsBySignal(signal: Signal): Seq[Routing] = {
     val key = getKey(signal)
-    System.out.println("Routing key"+key)
+    System.out.println("[RoutingCassandraPool:get]"+key)
     val query = HFactory.createSliceQuery(keyspace, StringSerializer.get(), StringSerializer.get(), StringSerializer.get())
       .setKey(key)
       .setColumnFamily(cfname)
@@ -64,6 +64,7 @@ class RoutingCassandraPool(cluster: Cluster)
   }
   def saveRouting(r: Routing) = {
     val key = getKey(r)
+    System.out.println("[RoutingCassandraPool:save]"+key);
     val updater = compTemplate.createUpdater(key);
 
     updater.setValue(RoutingSerializer.toString(r), "", StringSerializer.get())

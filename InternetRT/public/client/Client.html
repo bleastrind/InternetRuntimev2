@@ -8,6 +8,7 @@ window.InternetRuntime.Client.Core = new function()
 	var CONST = 
 	{	
 		BASE_URL: 'http://localhost:9000',
+		GET_USERNAME_URL: '/clients/getName',
 		LOGIN_URL: '/clients/login',
 		REGISTER_URL: '/clients/register',
 		LONGPOLLING_URL: '/clients/longpolling',
@@ -82,12 +83,12 @@ window.InternetRuntime.Client.Core = new function()
 			postMessage(msg);
 		}
 	
-		this.knownUser = function()
+		this.knownUser = function(username)
 		{
 			var msg = 
 			{
 				type: 'knownUser',
-				username: 'Xu Peilong'	//need a username?
+				username: username	//need a username?
 			}
 			postMessage(msg);
 		}
@@ -239,7 +240,23 @@ window.InternetRuntime.Client.Core = new function()
 		
 		
 		
-		
+		this.getUserName = function()
+		{
+			var Url = CONST.BASE_URL+ CONST.GET_USERNAME_URL;
+			try
+			{
+				new asynHttpRequest()
+				.setType('Get')
+				.setUrl(Url)
+				.setOKCallBack(knownUser)
+				.setErrorCallBack(unknownUser)
+				.send();
+			}
+			catch (e)
+			{
+				alert(e);
+			}
+		}
 		
 		this.StartLongPolling = function()
 		{
@@ -251,9 +268,9 @@ window.InternetRuntime.Client.Core = new function()
 		{
 			CORS.unknownUser();
 		}
-		function knownUser()
+		function knownUser(response)
 		{
-			CORS.knownUser();
+			CORS.knownUser(response.responseText);
 		}
 		
 		
@@ -331,6 +348,7 @@ window.InternetRuntime.Client.Core = new function()
 		}
 		*/
 	}
+	
 	
 }
 

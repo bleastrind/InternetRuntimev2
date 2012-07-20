@@ -2,29 +2,37 @@ package org.internetrt.sdk.util
 import scala.xml.XML$
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
+import org.internetrt.sdk.exceptions.FormatErrorException
 
 object RoutingXmlParser{
   
 	def ROUTING_INSTANCE_ID_KEY = "r_ID"
-  
+
+	 def throwFormatException(term: String, description: String){
+     if (term == null || term == "")
+      {
+	    throw new FormatErrorException("Error in  Xml: "+description+" not set!");
+      }
+	}
+	  
     def getTo(listener:ListenerConfig ): String = {
 	  val signalListener = listener.node;
-	  val requestType = signalListener \ "@runat";
-	  requestType.toString();
+	  val requestType = (signalListener \ "@runat").toString();
+	  throwFormatException(requestType, "signalListener.@runat")
+	  return requestType
 	}
     
 	
-	def getReqType(listener:ListenerConfig): String = {
-	  
+	def getListenerType(listener:ListenerConfig): String = {
 	  val signalListener = listener.node;
 	  val requestType = signalListener \ "@type";
 	  requestType.toString();
-
 	}
 	
-	def getReqUrl(listener:ListenerConfig): String = {
+	def getListenerUrl(listener:ListenerConfig): String = {
 	  val signalListener = listener.node;
 	  val requestUrl = (signalListener \ "URL").text;
+	  throwFormatException(requestUrl, "signalListener.URL")
 	  requestUrl.toString();
 	}
 	
@@ -61,12 +69,25 @@ object RoutingXmlParser{
 	   }
 	   Map(params:_*);
 	}	  
+	
+	def getRequiredFormats(listener:ListenerConfig):java.util.List[ListenerDataFormat] = {
+	  Seq(("params",paramsAdapter(listener)) , 
+	      ("headers",headersAdapter(listener)) ,
+	      ("body",bodyAdapter(listener))) map {
+	    p => ListenerDataFormat(p._1,p._2)
+	  }
+	}
 }
 
 class RoutingXmlParser(xml:String)  {
  
+  def throwFormatException(term: String, description: String){
+     if (term == null || term == "")
+      {
+	    throw new FormatErrorException("Error in  Xml: "+description+" not set!");
+      }
+	}
      val xmlFile = scala.xml.XML.loadString(xml);
-
      def getExtData():GlobalData = {
        GlobalData(Map(RoutingXmlParser.ROUTING_INSTANCE_ID_KEY -> (xmlFile \ "id" head).text ))
      }
@@ -74,6 +95,7 @@ class RoutingXmlParser(xml:String)  {
     def getFrom(): String = {
       val signal = xmlFile \ "signal";
 	  val from = (signal \ "from").text
+	  throwFormatException(from,"signal.from")
 	  return from.toString();
     }
     
@@ -82,11 +104,11 @@ class RoutingXmlParser(xml:String)  {
 	}
 	
 	def getReqType(): String = {
-	  RoutingXmlParser.getReqType(getRequestListener)
+	  RoutingXmlParser.getListenerType(getRequestListener)
 	}
 	
 	def getReqUrl(): String = {
-	  RoutingXmlParser.getReqUrl(getRequestListener)
+	  RoutingXmlParser.getListenerUrl(getRequestListener)
 	}
 	
 	def getParamsAdapter(): java.util.Map[String,DataAdapter] = {
@@ -129,7 +151,9 @@ class RoutingXmlParser(xml:String)  {
 
 	
 	  def getRoutingInstanceId () ={
-
-	    ( xmlFile \ "id").text
+		 
+	    val routingInstanceId = ( xmlFile \ "id").text
+	    throwFormatException(routingInstanceId, "routingInstanceId")
+	    routingInstanceId
 	   }
 }

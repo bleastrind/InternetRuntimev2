@@ -19,7 +19,14 @@ abstract class UserInterface {
   val clientManager = ClientsManager
   
   def register(username: String, password: String): String = {
-    if (authCenter.registerUser(username, password)) "success" else "failed"
+    if (authCenter.registerUser(username, password)){
+	
+		val uid = authCenter.login(username, password)
+		installRootApp(uid, <?xml version="1.0" encoding="UTF-8"?>
+		<Application><Name>jsslimclient</Name><AppID>userinterface</AppID><AppOwner>system</AppOwner><Signals><Event runat="userinterface"><Signalname>clients/pageload</Signalname><Description>Client page load.</Description></Event></Signals><SignalHanlders></SignalHanlders></Application> toString)
+		"success" 
+	}
+		else "failed"
   }
   def login(username: String, password: String): String = {
     authCenter.login(username, password)
