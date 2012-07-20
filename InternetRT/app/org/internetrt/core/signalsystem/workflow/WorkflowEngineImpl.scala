@@ -15,6 +15,7 @@ import org.internetrt.sdk.util.ListenerDataFormat
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import org.internetrt.sdk.util.HttpHelper
+import org.internetrt.exceptions.InputFormatErrorException
 
 
 abstract class WorkflowEngineImpl extends WorkflowEngine {
@@ -68,7 +69,8 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
         val selectedRouting = routings(routingIndex)
         	OkState(selectedRouting, (selectedRouting.xml \ "RequestListener")(listenerIndex))
         }catch{
-          case _ => OptionMissingState(Map("requestListenerIndex" -> conflicts))
+          case e:IndexOutOfBoundsException => throw new InputFormatErrorException("Index is not consistency with the request")
+          case _ => throw new InputFormatErrorException("requestListenerIndex Received:"+options("requestListenerIndex")+"\nBut Need format like:<Choice><RoutingId>1</RoutingId><RequestListenerId>0</RequestListenerId></Choice>")
         }
       }
     }

@@ -1,5 +1,5 @@
 package org.internetrt.exceptions
 
-class ConfigNotPreparedException (msg:String) extends Exception {
+class ConfigNotPreparedException (msg:String) extends Exception(msg) {
 
 }

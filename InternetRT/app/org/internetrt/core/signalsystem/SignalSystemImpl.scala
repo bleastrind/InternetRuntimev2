@@ -41,7 +41,7 @@ abstract class SignalSystemImpl extends SignalSystem {
     } catch {
       case e:Exception => {
         //e.printStackTrace()
-        new RejectResponse(I18n.REJECT+":"+e.getMessage())
+        new RejectResponse(I18n.REJECT+":" + e + " " + e.getMessage())
       }
     }
   }
