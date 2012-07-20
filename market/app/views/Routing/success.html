@@ -1,2 +1,5 @@
+#{extends 'main.html' /}
 <h1>Success!</h1><br/>
-<a href="@AppController.listAllApps()">Back</a>
+#{form @AppController.listAllApps()}
+	<input type = "submit" value = "back">
+#{/form}

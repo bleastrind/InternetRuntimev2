@@ -32,7 +32,9 @@ window.InternetRuntime.Client = new function()
 	{
 		BASE_URL: 'http://localhost:9000',
 		CORE_IFRAME_SRC: '/assets/client/Client.html',
-		Lib_SRC: '/assets/client/Lib.js'
+		Lib_SRC: '/assets/client/Lib.js',
+		
+		MARKET_URL: 'http://localhost:9001',
 	}
 	
 	var CoreIframe;
@@ -72,8 +74,10 @@ window.InternetRuntime.Client = new function()
 	//	API
 	this.runClient = function()
 	{
+		
 		Init(function(){
-			CORS.start();
+			loading();
+			
 		});
 	}
 	
@@ -86,8 +90,7 @@ window.InternetRuntime.Client = new function()
 		});
 	}
 	
-	
-	
+
 	
 	function jumpToUrl(url)
 	{
@@ -145,11 +148,11 @@ window.InternetRuntime.Client = new function()
 			},
 			unknownUser: function(data)
 			{
-				
+				loadingFinish(null);
 			},
 			knownUser: function(data)
 			{
-				
+				loadingFinish(data.username);
 			}
 			/*
 			initOption: function(data)
@@ -195,6 +198,149 @@ window.InternetRuntime.Client = new function()
 			}
 			postMessage(msg);
 		}
+	}
+	
+	var LoadingPanel
+	function loading()
+	{
+		LoadingPanel = new function()
+		{
+			var LoadingPanelSize = new DXY(250, 70);
+			var LoadingPanelCenterXY = Point.ScreenCenter;
+			var LoadingLogoSize = new DXY(231, 24);
+			var LoadingLogoCenterXY = new XY(125, 30);
+			var	LoadingLogo = Create('img')
+			.Size(LoadingLogoSize)
+			.CenterXY(LoadingLogoCenterXY)
+			.Src('InternetRuntime.png');
+			return Create('div')
+			.Size(LoadingPanelSize)
+			.CenterXY(LoadingPanelCenterXY)
+			.Style('first')
+			.Child(LoadingLogo);
+		}
+		function showLoadingPanel()
+		{
+			LoadingPanel
+			.WindowFather()
+			.Opacity(0)
+			.Time(600)
+			.CallBack(CORS.start())
+			.Opacity(1)
+		}
+		showLoadingPanel();
+	}
+	function loadingFinish(username)
+	{
+		function hideLoadingPanel()
+		{
+			var SmallSize = new InternetRuntime.UI.DXY(23, 10);
+			LoadingPanel
+			.Time(300)
+			.To(Point.ScreenRightbottom.minus(SmallSize.scale(1.2)))
+			.Opacity(0)
+			.Move()
+			.CallBack(InitUserPanel)
+			.Size(SmallSize);
+		}
+		
+		var UserPanelTag = new function()
+		{
+			var UserPanelTagSize = new DXY(25, 70);			
+			return Create('div')
+			.Size(UserPanelTagSize)
+			.Style('tag')			
+		}
+		var UserPanel = new function()
+		{			
+			var UserPanelSize = new DXY(250, 150);
+			var UserPanelTagLeftBottomXY = new XY(-2, UserPanelSize.dy);
+			UserPanelTag.RightBottomXY(UserPanelTagLeftBottomXY);
+			return Create('div')
+			.Size(UserPanelSize).Style('first')
+			.Child(UserPanelTag);
+			
+		}
+		var UserPanelWrapper = new function()
+		{
+			var UserPanelWrapperSize = new DXY(UserPanel.Size().dx + UserPanelTag.Size().dx, UserPanel.Size().dy); 
+			return Create('div')
+			.Size(UserPanelWrapperSize)
+			.Style('wraper')
+		}
+		var UserPanelInitPos = new XY(UserPanelWrapper.Size().dx, 0);
+		function InitUserPanel()
+		{	
+			LoadingPanel.Style('hidden');
+			UserPanel
+			.XY(UserPanelInitPos);
+			UserPanelWrapper.WindowFather()
+			.Child(UserPanel)
+			.XY(Point.ScreenRightbottom.minus(UserPanelWrapper.Size()));
+			document.body.onscroll = function()
+			{
+				Point.fresh();
+				UserPanelWrapper.XY(Point.ScreenRightbottom.minus(UserPanelWrapper.Size()));
+			}
+			
+			UserPanelTag
+			.HoverIn(showUserPanel);
+			UserPanelWrapper
+			.HoverOut(hideUserPanel);
+			
+		}
+		function showUserPanel(done)
+		{
+			var ShowTargetXY = new XY(UserPanelTag.Size().dx, 0);
+			UserPanel
+			.Time(300)
+			.To(ShowTargetXY)
+			.CallBack(done)
+			.Move();
+		}
+		function hideUserPanel(done)
+		{
+			UserPanel
+			.Time(300)
+			.To(UserPanelInitPos)
+			.CallBack(done)
+			.Move();			
+		}
+		
+		function setPanel(username)
+		{
+			var NotLoginLabel = Create('h3')
+			.Text('You need login first!');
+			var LoginButton = Create('a')
+			.Text('Login')
+			.Href('#')
+			.Click(function(done){
+				CORS.loginByJump();
+			});
+			var RegisterButton = Create('a')
+			.Text('Login')
+			.Href('#')
+			.Click(function(done){
+				CORS.registerByJump();
+			})
+			var MarketButton = Create('a')
+			.Text('Login')
+			.Href('#')
+			.Click(function(done){
+				jumpToUrl(CONST.MARKET_URL)
+			})
+			if (username == null)
+			{
+				
+			}
+			else
+			{
+				
+			}
+		}
+		
+		hideLoadingPanel();
+		
 	}
 	
 }
