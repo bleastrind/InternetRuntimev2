@@ -1,52 +1,123 @@
-#{extends 'main.html' /}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
 #{set title:'Home' /}
+<head>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <script>
+        var irturl = "http://localhost:9000";
+        var marketurl ="http://localhost:9001";
+        function param(obj,value){
+            alert(value);
+            alert(obj.html())
+            if (value=="key") {
+                obj.show();
+                obj.val( "input new key");
+            }
 
+            else if (value=="const") {
+                obj.show();
+                obj.val( "input const value");
+            }
+            else {
+                obj.val(value);
+                obj.hide();
+            }
+            return
+        }
+        function addpara(obj){
+            alert(obj.html());
+            var params = $('<div><label>key</label><input type="text" name="key"><label>value</label></div>');
+
+            alert(params.html());
+            var select = $('<select><option value ="<var></var>">the var in the signal</option><option value ="key">new key</option><option value ="<var><ID></ID></var>">RoutingInstanceID</option><option value ="const" >Const value</option></select>');
+            var input = $('<input name="value" type="text"/>');
+
+
+            input.hide();
+            select.change(function(){  param($(this).siblings("input[name='value']"),$(this).val())})
+
+            $(params).append(select);
+            $(params).append(input);
+            $(obj).append(params);
+
+
+            return obj;
+        }
+
+        $(function() {
+           // $( ".button" ).button();
+            $( "#addsignal").click(function() {
+                 $("#signals")
+                         .append('<div><label>Runat</label><select name="runat"><option value ="userinterface">userinterface</option><option value ="${id}">Appid</option></select></br><label>Signalname</label><input type="text" name="signalname"></div></br>'
+                 );
+            });
+
+            $("#addlistener").click(function() {
+                var obj = $('<div name="listener"><select name="listener"><option value ="RequestListener">RequestListener</option><option value ="EventListener">EventListener</option></select><label>Description</label><input type="text" name="description"><label>Url</label><input type="text" name="url"><label>Signalname</label><input type="text" name="signalname">' +
+                        '<a class="button">AddPara</a></div></br>');
+                alert(obj.find(".button").html());
+                $(obj).find(".button").click(function(){addpara(obj);});
+                $("#signalhandler") .append(obj);
+            });
+            $("#send").click(function(){
+                alert($("#attribute input[name='name']").val());
+
+                var xml = '<?xml version="1.0" encoding="UTF-8"?>'+
+                       '<Application>'+
+                        '<Name>'+$("#attribute input[name='name']").val()+'</Name>'+
+                        '<AppID>'+"${id}"+'</AppID>'+
+                        '<AppOwner>'+$("#attribute input[name='appowner']").val()+'</AppOwner>'+
+                       '<Signals>';
+                $("#signals div").each(function(index,Element){
+                    xml+='<Request runat="'+$(Element).find("select").val()+'"><Signalname>'+$(Element).find("input[name='signalname']").val()+'</Signalname><Description>Share request. Response should share the signal to somewhere.</Description><Require>Response should share the signal to somewhere</Require></Request>';
+                    //eval($.get(irturl+"/signal/querydef/"+$(Element).find("input[name='signalname']").val(),{ format: "json"})).Description
+                })
+                       xml+='</Signals>'+
+                        '<SignalHanlders>';
+                $("#signalhandler").find('div[name="listener"]').each(function(index,ele){
+                    xml+='<'+$(ele).find("select[name='listener']").val()+' type="httpget" runat="${id}">'+
+                            '<Description>'+$(ele).find("input[name='description']").val() +'</Description>'+
+                            '<URL id="1">'+$(ele).find("input[name='url']").val() +'</URL>'+
+                            '<Adapter>'+
+                            '<Signalname id="1">'+$(ele).find("input[name='signalname']").val()+'</Signalname>'+
+                            '<params>';
+                            $(ele).find("div").each(function(index,ele){
+                                xml+= '<param><key>'+$(ele).find("select").val()+'</key><value>'+$(ele).find("input").val()+'</value></param>'
+                            })
+
+                    xml+='</params> '+
+                            '</Adapter>'+
+                            '</'+$(ele).find("select[name='listener']").val()+'>';
+                    ;
+                })
+                    xml+= '</SignalHanlders>'+
+                '</Application>';
+                alert(xml);
+                $.post(marketurl+"/admincontroller/addappsavexml",{information:xml,id:"${id}",secret:"${secret}"});            
+            })
+        });
+    </script>
+</head>
+<body>
 <h1>Hello Admin!You can manage every appliacation here!</h1>
+<h3> Your Appid:${id} ,Your Secret:${secret}</h3>
 
-	<h3> Your Appid:${id} ,Your Secret:${secret}</h3>
-      #{form @AdminController.addAppSave()}
-	  
-	 <input type="hidden" name="id" value="${id}">
-	 <input type="hidden" name="secret" value="${secret}">
-     <p>
-          <label for="name">name: </label>
-          <input type="text" name="name" id="name" value="${params.name}" />
-     </p>
-	
-	 <p>   
-	  <label>AccessRequest</label>
-      <select name="AccessRequest" id="AccessRequest">   
-        <option value="${params.AccessRequest}">getApplications</option>          
-      </select>   
-     </p>  
-	 
-     <p>
-          <label for="installUrl">installurl: </label>
-          <input type="text" name="installUrl" id="installUrl"  value="${params.installUrl}">
-    </p>
+ <div>
+    <div id="attribute">
+        <label>Name</label> <input type="text" name="name">
+        <label>AppOwner</label> <input type="text" name="appowner">
+    </div>
 
-	<p>
-          <label for="updated">updated: </label>
-          <input type="radio"  name="updated" id="updated" value="true">true</input>
-		  <input type ="radio" name="updated" id="updated" value="false" checked>false</input>
-    </p>	
-	
-	<p>
-          <label for="updateUrl">updatedUrl: </label>
-          <input type="text" name="updateUrl" id="updateUrl" value="${params.updateUrl}">
-    </p>
-	
-	<p>
-          <label for="updateUrl">email: </label>
-          <input type="text" name="email" id="email" value="${params.email}">
-    </p>
+    <div id="signals">
 
-          <input type = "submit" value = "save">
+    </div>
+     <a class="button" id="addsignal">Add Signal</a>
+    <div id= "signalhandler">
 
-     #{/form}
-	 <h1></h1>
-	#{form @AdminController.welcome()}
-		<input type = "submit" value = "back">
-	#{/form}	 
-   
-
+    </div>
+     <a class="button" id="addlistener">Add listener</a>
+ </div>
+<a class="button" id="send">Submit</a>
+</body>
+</html>

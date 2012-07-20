@@ -1,33 +1,91 @@
 if (!window.InternetRuntime)
 	window.InternetRuntime = {};
-if (!window.InternetRuntime.Client)
-window.InternetRuntime.Client = {};
+
+
+	
 
 
 
 window.InternetRuntime.Client = new function()
 {
+	var UI;
+	var Point;
+	function InitWithLib(callback)
+	{
+		UI = window.InternetRuntime.UI;
+		Point = new function()
+		{	
+			this.fresh = function()
+			{
+				this.ScreenCenter = new UI.XY
+								(document.body.scrollLeft + window.innerWidth / 2
+								,document.body.scrollTop + window.innerHeight / 2);
+				this.ScreenRightbottom = new UI.XY
+								(document.body.scrollLeft + document.body.clientWidth
+								,document.body.scrollTop + document.body.clientHeight);
+			}
+			this.fresh();
+		}
+		loadCore(callback);
+	}
 	var CONST = 
 	{
 		BASE_URL: 'http://localhost:9000',
-		CORE_IFRAME_SRC: '/assets/client/Client.html'
+		CORE_IFRAME_SRC: '/assets/client/Client.html',
+		Lib_SRC: '/assets/client/Lib.js'
 	}
 	
 	var CoreIframe;
-	
-	function loadCore()
-	{
-		CoreIframe = document.createElement('iframe');
-		CoreIframe.onload = function()
-		{	
-			CORS.installRootApp();
-			//CORS.start();
-		}
-		CoreIframe.src = CONST.BASE_URL + CONST.CORE_IFRAME_SRC;
-		CoreIframe.style.width = 1 + 'px';
-		CoreIframe.style.height = 1 + 'px';
-		document.body.appendChild(CoreIframe);
+	function Init(func)
+	{		
+		loadUILib(func);
 	}
+	function loadUILib(callback)
+	{
+		
+		if (!window.InternetRuntime.UI)
+		{
+			
+			var LibScritp = document.createElement('script');
+			document.body.appendChild(LibScritp);
+			LibScritp.onload = function()
+			{
+				InitWithLib(callback);
+			}
+			
+			LibScritp.src = CONST.BASE_URL + CONST.Lib_SRC;
+		}
+		else
+			InitWithLib(callback);
+	}
+	function loadCore(callback)
+	{	
+		var CoreIframeSize = new UI.DXY(1, 1);
+		CoreIframe = UI.Create('iframe')
+		.LoadFunc(callback)
+		.Src(CONST.BASE_URL + CONST.CORE_IFRAME_SRC)
+		.Size(CoreIframeSize)
+		.WindowFather();
+	}
+	
+
+	//	API
+	this.runClient = function()
+	{
+		Init(function(){
+			CORS.start();
+		});
+	}
+	
+	this.installRootApp = function()
+	{
+		
+		Init(function(){
+			
+			CORS.installRootApp();
+		});
+	}
+	
 	
 	
 	
@@ -35,27 +93,39 @@ window.InternetRuntime.Client = new function()
 	{
 		document.location.href = url;
 	}
-	
-	
 	function showIframe(xy, size)
 	{
+		CoreIframe.Size(size)
+		.Size(new UI.DXY(size.dx, size.dy));
+		CoreIframe.DOMObject.style.zIndex = 2;
+		
+		var IframeBox = UI.Create('div')
+		.Size(new UI.DXY(size.dx, size.dy))
+		.Style('first')
+		.WindowFather();
+		
 		if (xy == 'center')
 		{
-			CoreIframe.style.left = document.body.scrollLeft + window.innerWidth / 2 - size.dx / 2 + 'px';
-			CoreIframe.style.top = document.body.scrollTop + window.innerHeight / 2 - size.dy / 2 + 'px';
+			IframeBox.CenterXY(Point.ScreenCenter);
+			CoreIframe.CenterXY(Point.ScreenCenter);
 		}
 		else
 		{
-			CoreIframe.style.left = xy.x + 'px';
-			CoreIframe.style.top = xy.y + 'px';
+			IframeBox.XY(xy);
+			CoreIframe.XY(xy);
 		}
-		CoreIframe.style.width = size.dx + 20 + 'px';
-		CoreIframe.style.height = size.dy + 20 + 'px';	
-		CoreIframe.style.position = 'absolute';
-		CoreIframe.frameBorder = 0;
+		
+		IframeBox
+		.Opacity(0)
+		.Time(300)
+		.Opacity(1);
+		CoreIframe
+		.Opacity(0)
+		.Time(300)
+		.Opacity(1);
+		
+		
 	}
-	
-	
 	var CORS = new function()
 	{
 		//	Receive
@@ -91,7 +161,7 @@ window.InternetRuntime.Client = new function()
 		//	Send
 		function postMessage(msg)
 		{
-			CoreIframe.contentWindow.postMessage(msg, CONST.BASE_URL);
+			CoreIframe.DOMObject.contentWindow.postMessage(msg, CONST.BASE_URL);
 		}
 		this.loginByJump = function()
 		{
@@ -111,7 +181,6 @@ window.InternetRuntime.Client = new function()
 		}
 		this.installRootApp = function()
 		{
-			
 			var msg = 
 			{
 				type: 'installRootApp'
@@ -127,16 +196,6 @@ window.InternetRuntime.Client = new function()
 			postMessage(msg);
 		}
 	}
-	
-	
-	
-
-	
-	
-	
-	loadCore();
-	
-	
 	
 }
 
