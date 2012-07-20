@@ -31,34 +31,40 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
   }
 
   def checkStatus(routings: Seq[Routing], options: Map[String, String]) = {
-    val routingIndexedRequestListeners = routings
-      .map(r => r.xml \\ "RequestListener" map (node => (r.xml \ "@id" text, node))).flatten
-    if (routingIndexedRequestListeners.length == 0)
+    case class RoutingListenerLocator(routingIndex:Int ,routing:Routing, listenerIndex:Int, listenernode:scala.xml.Node);
+    val routingListenerLocators = routings.zipWithIndex.map{
+    	routingIndexpair => (routingIndexpair._1.xml \\ "RequestListener" zipWithIndex) map{
+    	  listenerIndexpair => RoutingListenerLocator(
+    	      routingIndexpair._2, 
+    	      routingIndexpair._1, 
+    	      listenerIndexpair._2, 
+    	      listenerIndexpair._1 ) 
+    	} 
+      }.flatten
+    if (routingListenerLocators.length == 0)
       NoRequestListener(routings.head.xml \ "Signal" head)
-    else if (routingIndexedRequestListeners.length == 1) {
-      val selectedRouting = routings.filter(
-        r => (r.xml \ "@id" text) == routingIndexedRequestListeners.head._1).head
-      val selectedRequestID: String = routingIndexedRequestListeners.head._2 \\ "RequestListener" \ "@id" text;
-      OkState(selectedRouting, selectedRequestID)
+    else if (routingListenerLocators.length == 1) {
+      val selectedRouting = routingListenerLocators.head.routing
+      val requestListener = routingListenerLocators.head.listenernode
+      OkState(selectedRouting, requestListener)
     } else {
 
-      val conflicts = routingIndexedRequestListeners.map(pair =>
-        <Choice><RoutingId>{ pair._1 }</RoutingId><RequestListenerId>{ pair._2 \ "@id" text }</RequestListenerId>{ pair._2 }</Choice>)
+      val conflicts = routingListenerLocators.map(locator =>
+        <Choice><RoutingId>{ locator.routingIndex }</RoutingId><RequestListenerId>{ locator.listenerIndex }</RequestListenerId>{ locator.listenernode }</Choice>)
 
       if (options == null || options.get("requestListenerIndex") == None)
         OptionMissingState(Map("requestListenerIndex" -> conflicts));
       else {
+        try{
         val conflictChoiece = scala.xml.XML.loadString(options("requestListenerIndex"))
-        val selectedChoice = conflicts.filter(node =>
-          (node \ "RoutingId") == (conflictChoiece \ "RoutingId") &&
-            (node \ "RequestListenerId") == (conflictChoiece \ "RequestListenerId"))
-        if (selectedChoice.size == 1) {
-          OkState(routings
-            .filter(r => (r.xml \ "@id" text) == (conflictChoiece \ "RoutingId" text))
-            .head,
-            conflictChoiece \ "RequestListenerId" text)
-        } else
-          OptionMissingState(Map("requestListenerIndex" -> conflicts))
+        val routingIndex = (conflictChoiece \ "RoutingId" text).toInt
+        val listenerIndex = (conflictChoiece \ "RequestListenerId" text).toInt
+        
+        val selectedRouting = routings(routingIndex)
+        	OkState(selectedRouting, (selectedRouting.xml \ "RequestListener")(listenerIndex))
+        }catch{
+          case _ => OptionMissingState(Map("requestListenerIndex" -> conflicts))
+        }
       }
     }
   }
