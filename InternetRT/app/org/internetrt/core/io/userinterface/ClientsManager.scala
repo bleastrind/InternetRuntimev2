@@ -10,6 +10,7 @@ import akka.pattern._
 import akka.util.Timeout
 import akka.util.duration._
 import akka.dispatch.Await
+import org.internetrt.exceptions.InvalidStatusException
 
 /**
  * TODO use enum
@@ -49,16 +50,30 @@ object ClientsManager {
   }
 
   def response(uid: String, msg: String, msgID: String) = {
-    val connector = clients.get(uid).get;
-    connector.response(msg, msgID);
+    try {
+      val connector = clients.get(uid).get;
+      connector.response(msg, msgID);
+    } catch {
+      case e => {
+        System.out.println("[ClientsManager:response] Error on response!:" + uid);
+      }
+    }
   }
   def sendevent(uid: String, msg: String, allowedStatus: Seq[String]) {
-    val connector = clients.get(uid).get;
-    connector.output(msg, allowedStatus);
+    try {
+      val connector = clients.get(uid).get;
+      connector.output(msg, allowedStatus);
+    } catch {
+      case e: NoSuchElementException => throw new InvalidStatusException("User " + uid + " don't have alive clients")
+    }
   }
   def ask(uid: String, msg: String, allowedStatus: Seq[String]): Future[String] = {
-    val connector = clients.get(uid).get;
-    connector.ask(msg, allowedStatus);
+    try {
+      val connector = clients.get(uid).get;
+      connector.ask(msg, allowedStatus);
+    } catch {
+      case e: NoSuchElementException => throw new InvalidStatusException("User " + uid + " don't have alive clients")
+    }
   }
 }
 
@@ -90,7 +105,7 @@ class UserConnector(uid: String) {
     val result = (ClientStubActor.ref ? Request(msgID)).mapTo[String]; //Record the callback actorref
 
     output(msg, allowedStatus, Some(msgID)); // Send message to clients
-    
+
     result
   }
   def output(msg: String, allowedStatus: Seq[String], msgID: Option[String] = None) {
@@ -108,7 +123,7 @@ class ClientStubActor extends Actor {
 
   def receive = {
     case Request(msgID) => {
- 
+
       waitingMessages += (msgID -> sender)
     }
     case Response(msg, msgID) => {
