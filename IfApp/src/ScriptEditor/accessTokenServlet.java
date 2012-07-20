@@ -36,16 +36,18 @@ public class accessTokenServlet extends HttpServlet {
 		String code = null;
 		String appID = "12dd85a3-5ae1-434b-82ef-26cf5186386f";
 		String appSecret = "ecb54b2b-6c31-41c6-bc77-e8f43115cce2";
-		
+		InternetRT rt = config.properties.irt;
 		
 		if(request.getParameter("code") == null){
-			response.sendRedirect("http://localhost:9000/oauth/authorize?appID=12dd85a3-5ae1-434b-82ef-26cf5186386f&redirect_uri=http://localhost:8080/IfApp/accessTokenServlet");
+			
+			String codeCallBack = rt.getAuthCodeUrl();
+			response.sendRedirect(codeCallBack );
 		}
 		else {
 			code = request.getParameter("code");
 			System.out.println("CODE"+code);
 			
-			InternetRT rt = config.properties.irt;
+			
 			
 			String accessTokenString = rt.getAccessToken(code, appID, appSecret);
 			
