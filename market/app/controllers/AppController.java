@@ -21,10 +21,7 @@ import config.properties;
 public class AppController extends Controller {
 
 	public static String getAccessToken() {
-		System.out.println("get token!!!!?????!!!!");
 		System.out.println(session.get("token"));
-		System.out.println("get token!!!!!!!!!!!!!!!!!");
-		System.out.println("token:"+session.get("token"));
 		return session.get("token");
 	}
 
@@ -45,8 +42,17 @@ public class AppController extends Controller {
 
 	public static void listAllApps() {
 		List<App> applist = AppService.getAllApps();
+
 		//Boolean flag = AppService.market(getAccessToken());
+		
+		for (App app:applist){
+			AppXmlParser parser = new AppXmlParser(app.getInformation());
+		}
 		Boolean flag = false;
+		if (getAccessToken()!=null)
+			flag = AppService.market(getAccessToken());
+		else 
+			Controller.redirect(properties.irt.getAuthCodeUrl());
 		render("AppService/listAllApps.html", applist, flag);
 	}
 

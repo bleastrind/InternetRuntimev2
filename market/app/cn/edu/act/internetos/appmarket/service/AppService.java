@@ -34,8 +34,8 @@ public class AppService{
 		InternetRT irt = properties.irt;
 		try {
 			System.out.print("market");
-		irt.getAppDetail(config.properties.appID, token);
-		System.out.println("market");
+			irt.getAppDetail(config.properties.appID, token);
+			System.out.println("market");
 		return true;
 		} catch(Exception err){
 			System.out.println("no market");
