@@ -276,6 +276,14 @@ public class InternetRT {
 		return (String) json.get("user_id");
 	}
 	
+	public String getAccessTokenByRoutingInstanceID(String rid){
+		try{
+			return setAccessTokenWithCode(getAccessTokenByRoutingInstanceID(rid));
+		} catch(Exception e){
+			return "Routing Instance ID Err";
+		}
+	}
+	
 	public static void main(String args[]) throws IOException{
 		InternetRT irt = new InternetRT();
 	    String appID = "494c22aa-9dc9-41c8-8602-cedf64d793c1";
