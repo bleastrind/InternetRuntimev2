@@ -45,7 +45,7 @@ move /Y ..\InternetRT\target\scala-2.9.1\classes\public\client\Test.html1  ..\In
 sed s/localhost/internetrt.org/ ../internetrtsdk/src/org/internetrt/sdk/InternetRT.java > ../internetrtsdk/src/org/internetrt/sdk/InternetRT.java1
 move /Y ..\internetrtsdk\src\org\internetrt\sdk\InternetRT.java1  ..\internetrtsdk\src\org\internetrt\sdk\InternetRT.java
 
-sed s/localhost/internetrt.org/ ../market/app/config/properties.java > ../market/app/config/properties.java 1
+sed s/localhost/internetrt.org/ ../market/app/config/properties.java > ../market/app/config/properties.java1
 move /Y ..\market\app\config\properties.java1  ..\market\app\config\properties.java
 
 sed s/localhost/internetrt.org/ ../market/app/views/AdminService/addApp.html > ../market/app/views/AdminService/addApp.html1
