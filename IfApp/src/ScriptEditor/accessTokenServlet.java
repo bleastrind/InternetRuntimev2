@@ -32,7 +32,6 @@ public class accessTokenServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		System.out.println("accessTokenServletAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		String code = null;
 		String appID = "12dd85a3-5ae1-434b-82ef-26cf5186386f";
 		String appSecret = "ecb54b2b-6c31-41c6-bc77-e8f43115cce2";

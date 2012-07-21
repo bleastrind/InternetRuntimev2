@@ -45,7 +45,7 @@ public class AppController extends Controller {
 
 	public static void listAllApps() {
 		List<App> applist = AppService.getAllApps();
-		// Boolean flag = AppService.market(getAccessToken());
+		//Boolean flag = AppService.market(getAccessToken());
 		Boolean flag = false;
 		render("AppService/listAllApps.html", applist, flag);
 	}

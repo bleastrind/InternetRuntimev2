@@ -30,11 +30,11 @@ window.InternetRuntime.Client = new function()
 	}
 	var CONST = 
 	{
-		BASE_URL: 'http://localhost:9000',
+		BASE_URL: 'http://internetrt.org:9000',
 		CORE_IFRAME_SRC: '/assets/client/Client.html',
 		Lib_SRC: '/assets/client/Lib.js',
 		
-		MARKET_URL: 'http://localhost:9001',
+		MARKET_URL: 'http://internetrt.org:9001',
 	}
 	
 	var CoreIframe;
