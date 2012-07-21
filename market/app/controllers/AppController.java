@@ -42,6 +42,8 @@ public class AppController extends Controller {
 
 	public static void listAllApps() {
 		List<App> applist = AppService.getAllApps();
+
+		//Boolean flag = AppService.market(getAccessToken());
 		
 		for (App app:applist){
 			AppXmlParser parser = new AppXmlParser(app.getInformation());
