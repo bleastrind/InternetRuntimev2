@@ -5,8 +5,10 @@
 <head>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
     <script>
-        var irturl = "http://internetrt.org:9000";
-        var marketurl ="http://internetrt.org:9001";
+    try{
+        var irturl = "http://localhost:9000";
+        var marketurl ="http://localhost:9001";
+  
         function param(obj,value){
             alert(value);
             alert(obj.html())
@@ -26,7 +28,7 @@
             return
         }
         function addpara(obj){
-            alert(obj.html());
+
             var params = $('<div><label>key</label><input type="text" name="key"><label>value</label></div>');
 
             alert(params.html());
@@ -44,8 +46,8 @@
 
             return obj;
         }
-
         $(function() {
+        
            // $( ".button" ).button();
             $( "#addsignal").click(function() {
                  $("#signals")
@@ -60,8 +62,8 @@
                 $(obj).find(".button").click(function(){addpara(obj);});
                 $("#signalhandler") .append(obj);
             });
+            
             $("#send").click(function(){
-                alert($("#attribute input[name='name']").val());
 
                 var xml = '<?xml version="1.0" encoding="UTF-8"?>'+
                        '<Application>'+
@@ -72,7 +74,7 @@
                 $("#signals div").each(function(index,Element){
                     xml+='<Request runat="'+$(Element).find("select").val()+'"><Signalname>'+$(Element).find("input[name='signalname']").val()+'</Signalname><Description>Share request. Response should share the signal to somewhere.</Description><Require>Response should share the signal to somewhere</Require></Request>';
                     //eval($.get(irturl+"/signal/querydef/"+$(Element).find("input[name='signalname']").val(),{ format: "json"})).Description
-                })
+                }) 
                        xml+='</Signals>'+
                         '<SignalHanlders>';
                 $("#signalhandler").find('div[name="listener"]').each(function(index,ele){
@@ -85,19 +87,28 @@
                             $(ele).find("div").each(function(index,ele){
                                 xml+= '<param><key>'+$(ele).find("select").val()+'</key><value>'+$(ele).find("input").val()+'</value></param>'
                             })
-
+				
                     xml+='</params> '+
                             '</Adapter>'+
                             '</'+$(ele).find("select[name='listener']").val()+'>';
                     ;
+                    
                 })
+                
                     xml+= '</SignalHanlders>'+
                 '</Application>';
                 alert(xml);
-                $.post(marketurl+"/admincontroller/addappsavexml",{information:xml,id:"${id}",secret:"${secret}",email:$("attribute").("input[name='email']")
-                ,installUrl:$("attribute").find("input[name='installurl']"),updateurl:$("attribute").find("input[name='updateurl']")});            
+
+                $.post(marketurl+"/admincontroller/addappsavexml",{information:xml,id:"${id}",secret:"${secret}",email:$("#attribute input[name='email']").val()
+                ,installUrl:$("#attribute input[name='installurl']").val(),updateurl:$("#attribute input[name='updateurl']").val()});    
+                      
             })
+            
         });
+        
+             }catch(e){
+                alert(e)
+             }
     </script>
 </head>
 <body>

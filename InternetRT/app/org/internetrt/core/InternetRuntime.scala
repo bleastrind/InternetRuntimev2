@@ -151,6 +151,7 @@ abstract class InternetRuntime {
       case _ => null
     }
   }
+  
 }
 
 trait StubSignalSystem extends SignalSystem {

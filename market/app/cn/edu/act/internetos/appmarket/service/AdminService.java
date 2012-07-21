@@ -29,8 +29,14 @@ public class AdminService{
     {
 		AppDao appdao = new AppDao();
 		try{
+			System.out.println(installUrl);
+			System.out.println(updateUrl);			
 			App app = new App(id,name, information, installUrl,updated,updateUrl,secret);
 			System.out.println(app.getId());
+			System.out.println(app.getInstallUrl());
+			System.out.println(app.getUpdateUrl());
+			System.out.println(app.getUpdated());
+			System.out.println(app.getName());
 			appdao.save(app); 
 		} catch(Exception err){
 			err.printStackTrace();

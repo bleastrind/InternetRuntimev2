@@ -3,6 +3,7 @@ package org.internetrt.driver.userinterface
 import play.api.mvc._
 import org.internetrt.SiteUserInterface
 import org.internetrt.CONSTS
+import org.internetrt.exceptions.ConsideredException
 
 object BrowserBaseClientInputs extends Controller {
   def register() = Action {
@@ -41,7 +42,7 @@ object BrowserBaseClientInputs extends Controller {
           Redirect(oldurl).withSession(request.session +
             (CONSTS.SESSIONUID -> uid) + ("username" -> username.get));
         } catch {
-          case e => {
+          case e:ConsideredException => {
             e.printStackTrace();
             Unauthorized("Login Failed")
           }

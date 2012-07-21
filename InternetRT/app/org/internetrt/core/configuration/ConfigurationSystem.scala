@@ -16,5 +16,7 @@ trait ConfigurationSystem{
 	
 	def getAppIDs(userID:String):Seq[String]
 	def getApp(userID:String ,id:String):Option[Application]
-	
+	  
+	def registerApp(app:Application):Boolean
+    def queryApp(id:String):Option[Application]
 }

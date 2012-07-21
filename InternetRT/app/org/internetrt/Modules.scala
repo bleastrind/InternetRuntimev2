@@ -68,6 +68,7 @@ trait MemoryAccessControlSystem extends AccessControlSystemImpl{
 trait CassandraConfigurationSystem extends ConfigurationSystemImpl {
   val appPool = Cassandra.appPool
   val routingResourcePool = Cassandra.routingPool
+  val globalAppPool = Cassandra.globalAppPool
 }
 
 trait CassandraAuthCenter extends AuthCenterImpl {
@@ -100,6 +101,7 @@ object Cassandra{
 	val routingPool = new RoutingCassandraPool(testCluster)
 	val routingInstancePool = new RoutingInstanceCassandraPool(testCluster)
 	val signalDefinationPool = new SignalDefinationCassandraPool(testCluster)
+	val globalAppPool = new GlobalAppCassandraPool(testCluster)
 }
 
 object SiteUserInterface extends UserInterface {

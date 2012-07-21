@@ -20,16 +20,25 @@ import org.slf4j.LoggerFactory;
 public class AppDao {
 	final static String KEYSPACE = "InternetRuntime";
 	final static String CF = "App";
+	
+	final static String KEYSPACEINRT = "InternetRT_Global";
+	final static String CFRT = "GlobalApp";
+	
 	final static StringSerializer se = new StringSerializer();
 	
 	Cluster cluster = getOrCreateCluster("Test Cluster", config.properties.canssadraAddress);
 	Keyspace keyspace = createKeyspace(KEYSPACE, cluster);	
 	Mutator<String> m = createMutator(keyspace, se);
 	
+	Keyspace keyspacert = createKeyspace(KEYSPACEINRT,cluster);
+	Mutator<String> mrt = createMutator(keyspacert, se);
+	
+	
 	public void save(App instance){
 		System.out.println(instance.getId());
 		m.insert(instance.getId(), CF, createStringColumn("name", instance.getName()));
 		m.insert(instance.getId(), CF, createStringColumn("information", instance.getInformation()));
+		mrt.insert(instance.getId(), CFRT, createStringColumn("value", instance.getInformation()));
 		m.insert(instance.getId(), CF, createStringColumn("installUrl", instance.getInstallUrl()));		
 		m.insert(instance.getId(), CF, createStringColumn("updated", instance.getUpdated()));
 		System.out.println( "^&*^*%^(&%*&((((((((((((((("+instance.getUpdateUrl());

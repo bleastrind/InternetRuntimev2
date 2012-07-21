@@ -94,7 +94,7 @@ abstract class AuthCenterImpl extends AnyRef
         accessTokenPool.put(accessToken.value, (accessToken, appID, userID))
         accessToken
       }
-      case None => null
+      case None => throw new AccessTokenNotValiedException("Auth code not valid")
     }
   }
 
@@ -103,7 +103,7 @@ abstract class AuthCenterImpl extends AnyRef
       case Some((token, appID, userID)) => {
         userID
       }
-      case None => null
+      case None => throw new AccessTokenNotValiedException()
     }
   }
 
@@ -116,7 +116,7 @@ abstract class AuthCenterImpl extends AnyRef
       case Some((token, appID, userID)) => {
         (userID, appID)
       }
-      case None => null
+      case None => throw new AccessTokenNotValiedException()
     }
   }
 }

@@ -12,58 +12,65 @@ import org.apache.commons.lang.NotImplementedException
 object SignalAPI extends Controller {
   def init(signalname: String) = Action {
     request =>
-      if (request.session.get(CONSTS.SESSIONUID) == None)
-        Unauthorized("Login Failed")
-      else {
-        val response = SiteUserInterface.initActionFromUserinterface(
-          request.session.get(CONSTS.SESSIONUID).get,
-          signalname,
-          request.queryString,
-          request.queryString.mapValues(seq => seq.headOption.getOrElse("")));
+      try {
+        if (request.session.get(CONSTS.SESSIONUID) == None)
+          Unauthorized("Login Failed")
+        else {
+          val response = SiteUserInterface.initActionFromUserinterface(
+            request.session.get(CONSTS.SESSIONUID).get,
+            signalname,
+            request.queryString,
+            request.queryString.mapValues(seq => seq.headOption.getOrElse("")));
 
-        if (request.queryString.get("format") match {
-          case Some(list) => list.head == "browserredirect"
-          case _ => false
-        }) {
-          tryRedirect(request, response)
-        } else
-          Ok(response.getResponse)
+          if (request.queryString.get("format") match {
+            case Some(list) => list.head == "browserredirect"
+            case _ => false
+          }) {
+            tryRedirect(request, response)
+          } else
+            Ok(response.getResponse)
+        }
+      } catch {
+        case e => BadRequest(e.getMessage())
       }
   }
 
   def initOption(signalname: String) = Action {
     request =>
+      try {
+        if (request.session.get(CONSTS.SESSIONUID) == None)
+          Unauthorized("Login Failed")
+        else {
+          val response = SiteUserInterface.initActionOptionsFromUserinterface( //TODO  move to interface
+            request.session.get(CONSTS.SESSIONUID).get,
+            signalname,
+            request.queryString,
+            request.queryString.mapValues(seq => seq.headOption.getOrElse("")));
 
-      if (request.session.get(CONSTS.SESSIONUID) == None)
-        Unauthorized("Login Failed")
-      else {
-        val response = SiteUserInterface.initActionOptionsFromUserinterface( //TODO  move to interface
-          request.session.get(CONSTS.SESSIONUID).get,
-          signalname,
-          request.queryString,
-          request.queryString.mapValues(seq => seq.headOption.getOrElse("")));
+          val resultxml = scala.xml.Utility.trim(
+            <Options>
+              {
+                scala.xml.NodeSeq.fromSeq(
+                  response.map(entry =>
+                    <entry>
+                      <key>{ entry._1 }</key>
+                      <value>{ entry._2 }</value>
+                    </entry>).toSeq)
+              }
+            </Options>)
 
-        val resultxml = scala.xml.Utility.trim(
-          <Options>
-            {
-              scala.xml.NodeSeq.fromSeq(
-                response.map(entry =>
-                  <entry>
-                    <key>{ entry._1 }</key>
-                    <value>{ entry._2 }</value>
-                  </entry>).toSeq)
-            }
-          </Options>)
-
-        if (request.queryString.get("format") match {
-          case Some(list) => list.head == "json"
-          case _ => false
-        }) {
-          import net.liftweb.json._;
-          import net.liftweb.json.JsonAST._;
-          Ok(Printer.pretty(JsonAST.render(Xml.toJson(resultxml))))
-        } else
-          Ok(resultxml)
+          if (request.queryString.get("format") match {
+            case Some(list) => list.head == "json"
+            case _ => false
+          }) {
+            import net.liftweb.json._;
+            import net.liftweb.json.JsonAST._;
+            Ok(Printer.pretty(JsonAST.render(Xml.toJson(resultxml))))
+          } else
+            Ok(resultxml)
+        }
+      } catch {
+        case e => BadRequest(e.getMessage())
       }
   }
 

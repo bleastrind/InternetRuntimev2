@@ -1,1 +1,14 @@
-You have to install first
+@(app:org.internetrt.core.model.Application,redirect_uri:String)
+ You have to install first:
+ <h1>App</h1>
+ @app.xml.toString()
+<form action="/clients/install" method="post">
+<input type="hidden" name="appID" value="@app.id"/>
+<input type="hidden" name="appxml" value="@app.xml.toString()"/>
+<input type="hidden" name="redirect_uri" value="@redirect_uri"/>
+@for(access <- app.accessRequests) {
+  <input type="checkbox" name="accesses" value="@access" checked/>
+} 
+
+<button type="submit" value="confirm"/>
+</form>

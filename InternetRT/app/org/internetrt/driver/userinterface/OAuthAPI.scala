@@ -5,37 +5,70 @@ import org.internetrt.CONSTS
 import org.internetrt.SiteInternetRuntime
 import org.internetrt.SiteUserInterface
 import play.api.templates.Html
+import org.internetrt.exceptions.ApplicationNotInstalledException
+import org.internetrt.exceptions.ConsideredException
 
-object OAuthAPI extends Controller{
-	def authorize()=Action{
-	  request=>
-	    
-	    System.out.println("OAuth:"+request.session)
-	    
-		request.session.get(CONSTS.SESSIONUID) match{
-		  case Some(userID)=>{
-//		    if(request.method == "GET"){
-				val appID = request.queryString.get("appID").get.head;
-				val redirect_uri = request.queryString.get("redirect_uri").get.head;
-				val code= SiteUserInterface.getAuthcodeForServerFlow(appID,userID,redirect_uri);
-				
-				if(code != null){
-					System.out.println("Redirect URL:"+redirect_uri);
-					Redirect(redirect_uri+"?code="+code);
-					//Ok(Html("<a href='http://localhost:9001'>back to old url</a>"))
-				}
-				else
-				  Ok(views.html.auth())
-//		    }
-//		    else if(request.method == "POST"){
-//		       val appID = request.body.asFormUrlEncoded.get.get("appID").head;
-//		       val redirect_uri = request.body.asFormUrlEncoded.get.get("redirect_uri").head;
-//		       val accessRequests = request.body.asFormUrlEncoded.get.get("accessRequests").head;
-//		    }		    
-		  }
-		  case None =>{
-		    Ok(views.html.login(request.uri))
-		  }
-		}
-	}
+object OAuthAPI extends Controller {
+
+  def install() = Action {
+    request =>
+      try {
+        System.out.println("[OAuthAPI:install]:" + request.session)
+
+        request.session.get(CONSTS.SESSIONUID) match {
+          case Some(userID) => {
+
+            val appID = request.body.asFormUrlEncoded.get.get("appID").get.head;
+            val appxml = request.body.asFormUrlEncoded.get.get("appxml").get.head;
+            val redirect_uri = request.body.asFormUrlEncoded.get.get("redirect_uri").get.head;
+            val accesses = request.body.asFormUrlEncoded.get.get("accesses").getOrElse(Seq.empty);
+            if (SiteUserInterface.installApp(userID, appxml, accesses, false)) {
+              val code = SiteUserInterface.getAuthcodeForServerFlow(appID, userID, redirect_uri);
+              Redirect(redirect_uri + "?code=" + code + accesses.foldLeft("")((res, i) => res + "&accesses=" + i));
+            } else
+              Ok("Install failed!")
+          }
+          case None => {
+            Ok(views.html.login(request.uri))
+          }
+        }
+      } catch {
+        case e:ConsideredException => BadRequest(e.toString());
+      }
+  }
+
+  def authorize() = Action {
+    request =>
+      try {
+        System.out.println("[OAuthAPI:authorize]:" + request.session)
+
+        request.session.get(CONSTS.SESSIONUID) match {
+          case Some(userID) => {
+
+            val appID = request.queryString.get("appID").get.head;
+            val redirect_uri = request.queryString.get("redirect_uri").get.head;
+            try {
+              val code = SiteUserInterface.getAuthcodeForServerFlow(appID, userID, redirect_uri);
+              System.out.println("Redirect URL:" + redirect_uri);
+              Redirect(redirect_uri + "?code=" + code + "&msg=success");
+              //Ok(Html("<a href='http://localhost:9001'>back to old url</a>"))
+            } catch {
+              case e: ApplicationNotInstalledException => {
+                val app = SiteUserInterface.queryApp(appID)
+                if(app == null)
+                  Redirect(redirect_uri + "?msg=AppNotRegistered");
+                else
+                  Ok(views.html.auth(app, redirect_uri))
+              }
+            }
+
+          }
+          case None => {
+            Ok(views.html.login(request.uri))
+          }
+        }
+      } catch {
+        case e:ConsideredException => BadRequest(e.toString());
+      }
+  }
 }

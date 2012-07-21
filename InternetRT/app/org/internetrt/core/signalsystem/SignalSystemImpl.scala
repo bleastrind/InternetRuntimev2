@@ -46,7 +46,7 @@ abstract class SignalSystemImpl extends SignalSystem {
     		 System.out.println("xml"+ins.toString())
       return new ObjectResponse(ins.xml)
     } catch {
-      case e:Exception => {
+      case e:ConfigNotPreparedException => {
         //e.printStackTrace()
         new RejectResponse(I18n.REJECT+":" + e + " " + e.getMessage())
       }
