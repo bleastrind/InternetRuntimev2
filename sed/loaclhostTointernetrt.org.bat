@@ -73,7 +73,14 @@ sed s/localhost/internetrt.org/ ../weibo/src/Servlet/WelcomeServlet.java > ../we
 move /Y ..\weibo\src\Servlet\WelcomeServlet.java1  ..\weibo\src\Servlet\WelcomeServlet.java
 
 
+sed s/127.0.0.1/internetrt.org/ ../internetrtsdk/src/org/internetrt/sdk/InternetRT.java > ../internetrtsdk/src/org/internetrt/sdk/InternetRT.java1
+move /Y ..\internetrtsdk\src\org\internetrt\sdk\InternetRT.java1  ..\internetrtsdk\src\org\internetrt\sdk\InternetRT.java
 
+sed s/127.0.0.1/internetrt.org/ ../renren/src/config/properties.java > ../renren/src/config/properties.java1
+move /Y ..\renren\src\config\properties.java1  ..\renren\src\config\properties.java
+
+sed s/127.0.0.1/internetrt.org/ ../weibo/src/config/properties.java > ../weibo/src/config/properties.java1
+move /Y ..\weibo\src\config\properties.java1  ..\weibo\src\config\properties.java
 
 
 
