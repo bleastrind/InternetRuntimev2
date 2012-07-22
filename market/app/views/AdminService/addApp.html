@@ -54,6 +54,10 @@
                          .append('<div><label>Runat</label><select name="runat"><option value ="userinterface">userinterface</option><option value ="${id}">Appid</option></select></br><label>Signalname</label><input type="text" name="signalname"></div></br>'
                  );
             });
+			
+			$("#addrequestAccesses").click(function(){
+				$("#requestAccesses").append('<input type="text" name="requestAccess" value="'+$("#newrequest").val()+'"/><br/>')
+			});
 
             $("#addlistener").click(function() {
                 var obj = $('<div name="listener"><select name="listener"><option value ="RequestListener">RequestListener</option><option value ="EventListener">EventListener</option></select><label>Description</label><input type="text" name="description"><label>Url</label><input type="text" name="url"><label>Signalname</label><input type="text" name="signalname">' +
@@ -69,8 +73,15 @@
                        '<Application>'+
                         '<Name>'+$("#attribute input[name='name']").val()+'</Name>'+
                         '<AppID>'+"${id}"+'</AppID>'+
-                        '<AppOwner>'+$("#attribute input[name='appowner']").val()+'</AppOwner>'+
-                       '<Signals>';
+                        '<AppOwner>'+$("#attribute input[name='appowner']").val()+'</AppOwner>';
+                
+                xml += "<AccessRequests>"
+                $("#requestAccesses input[name='requestAccess']").each(function(index,Element){
+                	xml+= '<AccessRequest>' + $(Element).val() + '</AccessRequest>'
+                });
+                xml += "</AccessRequests>"
+                       
+                xml += '<Signals>';
                 $("#signals div").each(function(index,Element){
                     xml+='<Request runat="'+$(Element).find("select").val()+'"><Signalname>'+$(Element).find("input[name='signalname']").val()+'</Signalname><Description>Share request. Response should share the signal to somewhere.</Description><Require>Response should share the signal to somewhere</Require></Request>';
                     //eval($.get(irturl+"/signal/querydef/"+$(Element).find("input[name='signalname']").val(),{ format: "json"})).Description
@@ -127,6 +138,14 @@
     <div id="signals">
 
     </div>
+    
+    <div id="requestAccesses">
+    <a class="button" id="addrequestAccesses">Add Request Accesses</a>:
+    <select id="newrequest">
+    <option value ="getApplications">getApplications</option>
+    </select>
+    </div>
+    
      <a class="button" id="addsignal">Add Signal</a>
     <div id= "signalhandler">
 

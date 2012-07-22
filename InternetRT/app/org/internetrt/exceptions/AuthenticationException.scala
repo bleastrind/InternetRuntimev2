@@ -19,3 +19,7 @@ class UserNotRegisteredException(msg:String) extends AuthenticationException(msg
 class AccessTokenNotValiedException(msg:String) extends AuthenticationException(msg){
   def this() = this("AccessToken Not Valied")
 }
+
+class AccessRequestNotGrantedException(request:String) extends AuthenticationException("You don't have the access of "+ request){
+  
+}

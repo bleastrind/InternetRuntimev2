@@ -38,15 +38,15 @@ public class RoutingRecomController extends Controller{
 	   
 		public static void index(String fromAppIDString){
 			String accessToken = getAccessToken();
-			
+			String redirect_uri = request.params.get("redirect_uri");
 			RoutingRecommender routingRecommender = new RoutingRecommender();
 			List<scala.Tuple3<String,Signal,DescribedListenerConfig>> result = routingRecommender.getPossibleRoutings(fromAppIDString, accessToken);
 			List<RoutingChoice> choices = generateChoieces(result);
 			System.out.println("[RoutingRecomController : index]: "+choices.size());
 			if(choices.size()> 0)
-				render("Routing/recomRouting.html",choices);
+				render("Routing/recomRouting.html",choices,redirect_uri);
 			else
-				render("Routing/success.html");
+				AppController.listAllApp();
 		}
 		
 		private static List<RoutingChoice> generateChoieces(List<scala.Tuple3<String,Signal,DescribedListenerConfig>> possibleRoutings){
@@ -70,6 +70,7 @@ public class RoutingRecomController extends Controller{
 
 		public static void ConfirmRecomRouting(){
 			String[] routings = request.params.getAll("choices");
+			String redirect_uri = request.params.get("redirect_uri");
 			InternetRT rt = config.properties.irt;
 			
 			String accessToken = getAccessToken();
@@ -79,7 +80,7 @@ public class RoutingRecomController extends Controller{
 				
 				rt.ConfirmRouting(accessToken,routing);
 			}
-			render("Routing/success.html");
+			render("Routing/success.html",redirect_uri);
 			/*PrintWriter out 
 			 * = response.getWriter();
 			out.flush();

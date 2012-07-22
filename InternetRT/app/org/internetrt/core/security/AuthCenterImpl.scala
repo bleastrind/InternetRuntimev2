@@ -54,10 +54,10 @@ abstract class AuthCenterImpl extends AnyRef
 
   def checkApp(appID: String, appSecret: String): Unit = {
     val realEncryptedAppsecret = appOwnerPool.get(appID).getOrElse("");
-    System.out.println(realEncryptedAppsecret)
-    System.out.println(appSecret)
+    System.out.println("[AuthCenterImpl:checkApp] realEncrypted pass:"+realEncryptedAppsecret)
+    System.out.println("[AuthCenterImpl:checkApp] inputEncrypted pass:"+appSecret)
     if (realEncryptedAppsecret != Encrypt.encrypt(appSecret))
-      throw new AuthDelayException()
+      throw new AuthDelayException("App Secret don't Match!")
   }
 
   def genAuthCode(appID: String, userID: String): String = {

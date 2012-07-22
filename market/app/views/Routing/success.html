@@ -1,5 +1,12 @@
 #{extends 'main.html' /}
 <h1>Success!</h1><br/>
+%{ if (redirect_uri == null || redirect_uri == ""){ }%
+
 #{form @AppController.listAllApps()}
 	<input type = "submit" value = "back">
 #{/form}
+
+%{  }else{  }%
+	<a href="${redirect_uri}" value = "next step">
+
+%{ } }%
