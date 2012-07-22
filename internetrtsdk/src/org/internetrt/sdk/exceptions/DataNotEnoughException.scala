@@ -1,5 +1,5 @@
 package org.internetrt.sdk.exceptions
 
-class DataNotEnoughException extends Exception {
-
+class DataNotEnoughException(msg:String) extends Exception(msg) {
+	def this() = this("")
 }

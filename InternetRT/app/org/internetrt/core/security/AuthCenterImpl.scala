@@ -80,7 +80,7 @@ abstract class AuthCenterImpl extends AnyRef
    * code can be auth token
    */
   def genAccessTokenByAuthToken(authtoken: String, appID: String, appSecret: String): AccessToken = {
-
+	System.out.println("[AuthCenterImpl:genAccessTokenByAuthToken]authtoken:"+authtoken+" appID:"+appID+" appSecret:"+appSecret)
     authCodePool.get(authtoken) match {
       case Some((appID, userID)) => {
 

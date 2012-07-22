@@ -90,7 +90,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
       val formats:Seq[ListenerDataFormat] = RoutingXmlParser.getRequiredFormats(config)
       
       val paramdata = formats.map(format =>{
-        if(format.kind == "params")
+        if(format.kind == "params" || format.map.size == 0)
         	ListenerRequestGenerator.generateDataByFormat(vars,format,GlobalData(Map(RoutingXmlParser.ROUTING_INSTANCE_ID_KEY -> workflowID)))
         else
           return Some(config)
@@ -98,6 +98,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
       
       val params = HttpHelper.generatorParamString(scala.collection.JavaConversions.mapAsJavaMap(paramdata));
       val url = RoutingXmlParser.getListenerUrl(config) + "?" + params;
+      
       ioManager.sendToUrl(uid, url, null)
       None
     } catch {

@@ -56,6 +56,7 @@ public class HttpHelper {
 	}
 
 	public static String httpClientGet(String requestUrl) {
+		System.out.println("[SDK HttpHelper:httpClientGet]:"+requestUrl);
 		byte[] responseBody = null;
 		HttpClient httpClient = new HttpClient();
 		GetMethod getMethod = new GetMethod(requestUrl);
