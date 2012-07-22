@@ -49,10 +49,10 @@ public class AppController extends Controller {
 			AppXmlParser parser = new AppXmlParser(app.getInformation());
 		}
 		Boolean flag = false;
-		if (getAccessToken()!=null)
-			flag = AppService.market(getAccessToken());
-		else 
-			Controller.redirect(properties.irt.getAuthCodeUrl());
+//		if (getAccessToken()!=null)
+//			flag = AppService.market(getAccessToken());
+//		else 
+//			Controller.redirect(properties.irt.getAuthCodeUrl());
 		render("AppService/listAllApps.html", applist, flag);
 	}
 

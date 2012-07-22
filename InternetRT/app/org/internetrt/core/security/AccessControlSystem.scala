@@ -1,7 +1,7 @@
 package org.internetrt.core.security
 
 trait AccessControlSystem {
-	def checkAccess(userID:String ,appID:String ,action:String):Boolean
+	def checkAccess(userID:String ,appID:String ,action:String):Unit
 	
 	def isRoot(userID:String, appID:String):Boolean
 	

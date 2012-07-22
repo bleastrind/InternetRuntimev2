@@ -14,6 +14,8 @@ import java.util.UUID
 import scala.xml.XML
 import org.internetrt.core.model.Routing
 import org.internetrt.core.security.AccessControlSystem
+import org.internetrt.exceptions.AccessRequestNotGrantedException
+import org.internetrt.exceptions.ApplicationNotInstalledException
 
 /**
  * The Facade of the logical system
@@ -137,10 +139,8 @@ abstract class InternetRuntime {
 
   def getApplications(accessToken: String) = {
     val (userID, appID) = authCenter.getUserIDAppIDPair(accessToken)
-    if (aclSystem.checkAccess(userID, appID, "getApplications"))
-      confSystem.getAppIDs(userID);
-    else
-      null
+    aclSystem.checkAccess(userID, appID, "getApplications")
+    confSystem.getAppIDs(userID);
   }
 
   def getApplicationDetail(id: String, accessToken: String) = {
@@ -148,7 +148,7 @@ abstract class InternetRuntime {
     aclSystem.checkAccess(userID, appID, "getApplications");
     confSystem.getApp(userID, id) match {
       case Some(app) => app
-      case _ => null
+      case _ => throw new ApplicationNotInstalledException()
     }
   }
   
