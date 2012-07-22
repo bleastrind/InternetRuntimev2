@@ -96,7 +96,13 @@
                             '<Signalname id="1">'+$(ele).find("input[name='signalname']").val()+'</Signalname>'+
                             '<params>';
                             $(ele).find("div").each(function(index,ele){
-                                xml+= '<param><key>'+$(ele).find("select").val()+'</key><value>'+$(ele).find("input").val()+'</value></param>'
+                                var value = $(ele).find("select").val()
+								var key = $(ele).find("input[name='key']").val()
+								var inputvalue = $(ele).find("input[name='value']").val()
+					
+								if (value=="key") { value = "<var><newkey>"+inputvalue+"</newkey></var>"   }
+								else if (value=="const") { value = inputvalue	}
+                                xml+= '<param><key>'+key+'</key><value>'+value+'</value></param>'
                             })
 				
                     xml+='</params> '+
