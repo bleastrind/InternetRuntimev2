@@ -23,18 +23,16 @@ public class RoutingRecomController extends Controller{
 	
 	
 		public static String getAccessToken() {
-			System.out.println("get token!!!!!!!!!!!!!!!!!");
+			System.out.println("[RoutingRecomController : getAccessToken]: "+"get token!");
 			return session.get("token");
 		}
 		
 		   @Before(only = { "index","ConfirmRecomRouting" })
 		public static void checkUser() {
-			System.out.println("checkUser");
 			String token = getAccessToken();
 			if (token == null) {
-				System.out.println(properties.irt.getAuthCodeUrl());
+				System.out.println("[RoutingRecomController : checkUser]: "+properties.irt.getAuthCodeUrl());
 				Controller.redirect(properties.irt.getAuthCodeUrl());
-				System.out.println("checkUser!!!!");
 			}
 		}
 	   
@@ -44,7 +42,7 @@ public class RoutingRecomController extends Controller{
 			RoutingRecommender routingRecommender = new RoutingRecommender();
 			List<scala.Tuple3<String,Signal,DescribedListenerConfig>> result = routingRecommender.getPossibleRoutings(fromAppIDString, accessToken);
 			List<RoutingChoice> choices = generateChoieces(result);
-			System.out.println(choices.size());
+			System.out.println("[RoutingRecomController : index]: "+choices.size());
 			if(choices.size()> 0)
 				render("Routing/recomRouting.html",choices);
 			else
@@ -77,7 +75,7 @@ public class RoutingRecomController extends Controller{
 			String accessToken = getAccessToken();
 			
 			for(String routing:routings){
-				System.out.println(routing);
+				System.out.println("[RoutingRecomControl : ConfirmRecomRouting]"+routing);
 				
 				rt.ConfirmRouting(accessToken,routing);
 			}

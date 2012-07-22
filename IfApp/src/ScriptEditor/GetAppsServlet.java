@@ -44,7 +44,7 @@ public class GetAppsServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		String accessToken = session.getAttribute("accessToken").toString();
 		List<String> appIDList  = rt.getApps(accessToken);
-		System.out.println("appsIDLIist"+appIDList);
+		System.out.println("[GetAppsServlet : doGet]: "+"appsIDLIist"+appIDList);
 		
 		JSONArray applications= new JSONArray();
 		JSONObject appsObject = new JSONObject();
@@ -53,7 +53,7 @@ public class GetAppsServlet extends HttpServlet {
 		{
 			String xmlString = rt.getAppDetail(str, accessToken);
 			
-			System.out.println(xmlString);
+			System.out.println("[GetAppsServlet : doGet]: "+"appXmlString"+xmlString);
 			
 			AppXmlParser appXmlParser = new AppXmlParser(xmlString);
 			
@@ -73,7 +73,7 @@ public class GetAppsServlet extends HttpServlet {
 		}
 		
 		String result = appsObject.toString();
-		System.out.println(result);
+		System.out.println("[GetAppsServlet : doGet]: "+"resultJsonString"+result);
 		PrintWriter out = response.getWriter();
 		out.write(result);
 		out.flush();

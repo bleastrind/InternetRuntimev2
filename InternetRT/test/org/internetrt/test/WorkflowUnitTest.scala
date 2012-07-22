@@ -20,7 +20,7 @@ class WorkflowUnitTest extends Specification with Mockito{
 	      val routingInstancePool = new StubRoutingInstancePool()
 	    }
 	    val rs = workflowEngine.checkStatus(Seq(rout1,rout2),Map.empty)
-	    System.out.println("###############"+rs);
+	    System.out.println("[WorkflowUnitTest : WorkflowUnitTest]: "+"workflowEngine.checkStatus: "+rs);
 	    rs match{
 	      case OptionMissingState(options)=>{
 	        val choice1 = scala.xml.Utility.trim(<Choice><RoutingId>0</RoutingId><RequestListenerId>0</RequestListenerId><RequestListener>1</RequestListener></Choice>);

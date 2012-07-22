@@ -43,7 +43,7 @@ public class RoutingRecommender {
 			for(String appID: allAppsList){
 				String fromAppXmlString = rt.getAppDetail(appID, accessToken);
 				AppXmlParser fromAppXmlParser = new AppXmlParser(fromAppXmlString);
-				System.out.println(config.node());
+				System.out.println("[RoutingRecommender : addNewSignalSource]:"+config.node());
 				List<Signal> signals = fromAppXmlParser.getMatchedRequestSignals(config);
 				for(Signal signal:signals){
 					a.add(new scala.Tuple3<String, Signal,DescribedListenerConfig>(fromAppXmlParser.getAppName(),signal,config));
@@ -60,7 +60,7 @@ public class RoutingRecommender {
 		for(Signal signal:requests){
 			
 			String signalName = signal.name();
-			System.out.println("signal"+signalName);
+			System.out.println("[RoutingRecommender : addNewListeners]: "+"signal"+signalName);
 			List<String> allAppsList = rt.getApps(accessToken);
 			
 			for(String appID: allAppsList){

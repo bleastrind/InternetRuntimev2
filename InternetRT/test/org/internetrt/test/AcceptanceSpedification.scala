@@ -68,7 +68,6 @@ class SignalSpedification extends Specification with Mockito{ override def is =
 var appid = ""
   var appsec = ""
     def install1 = {
-     // System.out.println((<secret>secret</secret> \\ "secret").text)
       val (id,sec)=TestEnvironment.authCenter.registerApp("secrecret")
       appid = id
       appsec=sec

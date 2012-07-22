@@ -15,12 +15,12 @@ public class messageReciver extends HttpServlet {
 		HttpServletResponse response) {
 		String Message = request.getParameter("message");
 		String rid = request.getParameter("rid");
-		System.out.println(rid);
+		System.out.println("[messageReciver : doGet]: "+"rid: "+rid);
 		InternetRT irt = config.properties.irt;
 		String userid = irt.getUserIdByToken(irt.setAccessTokenWithCode(irt.getAuthCodeByRoutingInstanceID(rid)));
-		System.out.print("userid" + userid);
+		System.out.print("[messageReciver : doGet]: "+"userid: " + userid);
 		UserSpace us = ApiInitListener.User.get(userid);
-		System.out.print(us.getSessionKey());
+		System.out.print("[messageReciver : doGet]: "+"userSessionKey: "+us.getSessionKey());
 		ApiInitListener.feedstub.publish(Message, us.getSessionKey());
 	}
 }

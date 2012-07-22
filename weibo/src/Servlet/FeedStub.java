@@ -35,8 +35,8 @@ public class FeedStub implements Runnable{
 	{
 		synchronized(this){
 			try{ 
-				System.out.println("add user");
-				System.out.println(Token);
+				System.out.println("[FeedStub : addFeedUser]: "+"add user");
+				System.out.println("[FeedStub : addFeedUser]: "+"Token: "+Token);
 				weibo.setToken(sessionKey);
 				StatusWapper sw = new Timeline().getUserTimeline();
 				List<Status> status = sw.getStatuses();
@@ -44,7 +44,7 @@ public class FeedStub implements Runnable{
 				up.add(us);
 				Initer.User.put(config.properties.irt.getUserIdByToken(Token), us);
 			} catch (Exception err){
-				System.out.print("add err");
+				System.out.print("[FeedStub : addFeedUser]: "+"add feed user err");
 			}
 		}
 	}
@@ -59,7 +59,7 @@ public class FeedStub implements Runnable{
 	
 	@Override
 	public void run() {
-		System.out.println("run");
+		System.out.println("[FeedStub : run]: "+"run");
 		while (true){
 			synchronized(this){
 				if (up.size()!=0){
@@ -73,9 +73,9 @@ public class FeedStub implements Runnable{
 					weibo.setToken(sessionKey);
 					for (Status x :sts){	
 						if (!status.contains(x)) {						
-							System.out.println("*******"+x.getText());
+							System.out.println("[FeedStub : run]: "+x.getText());
 							try {
-								System.out.println("token:"+us.getToken());
+								System.out.println("[FeedStub : run]: "+"token:"+us.getToken());
 								Map<String,String> map = new HashMap();
 								map.put("message", x.getText());
 								config.properties.irt.send(us.getToken(),"updateStatus", map);

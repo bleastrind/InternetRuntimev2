@@ -8,6 +8,7 @@ window.InternetRuntime.Client.Core = new function()
 	var CONST = 
 	{	
 		BASE_URL: 'http://localhost:9000',
+		GET_USERNAME_URL: '/clients/getName',
 		LOGIN_URL: '/clients/login',
 		REGISTER_URL: '/clients/register',
 		LONGPOLLING_URL: '/clients/longpolling',
@@ -18,7 +19,7 @@ window.InternetRuntime.Client.Core = new function()
 		STATUS_BACKGROUND: 'Backgroung',
 		STATUS_SLEEP: 'Sleep',
 		
-		IFRAME_SIZE: {dx: 400, dy: 200}
+		IFRAME_SIZE: {dx: 400, dy: 230}
 	}
 	
 	var CORS = new function()
@@ -67,6 +68,7 @@ window.InternetRuntime.Client.Core = new function()
 				xy: xy,
 				size: size
 			}
+				
 			postMessage(msg);
 		}
 		
@@ -81,12 +83,12 @@ window.InternetRuntime.Client.Core = new function()
 			postMessage(msg);
 		}
 	
-		this.knownUser = function()
+		this.knownUser = function(username)
 		{
 			var msg = 
 			{
-				type: 'knowUser',
-				username: 'Xu Peilong'	//need a username?
+				type: 'knownUser',
+				username: username	//need a username?
 			}
 			postMessage(msg);
 		}
@@ -124,12 +126,14 @@ window.InternetRuntime.Client.Core = new function()
 	
 	this.installRootApp = function()
 	{
+		
 		var Iframe = document.createElement('iframe');
 		Iframe.src = CONST.BASE_URL + CONST.INSTALL_ROOT_APP_URL;
 		Iframe.style.left = 0 + 'px';
 		Iframe.style.top = 0 + 'px';
-		Iframe.style.width = CONST.IFRAME_SIZE.dx + 'px';
-		Iframe.style.height = CONST.IFRAME_SIZE.dy + 'px';
+		Iframe.style.width = CONST.IFRAME_SIZE.dx - 30 + 'px';
+		Iframe.style.height = CONST.IFRAME_SIZE.dy - 30 + 'px';
+		Iframe.frameBorder = 0;
 		document.body.appendChild(Iframe);
 		CORS.showIframe('center', CONST.IFRAME_SIZE);
 	}
@@ -236,7 +240,23 @@ window.InternetRuntime.Client.Core = new function()
 		
 		
 		
-		
+		this.getUserName = function()
+		{
+			var Url = CONST.BASE_URL+ CONST.GET_USERNAME_URL;
+			try
+			{
+				new asynHttpRequest()
+				.setType('Get')
+				.setUrl(Url)
+				.setOKCallBack(knownUser)
+				.setErrorCallBack(unknownUser)
+				.send();
+			}
+			catch (e)
+			{
+				alert(e);
+			}
+		}
 		
 		this.StartLongPolling = function()
 		{
@@ -248,9 +268,9 @@ window.InternetRuntime.Client.Core = new function()
 		{
 			CORS.unknownUser();
 		}
-		function knownUser()
+		function knownUser(response)
 		{
-			CORS.knownUser();
+			CORS.knownUser(response.responseText);
 		}
 		
 		
@@ -328,6 +348,7 @@ window.InternetRuntime.Client.Core = new function()
 		}
 		*/
 	}
+	
 	
 }
 

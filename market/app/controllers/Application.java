@@ -34,7 +34,7 @@ public class Application extends Controller {
 		InternetRT irt = properties.irt;
 		String accessToken = irt.setAccessTokenWithCode(code);
 		session.put("token", accessToken);
-		System.out.println("Access Token:" + accessToken);
+		System.out.println("[Application : loginUser]: "+"Access Token:" + accessToken);
 		index();
     }
     

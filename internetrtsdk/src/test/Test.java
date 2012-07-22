@@ -22,11 +22,11 @@ public class Test {
 		// TODO Auto-generated method stub
 		List<RoutingChoice> s= generateChoieces(new TestRoutingPredicate().getPossibleRoutings("",""));
 		for(RoutingChoice sa:s){
-			System.out.println(sa.getSignalName()+"@"+sa.getSignalAppName()+":"+sa.getListenerAppName()+" "+sa.getListenerDescription());
+			System.out.println("[Test : main]: "+sa.getSignalName()+"@"+sa.getSignalAppName()+":"+sa.getListenerAppName()+" "+sa.getListenerDescription());
 			RoutingXmlParser parser = new RoutingXmlParser(sa.getRouting());
-			System.out.println("Routing:"+sa.getRouting());
+			System.out.println("[Test : main]: "+"Routing:"+sa.getRouting());
 			for(ListenerConfig config:parser.getEventListeners()){
-				System.out.println(config.node());
+				System.out.println("[Test : main]: "+config.node());
 			}
 		}
 	}
@@ -56,7 +56,7 @@ public class Test {
 				for(String app: allAppsList){
 					String fromAppXmlString = app;
 					AppXmlParser fromAppXmlParser = new AppXmlParser(fromAppXmlString);
-					System.out.println(config.node());
+					System.out.println("[Test : addNewSignalSource]: "+config.node());
 					List<Signal> signals = fromAppXmlParser.getMatchedRequestSignals(config);
 					for(Signal signal:signals){
 						a.add(new scala.Tuple3<String, Signal,DescribedListenerConfig>(fromAppXmlParser.getAppName(),signal,config));
@@ -73,7 +73,7 @@ public class Test {
 			for(Signal signal:requests){
 				
 				String signalName = signal.name();
-				System.out.println("signal"+signalName);
+				System.out.println("[Test : addNewListeners]: "+"signal"+signalName);
 				String[] allAppsList = new String[]{renren,sina};
 				
 				for(String app: allAppsList){

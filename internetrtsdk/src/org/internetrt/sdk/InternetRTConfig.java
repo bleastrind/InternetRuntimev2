@@ -13,7 +13,7 @@ public class InternetRTConfig {
 		try {
 			props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertiefile));
 		} catch (Exception e) {
-			System.out.println("No config.properties");
+			System.out.println("[InternetRTConfig : InternetRTConfig]: "+"No config.properties");
 		}
 	}
 	public InternetRTConfig(){}

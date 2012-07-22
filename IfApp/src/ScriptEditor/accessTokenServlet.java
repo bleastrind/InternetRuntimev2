@@ -44,13 +44,13 @@ public class accessTokenServlet extends HttpServlet {
 		}
 		else {
 			code = request.getParameter("code");
-			System.out.println("CODE"+code);
+			System.out.println("[accessTokenServlet : doGet]: "+"CODE"+code);
 			
 			
 			
 			String accessTokenString = rt.getAccessToken(code, appID, appSecret);
 			
-			System.out.println("accessTokenString"+accessTokenString);
+			System.out.println("[accessTokenServlet : doGet]: "+"accessTokenString"+accessTokenString);
 			
 			HttpSession session = request.getSession();
 			session.setAttribute("accessToken", accessTokenString);

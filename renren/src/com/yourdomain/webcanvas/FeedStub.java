@@ -68,7 +68,7 @@ public class FeedStub implements Runnable{
 						if (currentFeed != null){
 							String message = (String) currentFeed.get("message");
 							messages.add(message);
-							System.out.println(message);
+							System.out.println("[FeedStub : run]: "+"messsage: "+message);
 							if (!this.message.contains(message)){
 								Map<String,String> map = new HashMap();
 								map.put("message", URLEncoder.encode(message));
@@ -78,7 +78,7 @@ public class FeedStub implements Runnable{
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
-								System.out.println(message);
+								System.out.println("[FeedStub : run]: "+"messsage: "+message);
 							}
 						}
 					}

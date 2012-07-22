@@ -48,9 +48,9 @@ public class HomeServlet extends HttpServlet {
 			}
 			
 			try {
-				System.out.println("add user");
-				System.out.println(sessionKey+" "+renrenUserId+" "+Token);
-				System.out.println(config.properties.irt.getUserIdByToken(Token));
+				System.out.println("[HomeServlet : doGet]: "+"add user");
+				System.out.println("[HomeServlet : doGet]: "+"sessionKey:: "+sessionKey+" renrenUserId: "+renrenUserId+" Token:"+Token);
+				System.out.println("[HomeServlet : doGet]: "+"config.properties: "+config.properties.irt.getUserIdByToken(Token));
 				ApiInitListener.feedstub.addFeedUser(sessionKey, renrenUserId,Token);
 			} catch(Exception err){
 				err.printStackTrace();

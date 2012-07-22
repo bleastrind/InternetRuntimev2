@@ -21,18 +21,17 @@ import config.properties;
 public class AppController extends Controller {
 
 	public static String getAccessToken() {
-		System.out.println(session.get("token"));
+		System.out.println("[AppController : getAccessToken]: "+session.get("token"));
 		return session.get("token");
 	}
 
 	@Before(only = { "listAllApp", "deleteUserApp", "addUserAppSave" })
 	public static void checkUser() {
-		System.out.println("checkUser");
+		System.out.println("[AppController : checkUser]: "+"checkUser");
 		String token = getAccessToken();
 		if (token == null) {
-			System.out.println(properties.irt.getAuthCodeUrl());
+			System.out.println("[AppController : checkUser]: "+properties.irt.getAuthCodeUrl());
 			Controller.redirect(properties.irt.getAuthCodeUrl());
-			System.out.println("checkUser!!!!");
 		}
 	}
 
@@ -73,13 +72,12 @@ public class AppController extends Controller {
 			String information, String installUrl, String updated,
 			String updateUrl, String secret) {
 		String token = getAccessToken();
-		System.out.println(id);
+		System.out.println("[AppController : addUserAppSave]: "+"AppID"+id);
 		
-		System.out.println(token + "******************");
+		System.out.println("[AppController : addUserAppSave]: "+"accessToken"+token);
 		App app = new App(id, name, information, installUrl, updated,
 				updateUrl, secret);
 		if (AppService.addUserApp(app, token)){
-			System.out.println("succes");
 			RoutingRecomController.index(id);}
 		else
 			render("AppService/addfail.html");

@@ -19,14 +19,14 @@ public class WelcomeServlet extends HttpServlet {
 		String code = null;
 		String appID = config.properties.appID;	
 		String appSecret = config.properties.appSecret;
-		System.out.println("post code1:"+code);
+		System.out.println("[WelcomeServlet : doPost]: "+"post code1:"+code);
 		if(request.getParameter("code") == null){
 			response.sendRedirect("http://localhost:9000/oauth/authorize?appID="+appID+"&redirect_uri=http://apps.weibo.com/vinsiatest/weibot/welcome");
 		} else 	{
 		code = request.getParameter("code");
-		System.out.println("post code2:"+code);
+		System.out.println("[WelcomeServlet : doPost]: "+"post code2:"+code);
 		String accessTokenString = config.properties.irt.getAccessToken(code, appID, appSecret);
-		System.out.println(accessTokenString);
+		System.out.println("[WelcomeServlet : doPost]: "+"accessToken: "+accessTokenString);
 		HttpSession session = request.getSession();
 		session.setAttribute("accessToken", accessTokenString);
 		
@@ -41,14 +41,14 @@ public class WelcomeServlet extends HttpServlet {
 		String code = null;
 		String appID = config.properties.appID;	
 		String appSecret = config.properties.appSecret;
-		System.out.println("get code:"+code);
+		System.out.println("[WelcomeServlet : doGet]: "+"get code:"+code);
 		if(request.getParameter("code") == null){
 			response.sendRedirect("http://localhost:9000/oauth/authorize?appID="+appID+"&redirect_uri=http://apps.weibo.com/vinsiatest/weibot/welcome");
 		} else 	{
 		code = request.getParameter("code");
-		System.out.println("get code:"+code);
+		System.out.println("[WelcomeServlet : doGet]: "+"get code:"+code);
 		String accessTokenString = config.properties.irt.getAccessToken(code, appID, appSecret);
-		System.out.println(accessTokenString);
+		System.out.println("[WelcomeServlet : doGet]: "+"accessToken: "+accessTokenString);
 		HttpSession session = request.getSession();
 		session.setAttribute("accessToken", accessTokenString);
 		

@@ -23,20 +23,20 @@ public class HomeServlet extends HttpServlet{
 		throws ServletException, java.io.IOException {
 			String Auth=(String)request.getParameter("signed_request");
 			String Token=(String)request.getSession().getAttribute("accessToken");
-			System.out.println(Token);
+			System.out.println("[HomeServlet : doPost]: "+Token);
 			Oauth oauth = new Oauth();
 			try{
-				System.out.print(Auth);
+				System.out.print("[HomeServlet : doPost]: "+"Auth: "+Auth);
 				oauth.parseSignedRequest(Auth);
 				String sessionKey = oauth.getToken();
-				System.out.println("weibo"+sessionKey);
+				System.out.println("[HomeServlet : doPost]: "+"weiboSessionKey: "+sessionKey);
 				request.setAttribute("sessionkeyfromweibo", sessionKey);
-				System.out.println("weibo"+sessionKey);
+				System.out.println("[HomeServlet : doPost]: "+"weiboSessionKey"+sessionKey);
 				Initer.stub.suspend();
 				Initer.feedstub.addFeedUser(sessionKey,Token);
 				Initer.stub.resume();
 			} catch(Exception err){
-				System.out.print("err");
+				System.out.print("[HomeServlet : doPost]: "+"err");
 			}
 			
 			RequestDispatcher welcomeDispatcher = request.getRequestDispatcher("/views/home.jsp");
