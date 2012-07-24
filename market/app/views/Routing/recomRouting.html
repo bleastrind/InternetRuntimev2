@@ -15,7 +15,7 @@
   <body onload>
   <h1>There're some new signal matching you may be interested in</h1>
  #{form @RoutingRecomController.ConfirmRecomRouting()}
-   <input type="hidden" name="redierct_uri" value="${redirect_uri}"/>
+   <input type="hidden" name="redirect_uri" value="${redirect_uri}"/>
  	#{list items:choices, as:'choice'}
                <input type="checkbox" name="choices" value="${choice.routing}" checked/> 
                <span alt="${choice.signalDescription}">${choice.signalName}@${choice.signalAppName}</span>:

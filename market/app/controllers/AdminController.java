@@ -72,7 +72,7 @@ public class AdminController extends Controller {
     	if (!"".equals(updateurl)&&updateurl!=null) 
     		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"true",updateurl,secret);
     	else 
-    		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"false","empty",secret);
+    		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"false","",secret);
     	welcome();
     }
 }

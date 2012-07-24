@@ -51,6 +51,7 @@ public class FeedStub implements Runnable{
 	
 	public void publish(String Message,String token) throws WeiboException{
 		synchronized(this){
+			System.out.println("[FeedStub:publish]");
 			weibo.setToken(token);
 			Timeline tl = new Timeline();
 			tl.UpdateStatus(Message);
@@ -78,7 +79,7 @@ public class FeedStub implements Runnable{
 								System.out.println("[FeedStub : run]: "+"token:"+us.getToken());
 								Map<String,String> map = new HashMap();
 								map.put("message", x.getText());
-								config.properties.irt.send(us.getToken(),"updateStatus", map);
+								config.properties.irt.send(us.getToken(),"updatestatus", map);
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();

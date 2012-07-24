@@ -73,15 +73,18 @@ public class AppDao {
 		{
 			ColumnQuery<String, String, String> rowQuery = columnQuery.setColumnFamily(CF).setKey(row.getKey());
 			if (rowQuery.setName("name").execute().get() != null){
+				try{
 				App temp = new App(row.getKey(),
 					rowQuery.setName("name").execute().get().getValue(),
 					rowQuery.setName("information").execute().get().getValue(),
 					rowQuery.setName("installUrl").execute().get().getValue(),
 					rowQuery.setName("updated").execute().get().getValue(),
 					rowQuery.setName("updateUrl").execute().get().getValue(),
-					rowQuery.setName("secret").execute().get().getValue()
-				);
-				appList.add(temp);
+					rowQuery.setName("secret").execute().get().getValue());
+					appList.add(temp);
+				} catch(Exception e){
+				}
+				
 			}
 		}
 		return appList;		
