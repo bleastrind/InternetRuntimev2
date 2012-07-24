@@ -107,8 +107,8 @@ class PageJavaScriptSlimClientDriver(cid:String) extends ClientDriver{
 	var channel:ActorRef = null
 	
 	def response(data:String, msgID:Option[String]){
-	  channel ! "{cid:\""+cid+"\";data:"+data+ (msgID match {
-	    case Some(id)=>";"+CONSTS.MSGID+":"+id
+	  channel ! "{cid:\""+cid+"\",data:"+data+ (msgID match {
+	    case Some(id)=>","+CONSTS.MSGID+":"+id
 	    case _=>""
 	  })+"}"
 	}
