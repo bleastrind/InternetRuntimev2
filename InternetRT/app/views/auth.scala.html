@@ -1,8 +1,55 @@
-@(app:org.internetrt.core.model.Application,redirect_uri:String)
- You have to install first:
+ @(app:org.internetrt.core.model.Application,redirect_uri:String)
+ <html>
+ <head>
+<link rel="stylesheet" href="@routes.Assets.at("css/custom-theme/jquery-ui-1.8.21.custom.css")">
+<script src="@routes.Assets.at("js/jquery-1.7.2.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("js/jquery-ui-1.8.21.custom.min.js")" type="text/javascript"></script>
+<style>
+.wrapper {
+	width: 960px;
+	margin: 0 auto;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	padding: 60px 0;
+}
+.top {
+	background: #9DD745;
+	box-shadow: 0 -4px 0 rgba(0, 0, 0, 0.1) inset;
+	margin: 0 auto;
+	box-sizing: border-box;
+	padding: 30px 0;
+	text-align:center
+}
+div{
+	padding : 10px;
+	margin: 4px;
+}
+#inputdiv{
+	padding : 10px;
+	margin: 4px;
+	text-align:center
+}
+</style>
+<script>
+$(function() {
+$( "input:submit" ).button();
+});
+</script>
+ </head>
+
+
+ <body>
+ <div class="top">
+ <h1>You have to install first:</h1>
+ </div>
+ <div class="wrapper"> 
  <h1>App</h1>
+ <div>
  @app.xml.toString()
+  </div>
 <form action="/clients/install" method="post">
+ <div id="inputdiv" class="ui-widget-content">
 <input type="hidden" name="appID" value="@app.id"/>
 <input type="hidden" name="appxml" value="@app.xml.toString()"/>
 <input type="hidden" name="redirect_uri" value="@redirect_uri"/>
@@ -10,5 +57,12 @@
   <input type="checkbox" name="accesses" value="@access" checked/>
 } 
 
-<button type="submit" value="confirm"/>
+</div>
+<br/>
+<input type="submit" value="confirm"/>
+
 </form>
+
+</div>
+</body>
+</html>
