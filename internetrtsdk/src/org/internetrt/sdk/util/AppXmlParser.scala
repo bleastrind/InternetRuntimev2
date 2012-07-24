@@ -5,6 +5,12 @@ import org.internetrt.sdk.exceptions.FormatErrorException
 class AppXmlParser (xml:String){
   val xmlFile = scala.xml.XML.loadString(xml)
   
+  def getAppID():String = {
+    val   appID= (xmlFile \ "AppID").text
+      throwFormatException(appID,"appID")
+    return appID
+  }
+  
   def throwFormatException(term: String, description: String){
      if (term == null || term == "")
       {

@@ -60,7 +60,7 @@
 			});
 
             $("#addlistener").click(function() {
-                var obj = $('<div name="listener"><select name="listener"><option value ="RequestListener">RequestListener</option><option value ="EventListener">EventListener</option></select><label>Description</label><input type="text" name="description"><label>Url</label><input type="text" name="url"><label>Signalname</label><input type="text" name="signalname">' +
+                var obj = $('<div name="listener"><select name="listener"><option value ="RequestListener">RequestListener</option><option value ="EventListener">EventListener</option><option value ="RequestListener">PipeListener</option></select><label>Description</label><input type="text" name="description"><label>Url</label><input type="text" name="url"><label>Signalname</label><input type="text" name="signalname">' +
                         '<a class="button">AddPara</a></div></br>');
                 alert(obj.find(".button").html());
                 $(obj).find(".button").click(function(){addpara(obj);});
