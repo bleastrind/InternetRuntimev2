@@ -78,7 +78,7 @@ public class AppController extends Controller {
 		App app = new App(id, name, information, installUrl, updated,
 				updateUrl, secret);
 		if (AppService.addUserApp(app, token)){
-			RoutingRecomController.index(id);}
+			RoutingRecomController.index(id,updateUrl);}
 		else
 			render("AppService/addfail.html");
 	}

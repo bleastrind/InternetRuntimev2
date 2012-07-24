@@ -125,6 +125,7 @@ public class InternetRT {
 
 		//Event signals
 		for(ListenerConfig config: parser.getEventListeners()){
+			System.out.println(config);
 			sendToListener(adapter(sourceMap), config , parser.getExtData());
 		}
 		if(parser.getRequestListener() != null){
@@ -142,12 +143,11 @@ public class InternetRT {
 		for(ListenerDataFormat format: RoutingXmlParser.getRequiredFormats(config)){
 			resultdata.put(format.kind(), ListenerRequestGenerator.generateDataByFormat(data, format, extData));
 		}
-		
-		if(type == "httpget"){
+		if(type.equals("httpget")){
 			if(resultdata.containsKey("params"))
 				url += "?" + HttpHelper.generatorParamString(resultdata.get("params"));
 			return HttpHelper.httpClientGet(url);
-		}else if(type == "httppost"){
+		}else if(type.equals("httppost")){
 			Map<String,String> bodydata = new HashMap<String,String>();
 			if(resultdata.containsKey("params"))
 				url += "?" + HttpHelper.generatorParamString(resultdata.get("params"));
@@ -286,8 +286,8 @@ public class InternetRT {
 	
 	public static void main(String args[]) throws IOException{
 		InternetRT irt = new InternetRT();
-	    String appID = "494c22aa-9dc9-41c8-8602-cedf64d793c1";
-		String appSecret ="99c0e983-41bb-436d-b2ab-5f8ffa77986a";
+		String appID = "5c71fed6-04b5-44d8-afe9-73516f59060f";
+		String appSecret ="8d9389fa-6fc9-4f27-856d-74587c71e677";
 			try {
 				InternetRTConfig config = new InternetRTConfig();
 
@@ -295,14 +295,14 @@ public class InternetRT {
 				config.updatePropertiy("appSecret",
 						appSecret);
 				config.updatePropertiy("redirect_URI",
-						"http://127.0.0.1:9001/Application/loginUser"); //Play 1.0 and Play 2.0 will conflict on session, if domain is same & port is different
-				config.updatePropertiy("baseURL", "http://localhost:9000");
+						"http://internetrt.org:9001/Application/loginUser"); //Play 1.0 and Play 2.0 will conflict on session, if domain is same & port is different
+				config.updatePropertiy("baseURL", "http://internetrt.org:9000");
 				config.updatePropertiy("accessTokenURL",
-						"http://localhost:9000/oauth/accesstoken");
+						"http://internetrt.org:9000/oauth/accesstoken");
 				config.updatePropertiy("routingInstanceURl",
-						"http://localhost:9000/oauth/workflow");
+						"http://internetrt.org:9000/oauth/workflow");
 				config.updatePropertiy("authorizeURL",
-						"http://localhost:9000/oauth/authorize");
+						"http://internetrt.org:9000/oauth/authorize");
 			
 				irt = InternetRT.create(config);
 			} catch (Exception e) {
@@ -311,8 +311,8 @@ public class InternetRT {
 		}
 		Map<String,String> map = new HashMap();
 		map.put("message", "value");
-		String token = irt.setAccessTokenWithCode("066486c6-b6fc-4d60-9015-ad9a3052fcbb");
-		irt.send(token, "updateStatus", map);
+		String token = "93a134ba-52ce-4f54-9e7d-ad79bbb5f378";
+		irt.send(token, "updatestatus", map);
 	}
 
 }
