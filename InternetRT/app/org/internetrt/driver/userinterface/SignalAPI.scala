@@ -8,6 +8,7 @@ import org.internetrt.sdk.util.ListenerRequestGenerator
 import scala.collection.JavaConversions._
 import org.internetrt.sdk.util.RoutingXmlParser
 import org.apache.commons.lang.NotImplementedException
+import org.internetrt.sdk.util.HttpHelper
 
 object SignalAPI extends Controller {
   def init(signalname: String) = Action {
@@ -86,10 +87,10 @@ object SignalAPI extends Controller {
       val params = RoutingXmlParser.getRequiredFormats(config)
         .filter(f => f.kind == "params")
         .headOption match {
-          case Some(format) => "?" + ListenerRequestGenerator.generateDataByFormat(
+          case Some(format) => "?" + HttpHelper.generatorParamString( ListenerRequestGenerator.generateDataByFormat(
             request.queryString,
             format,
-            null)
+            null))
           case None => ""
         }
       //TODO the data should be Map[String,Map[String]]
