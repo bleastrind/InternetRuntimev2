@@ -28,6 +28,12 @@ object SignalAPI extends Controller {
             case _ => false
           }) {
             tryRedirect(request, response)
+          } else  
+		  if (request.queryString.get("format") match {
+            case Some(list) => list.head == "redirecturl"
+            case _ => false
+          }) {
+            Ok(getRedirectUrl(request, response))
           } else
             Ok(response.getResponse)
         }
@@ -76,6 +82,9 @@ object SignalAPI extends Controller {
   }
 
   private def tryRedirect(request: play.api.mvc.Request[play.api.mvc.AnyContent], response: org.internetrt.core.signalsystem.SignalResponse): play.api.mvc.Result = {
+	Redirect(getRedirectUrl(request, response))
+  }
+  private def getRedirectUrl(request: play.api.mvc.Request[play.api.mvc.AnyContent], response: org.internetrt.core.signalsystem.SignalResponse): String = {
 
     val parser = new RoutingXmlParser(response.getResponse)
     val config = parser.getRequestListener()
@@ -94,7 +103,7 @@ object SignalAPI extends Controller {
           case None => ""
         }
       //TODO the data should be Map[String,Map[String]]
-      Redirect(baseurl + params)
+      baseurl + params
     };
   }
 }
