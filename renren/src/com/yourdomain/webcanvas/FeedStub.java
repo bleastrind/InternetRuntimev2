@@ -73,7 +73,7 @@ public class FeedStub implements Runnable{
 								Map<String,String> map = new HashMap();
 								map.put("message", URLEncoder.encode(message));
 								try {
-									config.properties.irt.send(t.getToken(),"updateStatus", map);
+									config.properties.irt.send(t.getToken(),"updatestatus", map);
 								} catch (IOException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();

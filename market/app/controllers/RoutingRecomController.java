@@ -36,17 +36,18 @@ public class RoutingRecomController extends Controller{
 			}
 		}
 	   
-		public static void index(String fromAppIDString){
+		public static void index(String fromAppIDString,String redirect){
 			String accessToken = getAccessToken();
-			String redirect_uri = request.params.get("redirect_uri");
+			String redirect_uri = redirect;
 			RoutingRecommender routingRecommender = new RoutingRecommender();
 			List<scala.Tuple3<String,Signal,DescribedListenerConfig>> result = routingRecommender.getPossibleRoutings(fromAppIDString, accessToken);
 			List<RoutingChoice> choices = generateChoieces(result);
 			System.out.println("[RoutingRecomController : index]: "+choices.size());
 			if(choices.size()> 0)
 				render("Routing/recomRouting.html",choices,redirect_uri);
-			else
+			else if(redirect_uri==null||redirect_uri=="")
 				AppController.listAllApp();
+				else Controller.redirect(redirect_uri);
 		}
 		
 		private static List<RoutingChoice> generateChoieces(List<scala.Tuple3<String,Signal,DescribedListenerConfig>> possibleRoutings){

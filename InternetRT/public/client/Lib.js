@@ -652,11 +652,13 @@ window.InternetRuntime.UI = new function(){
 		};	
 		
 		var ClickFunc = function(){};
-		this.Click = function(dof)
+		this.Click = function(dof, subnotworkflag)
 		{
 			ClickFunc = dof;
-			Obj.onclick = function()
-			{			
+			Obj.onclick = function(e)
+			{
+				if (subnotworkflag && e.target != Obj)
+					return;
 				if (AnimeState == REST)
 				{
 					if (Time != 0)

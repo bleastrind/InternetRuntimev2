@@ -62,6 +62,12 @@ public class AppController extends Controller {
 		// TODO:nick name
 		render("AppService/listAllApp.html", applist, token);
 	}
+	
+
+	public static void listAppBySignalName(String signalname){
+		List<App> applist = AppService.getAppsBySignal(signalname);
+		render("AppService/listAllApps.html", applist, true);
+	}
 
 	public static void addUserApp() {
 		List<App> applist = AppService.getAllApps();
@@ -78,7 +84,7 @@ public class AppController extends Controller {
 		App app = new App(id, name, information, installUrl, updated,
 				updateUrl, secret);
 		if (AppService.addUserApp(app, token)){
-			RoutingRecomController.index(id);}
+			RoutingRecomController.index(id,updateUrl);}
 		else
 			render("AppService/addfail.html");
 	}

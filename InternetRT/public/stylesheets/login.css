@@ -1,0 +1,162 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font: 14px/21px 'Open Sans',"Lucida Sans","Lucida Grande","Lucida Sans Unicode",Verdana,sans-serif;
+}
+.cf:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    line-height: 0;
+    visibility: hidden;
+}
+
+
+ul, li {
+    list-style-type: none;
+}
+
+a {
+    color: #348FD0;
+    font-weight: 300;
+    text-decoration: none;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+a:hover {
+    color: #000000;
+}
+input[type="text"], input[type="email"], input[type="password"] {
+    border-color: #B2B2B2;
+    border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+    color: #383838;
+    font-size: 13px;
+    outline: 0 none;
+    padding: 5px;
+    width: 100%;
+}
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+    border: 1px solid #42A4E0;
+    box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5), 0 0 1px 3px rgba(73, 173, 227, 0.4);
+}
+input[type="text"]:disabled, input[type="email"]:disabled, input[type="password"]:disabled {
+    background-color: #F0F0F0;
+    color: #4F4F4F;
+    opacity: 1;
+}
+input[type="radio"], input[type="checkbox"] {
+    cursor: pointer;
+    margin-left: 2px;
+}
+button, .button {
+   
+    float: right;
+ 
+    padding: 6px 10px 7px;
+
+}
+
+
+
+h1 {
+    font-size: 36px;
+    letter-spacing: -1.5px;
+    line-height: 100%;
+}
+h2 {
+    font-size: 32px;
+    letter-spacing: -1px;
+    line-height: 100%;
+}
+h3 {
+    font-size: 28px;
+    letter-spacing: -0.5px;
+    line-height: 100%;
+}
+h4 {
+    font-size: 24px;
+    letter-spacing: -0.25px;
+    line-height: 100%;
+}
+
+body {
+    background-color: #ffffff;
+    background-position: center top, center top;
+    background-repeat: repeat-x, repeat;
+    color: #FFFFFF;
+}
+#wrapper {
+    padding: 0 auto;
+    width: 896px;
+}
+h1 {
+    margin-bottom: 35px;
+}
+.headline-main, h1 {
+    font-weight: 300;
+}
+
+
+#hAlign {
+    margin: 0 auto;
+    position: relative;
+    width: 700px;
+}
+#vAlign {
+    display: table-cell;
+    height: 500px;
+    width: 700px;
+	vertical-align: middle;
+}
+#signUp {
+    padding: 0 0 0 250px;
+}
+
+#signUp h1 {
+    max-width: 390px;
+}
+#signUpForm, #congrats {
+    background-color: #9DD745;
+    border-radius: 5px 5px 5px 5px;
+    margin: 0 auto;
+    padding: 20px;
+    width: 475px;
+}
+#signUpForm a {
+    text-shadow: 0 1px 0 #888888;
+}
+#signUpForm a:hover {
+    color: #58A7E7;
+}
+#signUpForm ul {
+    margin: 0 0 20px;
+}
+
+.submit .remember {
+    float: left;
+}
+
+#wrapper {
+    width: 100%;
+	height: 100%
+}
+#vAlign, #hAlign, #signUp, #signUpForm, #congrats {
+    width: 475px;
+}
+h1 {
+    font-size: 25px;
+}
+
+#hAlign {
+    padding: 0 10px;
+    width: 300px;
+}
+#vAlign, #signUp, #signUpForm, #congrats {
+    width: 100%;
+}
