@@ -23,7 +23,7 @@ public class WelcomeServlet extends HttpServlet {
 
 		String msg = request.getParameter("msg");
 			if(request.getParameter("code") == null){
-				response.sendRedirect("http://internetrt.org:9000/oauth/authorize?appID="+appID+"&redirect_uri=http://apps.weibo.com/vinsiatest/weibot/welcome");
+				response.sendRedirect("http://localhost:9000/oauth/authorize?appID="+appID+"&redirect_uri=http://apps.weibo.com/vinsiatest/weibot/welcome");
 			} else 	{
 				code = request.getParameter("code");
 				System.out.println("[WelcomeServlet : doPost]: "+"post code2:"+code);
@@ -45,7 +45,7 @@ public class WelcomeServlet extends HttpServlet {
 		String appSecret = config.properties.appSecret;
 		System.out.println("[WelcomeServlet : doGet]: "+"get code:"+code);
 		if(request.getParameter("code") == null){
-			response.sendRedirect("http://internetrt.org:9000/oauth/authorize?appID="+appID+"&redirect_uri=http://apps.weibo.com/vinsiatest/weibot/welcome");
+			response.sendRedirect("http://localhost:9000/oauth/authorize?appID="+appID+"&redirect_uri=http://apps.weibo.com/vinsiatest/weibot/welcome");
 		} else 	{
 		code = request.getParameter("code");
 		System.out.println("[WelcomeServlet : doGet]: "+"get code:"+code);
