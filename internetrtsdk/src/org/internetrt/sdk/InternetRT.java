@@ -295,14 +295,14 @@ public class InternetRT {
 				config.updatePropertiy("appSecret",
 						appSecret);
 				config.updatePropertiy("redirect_URI",
-						"http://127.0.0.1:9001/Application/loginUser"); //Play 1.0 and Play 2.0 will conflict on session, if domain is same & port is different
-				config.updatePropertiy("baseURL", "http://localhost:9000");
+						"http://internetrt.org:9001/Application/loginUser"); //Play 1.0 and Play 2.0 will conflict on session, if domain is same & port is different
+				config.updatePropertiy("baseURL", "http://internetrt.org:9000");
 				config.updatePropertiy("accessTokenURL",
-						"http://localhost:9000/oauth/accesstoken");
+						"http://internetrt.org:9000/oauth/accesstoken");
 				config.updatePropertiy("routingInstanceURl",
-						"http://localhost:9000/oauth/workflow");
+						"http://internetrt.org:9000/oauth/workflow");
 				config.updatePropertiy("authorizeURL",
-						"http://localhost:9000/oauth/authorize");
+						"http://internetrt.org:9000/oauth/authorize");
 			
 				irt = InternetRT.create(config);
 			} catch (Exception e) {
