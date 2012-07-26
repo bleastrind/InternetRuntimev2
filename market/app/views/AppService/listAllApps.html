@@ -2,8 +2,8 @@
 <html>
 <head>
 <style type="text/css">
-body.test1 {margin:0 ;padding-left: 2cm }
-table {border:1px solid blue; width:1200px; overflow:hidden}
+body.test1 {margin:0 ;padding-left: 1.5cm }
+table {border:1px solid blue; width:1250px;}
 th,td {border:1px solid blue }
 </style>
 </head>
@@ -22,13 +22,14 @@ th,td {border:1px solid blue }
 		</tr>							
             #{list items:applist, as:'app'}
                 <tr>
-                    <td width:300px; height:60px;overflow:hidden>${app.name}</td>
+                    <td width:100px; height:60px;overflow:hidden>${app.name}</td>
                     <td border:1px solid blue; width:600px; height:100px; overflow:hidden>${app.decription}</td>
-					<input type="hidden" name="information" value="${app.information}">
-                    <td width:300px; height:60px;overflow:hidden>
+		    <input type="hidden" name="information" value="${app.information}">
+                    <td width:200px; height:60px;overflow:hidden>
                         <a href="@{AppController.listApp(app)}">Details View</a>
                     </td>
-                </tr>		
+                </tr>
+				
             #{/list}
     </table>
 #{/if}

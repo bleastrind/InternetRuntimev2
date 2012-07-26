@@ -45,7 +45,7 @@ public class FeedStub implements Runnable{
 	
 	public void publish(String message,String sessionkey){
 		RenrenApiClient apiClient = RenrenApiClient.getInstance();
-		apiClient.getFeedService().publicFeed("weibo", message, "nihao", "", "", "", "", "转发自微博", new SessionKey(sessionkey));
+		apiClient.getFeedService().publicFeed("人人stub", "人人stub发送", "http://apps.renren.com/vinsiademo/welcome", "", "", "", "", message, new SessionKey(sessionkey));
 	}
 	
 	public void run()
