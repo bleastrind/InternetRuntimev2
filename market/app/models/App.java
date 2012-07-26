@@ -14,7 +14,7 @@ public class App {
 	private String updated;
 	private String updateUrl;
 	private String secret;
- 
+	private String decription;
 	//Construcors	
 	public App(String id, String name, String information, String installUrl,String updated,String updateUrl,String secret)
 	{
@@ -90,5 +90,13 @@ public class App {
 	public String getSecret()
 	{
 		return this.secret;
+	}
+	
+	public String getDecription(){
+		return this.decription;
+	}
+	
+	public void setDecription(String decription){
+		this.decription = decription;
 	}
 }

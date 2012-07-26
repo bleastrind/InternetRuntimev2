@@ -6,7 +6,8 @@
   <title>Renren Webcanvas Demo -- Welcome</title>
   <script type="text/javascript" src="../js/renren_js_sdk/renren.js"></script>
 </head>
-<body>&nbsp; 
+<body>
+<h1>欢迎使用人人stub</h1>
 <script type="text/javascript">
   	try{
 	  var uiOpts = {
@@ -23,5 +24,5 @@
 	  alert(err)
 	  }
   </script> 
-  Hi, Welcome!</body>
+ </body>
 </html>

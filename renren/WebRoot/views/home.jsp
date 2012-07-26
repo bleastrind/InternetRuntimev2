@@ -10,5 +10,6 @@
   <p>你好，${requestScope.userName}</p>	
   <p>${requestScope.feedName }</p>
   <p>${requestScope.feedMessage }</p>
+  <p>人人stub正在运行中...</p>
 </body>
 </html>
