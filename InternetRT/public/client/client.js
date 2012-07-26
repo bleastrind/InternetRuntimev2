@@ -35,14 +35,17 @@ window.InternetRuntime.Client = new function()
 	}
 	var CONST = 
 	{
-		BASE_URL: 'http://internetrt.org:9000',
+		BASE_URL: 'http://localhost:9000',
 		CORE_IFRAME_SRC: '/assets/client/Client.html',
 		Lib_SRC: '/assets/client/Lib.js',
 		LOGO_SRC: '/assets/client/InternetRuntime.png',
 		
-		MARKET_URL: 'http://internetrt.org:9001',
+		MARKET_URL: 'http://localhost:9001',
+<<<<<<< HEAD
+=======
 		
 		PAGE_LOAD_SIGNAL_NAME: 'clients/pageload'
+>>>>>>> 94f3f7d8d7683cbcfcfbbd84e8c17ee651a6a912
 	}
 	
 	var CoreIframe;
