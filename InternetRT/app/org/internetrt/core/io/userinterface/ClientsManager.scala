@@ -55,7 +55,8 @@ object ClientsManager {
       connector.response(msg, msgID);
     } catch {
       case e => {
-        System.out.println("[ClientsManager:response] Error on response!:" + uid);
+       Log log=Log.getLoger(); 
+        log.loger.error("[ClientsManager:response] Error on response!:" + uid);
       }
     }
   }

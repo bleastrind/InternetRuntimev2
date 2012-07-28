@@ -33,8 +33,8 @@ public class accessTokenServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String code = null;
-		String appID = "927259c0-1d4b-4170-826a-8dea43a7a7a7";
-		String appSecret = "6337a390-0dda-4b02-9a13-b5fd175bb1c1";
+		String appID = "bd19541f-7996-4d05-be56-1c0b5b10317a";
+		String appSecret = "b50e83b5-aa48-4a1f-b2d3-954d6c45783a";
 		InternetRT rt = config.properties.irt;
 		
 		if(request.getParameter("code") == null){

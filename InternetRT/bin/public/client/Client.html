@@ -7,12 +7,17 @@ window.InternetRuntime.Client.Core = new function()
 	//	Global Consts
 	var CONST = 
 	{	
-		BASE_URL: 'http://localhost:9000',
+		BASE_URL: 'http://internetrt.org:9000',
 		GET_USERNAME_URL: '/clients/getName',
 		LOGIN_URL: '/clients/login',
 		REGISTER_URL: '/clients/register',
 		LONGPOLLING_URL: '/clients/longpolling',
 		INSTALL_ROOT_APP_URL: '/clients/installapp',
+		INIT_OPTION_URL: '/signal/initOption/client/',
+		INIT_URL: '/signal/init/client/',
+		
+		
+		FORMAT_PARAM_NAME: 'format',
 		CID_PARAM_NAME: 'CID',
 		STATUS_PARAM_NAME: 'CLIENTSTATUS',		
 		STATUS_ACTIVE: 'Active',
@@ -30,25 +35,32 @@ window.InternetRuntime.Client.Core = new function()
 			MessageHandler[e.data.type](e.data);
 		}
 		var MessageHandler = 
-		{
+		{		
+			pageLoad: function(data)
+			{
+				window.InternetRuntime.Client.Core.init(data.signalname, null);
+			},
 			loginByJump: function(data)
 			{
-				window.InternetRuntime.Client.Core.loginByJump();
+				window.InternetRuntime.Client.Core.loginByJump(data.oldurl);
 			},
 			registerByJump: function(data)
 			{
-				window.InternetRuntime.Client.Core.registerByJump();
+				window.InternetRuntime.Client.Core.registerByJump(data.oldurl);
 			},
 			installRootApp: function(data)
 			{
 				
 				window.InternetRuntime.Client.Core.installRootApp();
+			},		
+			init: function(data)
+			{
+				window.InternetRuntime.Client.Core.init(data.signalname, data.params, data.id);
 			},
-			/*
 			initOption: function(data)
 			{
-				window.InternetRuntime.Communication.initOption(data.signalname);
-			},*/
+				window.InternetRuntime.Client.Core.initOption(data.signalname, data.id);
+			},
 			start: function(data)
 			{
 				window.InternetRuntime.Client.Core.run();
@@ -59,6 +71,36 @@ window.InternetRuntime.Client.Core = new function()
 		function postMessage(msg)
 		{
 			window.top.postMessage(msg, '*');
+		}
+		this.eval = function(script)
+		{
+			
+			var msg = 
+			{
+				type: 'eval',
+				script: script
+			}
+			postMessage(msg);
+		}
+		this.initBack = function(data, id)
+		{
+			var msg = 
+			{
+				type: 'initBack',
+				id: id,
+				data: data
+			}
+			postMessage(msg);
+		}
+		this.initOptionBack = function(option, id)
+		{
+			var msg = 
+			{
+				type: 'initOptionBack',
+				id: id,
+				option: option
+			}
+			postMessage(msg);
 		}
 		this.showIframe = function(xy, size)
 		{
@@ -142,24 +184,27 @@ window.InternetRuntime.Client.Core = new function()
 	//	Client start to work
 	this.run = function()
 	{	
-		try
-		{
-			Communication.StartLongPolling();
-		}
-		catch(e)
-		{
-			alert(e);
-		}
+		Communication.getUserName();
 	}
 	
-	this.loginByJump = function()
+	this.loginByJump = function(oldurl)
 	{	
-		CORS.jumpToUrl(CONST.BASE_URL + CONST.LOGIN_URL);
+		CORS.jumpToUrl(CONST.BASE_URL + CONST.LOGIN_URL + '?oldurl=' + oldurl);
 	}
 	
-	this.registerByJump = function()
+	this.registerByJump = function(oldurl)
 	{
-		CORS.jumpToUrl(CONST.BASE_URL + CONST.REGISTER_URL);
+		CORS.jumpToUrl(CONST.BASE_URL + CONST.REGISTER_URL + '?oldurl=' + oldurl);
+	}
+	
+	this.init = function(signalname, params, id)
+	{
+		Communication.init(signalname, params, id);
+	}
+	
+	this.initOption = function(signalname, id)
+	{
+		Communication.initOption(signalname, id);
 	}
 	
 	var Communication = new function()
@@ -173,7 +218,7 @@ window.InternetRuntime.Client.Core = new function()
 			var Content = null;
 			var CallBack = function(){};
 			var OKCallBack = function(){};
-			var ErrorCallBack = function(){alert('Http request to ' + Url + ' Error!')};
+			var ErrorCallBack = function(){('Http request to ' + Url + ' Error!')};
 			
 			this.setType = function(type)
 			{
@@ -243,19 +288,11 @@ window.InternetRuntime.Client.Core = new function()
 		this.getUserName = function()
 		{
 			var Url = CONST.BASE_URL+ CONST.GET_USERNAME_URL;
-			try
-			{
-				new asynHttpRequest()
-				.setType('Get')
-				.setUrl(Url)
-				.setOKCallBack(knownUser)
-				.setErrorCallBack(unknownUser)
-				.send();
-			}
-			catch (e)
-			{
-				alert(e);
-			}
+			new asynHttpRequest()
+			.setType('Get')
+			.setUrl(Url)
+			.setOKCallBack(checkUser)
+			.send();
 		}
 		
 		this.StartLongPolling = function()
@@ -264,26 +301,62 @@ window.InternetRuntime.Client.Core = new function()
 			lp.start();
 		}
 		
-		function unknownUser()
+		function checkUser(response)
 		{
-			CORS.unknownUser();
+			if (response.responseText == "")
+				CORS.unknownUser();
+			else
+			{
+				CORS.knownUser(response.responseText);
+				Communication.StartLongPolling();
+			}
 		}
-		function knownUser(response)
+		
+		function initBack(response, id)
 		{
-			CORS.knownUser(response.responseText);
+			CORS.initBack(response.responseText, id);
+		}
+		this.init = function(signalname, params, id)
+		{
+			var Url = CONST.BASE_URL + CONST.INIT_URL + signalname;
+			try
+			{
+				var r = new asynHttpRequest()
+				.setType('Get')
+				.setUrl(Url)
+				.setOKCallBack(function(response){
+								initBack(response, id);
+								})
+				.setErrorCallBack(function(response){
+								initBack(response, id);
+								});
+				for (var p in params)
+					r.pushParam(p, params[p]);
+				r.send();
+			}catch(e)
+			{}
+			
 		}
 		
-		
-		
-		this.initOption = function(signalname)
+		function initOptionBack(response, id)
+		{
+			CORS.initOptionBack(response.responseText, id);
+		}
+		this.initOption = function(signalname, id)
 		{			
-			var url = BaseUrl + "/signal/initOption/client/" + signalname;
-			var params = {};
-			params.format = 'json';
-			var response = HTTPGet(url, params);
-			if (response != '')
-				alert(response);
+			var Url = CONST.BASE_URL + CONST.INIT_OPTION_URL + signalname;
+
+			new asynHttpRequest()
+			.setType('Get')
+			.setUrl(Url)
+			.pushParam(CONST.FORMAT_PARAM_NAME, 'json')
+			.setOKCallBack(function(response){
+							initOptionBack(response, id);
+							})
+			.send();
 		}
+		
+		
 		
 		
 		function LongPolling(eventHandler)
@@ -302,27 +375,24 @@ window.InternetRuntime.Client.Core = new function()
 			//a longpolling tick
 			function tick()			
 			{
-				try
-				{
-					new asynHttpRequest()
-					.setType('Get')
-					.setUrl(Url)
-					.pushParam(CONST.CID_PARAM_NAME, CId)
-					.pushParam(CONST.STATUS_PARAM_NAME, Status)
-					.setOKCallBack(handleLongpolling)
-					.setErrorCallBack(unknownUser)
-					.send();
-				}
-				catch (e)
-				{
-					alert(e);
-				}
+				new asynHttpRequest()
+				.setType('Get')
+				.setUrl(Url)
+				.pushParam(CONST.CID_PARAM_NAME, CId)
+				.pushParam(CONST.STATUS_PARAM_NAME, Status)
+				.setOKCallBack(handleLongpolling)
+				.send();
 			}
 			function handleLongpolling(request)
 			{
-				knownUser();
 				var response = request.responseText;
-				CId = eval(response);
+				var resJsonObj;
+				eval("resJsonObj = " + response);
+				if (CId == null)
+					CId = resJsonObj.cid;
+				if (resJsonObj.data)
+					eventHandlers[resJsonObj.data[0]](resJsonObj.data[1]);
+				
 				//why get cid instead of {cid:cid}????
 				/*if (response.data)
 					switch (response.type)
@@ -336,17 +406,16 @@ window.InternetRuntime.Client.Core = new function()
 				}
 			}
 		}
-		/*
+		
+		//msgid not impl
 		var eventHandlers = 
 		{
-			"default": function(msgId, data)
+			"loadscript": function(data)
 			{
-				var r = prompt(data,"");
-				var url = BaseUrl+ "/clients/response";
-				asyncHTTPPost(url, {'msgID': msgId}, r);				
+				CORS.eval(unescape(data).substr(18));		
 			}
 		}
-		*/
+		
 	}
 	
 	

@@ -8,21 +8,26 @@ if (!window.InternetRuntime)
 
 window.InternetRuntime.Client = new function()
 {
-	var UI;
+	var XY;
+	var DXY;
+	var Create;
 	var Point;
 	function InitWithLib(callback)
 	{
-		UI = window.InternetRuntime.UI;
+		XY = window.InternetRuntime.UI.XY;
+		DXY = window.InternetRuntime.UI.DXY;
+		Create = window.InternetRuntime.UI.Create;
 		Point = new function()
 		{	
 			this.fresh = function()
 			{
-				this.ScreenCenter = new UI.XY
+				this.ScreenCenter = new XY
 								(document.body.scrollLeft + window.innerWidth / 2
 								,document.body.scrollTop + window.innerHeight / 2);
-				this.ScreenRightbottom = new UI.XY
+				this.ScreenRightbottom = new XY
 								(document.body.scrollLeft + document.body.clientWidth
 								,document.body.scrollTop + document.body.clientHeight);
+				alert(document.body.clientHeight);
 			}
 			this.fresh();
 		}
@@ -30,11 +35,17 @@ window.InternetRuntime.Client = new function()
 	}
 	var CONST = 
 	{
-		BASE_URL: 'http://localhost:9000',
+		BASE_URL: 'http://internetrt.org:9000',
 		CORE_IFRAME_SRC: '/assets/client/Client.html',
 		Lib_SRC: '/assets/client/Lib.js',
+		LOGO_SRC: '/assets/client/InternetRuntime.png',
 		
-		MARKET_URL: 'http://localhost:9001',
+		MARKET_URL: 'http://internetrt.org:9001',
+<<<<<<< HEAD
+=======
+		
+		PAGE_LOAD_SIGNAL_NAME: 'clients/pageload'
+>>>>>>> 94f3f7d8d7683cbcfcfbbd84e8c17ee651a6a912
 	}
 	
 	var CoreIframe;
@@ -62,8 +73,8 @@ window.InternetRuntime.Client = new function()
 	}
 	function loadCore(callback)
 	{	
-		var CoreIframeSize = new UI.DXY(1, 1);
-		CoreIframe = UI.Create('iframe')
+		var CoreIframeSize = new DXY(1, 1);
+		CoreIframe = Create('iframe')
 		.LoadFunc(callback)
 		.Src(CONST.BASE_URL + CONST.CORE_IFRAME_SRC)
 		.Size(CoreIframeSize)
@@ -90,7 +101,27 @@ window.InternetRuntime.Client = new function()
 		});
 	}
 	
+	var CallBackPoolId = 0;
+	var CallBackPool = {};
+	this.initOption = function(signalname, callback)
+	{
+		var Id = CallBackPoolId;
+		CallBackPoolId++;
+		CallBackPool[Id] = callback
+		CORS.initOption(signalname, Id);
+	}
+	
 
+	
+	
+	this.init = function(signalname, params, callback)
+	{
+		var Id = CallBackPoolId;
+		CallBackPoolId++;
+		CallBackPool[Id] = callback
+		
+		CORS.init(signalname, params, Id);
+	}
 	
 	function jumpToUrl(url)
 	{
@@ -99,11 +130,11 @@ window.InternetRuntime.Client = new function()
 	function showIframe(xy, size)
 	{
 		CoreIframe.Size(size)
-		.Size(new UI.DXY(size.dx, size.dy));
+		.Size(new DXY(size.dx, size.dy));
 		CoreIframe.DOMObject.style.zIndex = 2;
 		
-		var IframeBox = UI.Create('div')
-		.Size(new UI.DXY(size.dx, size.dy))
+		var IframeBox = Create('div')
+		.Size(new DXY(size.dx, size.dy))
 		.Style('first')
 		.WindowFather();
 		
@@ -138,6 +169,19 @@ window.InternetRuntime.Client = new function()
 		}
 		var MessageHandler = 
 		{
+			eval: function(data)
+			{
+				eval(data.script);
+			},
+			initOptionBack: function(data)
+			{
+				CallBackPool[data.id](data.option);
+			},	
+			initBack: function(data)
+			{
+				if (data.id != null)
+				CallBackPool[data.id](data.data);
+			},	
 			showIframe: function(data)
 			{
 				showIframe(data.xy, data.size);
@@ -152,6 +196,7 @@ window.InternetRuntime.Client = new function()
 			},
 			knownUser: function(data)
 			{
+				
 				loadingFinish(data.username);
 			}
 			/*
@@ -166,11 +211,42 @@ window.InternetRuntime.Client = new function()
 		{
 			CoreIframe.DOMObject.contentWindow.postMessage(msg, CONST.BASE_URL);
 		}
+		this.pageLoad = function()
+		{
+			var msg = 
+			{
+				type: 'pageLoad',
+				signalname: CONST.PAGE_LOAD_SIGNAL_NAME
+			}
+			postMessage(msg);
+		}		
+		this.initOption = function(signalname, id)
+		{
+			var msg = 
+			{
+				type: 'initOption',
+				signalname: signalname,
+				id: id
+			}
+			postMessage(msg);
+		}
+		this.init = function(signalname, params, id)
+		{
+			var msg =
+			{
+				type: 'init',
+				signalname: signalname,
+				params: params,
+				id: id
+			}
+			postMessage(msg);
+		}
 		this.loginByJump = function()
 		{
 			var msg = 
 			{
-				type: 'loginByJump'
+				type: 'loginByJump',
+				oldurl: document.location.href
 			}
 			postMessage(msg);
 		}
@@ -178,7 +254,8 @@ window.InternetRuntime.Client = new function()
 		{
 			var msg = 
 			{
-				type: 'registerByJump'
+				type: 'registerByJump',
+				oldurl: document.location.href
 			}
 			postMessage(msg);
 		}
@@ -212,7 +289,7 @@ window.InternetRuntime.Client = new function()
 			var	LoadingLogo = Create('img')
 			.Size(LoadingLogoSize)
 			.CenterXY(LoadingLogoCenterXY)
-			.Src('InternetRuntime.png');
+			.Src(CONST.BASE_URL + CONST.LOGO_SRC);
 			return Create('div')
 			.Size(LoadingPanelSize)
 			.CenterXY(LoadingPanelCenterXY)
@@ -225,16 +302,17 @@ window.InternetRuntime.Client = new function()
 			.WindowFather()
 			.Opacity(0)
 			.Time(600)
-			.CallBack(CORS.start())
+			.CallBack(CORS.start)
 			.Opacity(1)
 		}
 		showLoadingPanel();
 	}
 	function loadingFinish(username)
 	{
+		
 		function hideLoadingPanel()
 		{
-			var SmallSize = new InternetRuntime.UI.DXY(23, 10);
+			var SmallSize = new DXY(23, 10);
 			LoadingPanel
 			.Time(300)
 			.To(Point.ScreenRightbottom.minus(SmallSize.scale(1.2)))
@@ -277,21 +355,25 @@ window.InternetRuntime.Client = new function()
 			UserPanelWrapper.WindowFather()
 			.Child(UserPanel)
 			.XY(Point.ScreenRightbottom.minus(UserPanelWrapper.Size()));
-			document.body.onscroll = function()
+			
+			document.body.addEventListener('scroll', ScrollFresh, false);
+			function ScrollFresh()
 			{
 				Point.fresh();
 				UserPanelWrapper.XY(Point.ScreenRightbottom.minus(UserPanelWrapper.Size()));
 			}
 			
 			UserPanelTag
-			.HoverIn(showUserPanel);
+			.HoverIn(showUserPanel, true);
 			UserPanelWrapper
-			.HoverOut(hideUserPanel);
+			.HoverOut(hideUserPanel, true);
+			
+			setPanel(username);
 			
 		}
 		function showUserPanel(done)
 		{
-			var ShowTargetXY = new XY(UserPanelTag.Size().dx, 0);
+			var ShowTargetXY = new XY(UserPanelTag.Size().dx + 10, 0);
 			UserPanel
 			.Time(300)
 			.To(ShowTargetXY)
@@ -309,33 +391,48 @@ window.InternetRuntime.Client = new function()
 		
 		function setPanel(username)
 		{
-			var NotLoginLabel = Create('h3')
-			.Text('You need login first!');
+			
+			
 			var LoginButton = Create('a')
 			.Text('Login')
 			.Href('#')
+			.XY(new XY(35, 80))
 			.Click(function(done){
 				CORS.loginByJump();
 			});
 			var RegisterButton = Create('a')
-			.Text('Login')
+			.Text('Register')
 			.Href('#')
+			.XY(new XY(100, 80))
 			.Click(function(done){
 				CORS.registerByJump();
 			})
 			var MarketButton = Create('a')
-			.Text('Login')
+			.Text('Market')
 			.Href('#')
+			.XY(new XY(35, 80))
 			.Click(function(done){
 				jumpToUrl(CONST.MARKET_URL)
 			})
-			if (username == null)
-			{
-				
+			if (username == null || username == "")
+			{	
+				var NotLoginLabel = Create('h3')
+				.Text('You need login first!')
+				.XY(new XY(25, 30));
+				UserPanel
+				.Child(NotLoginLabel)
+				.Child(LoginButton)
+				.Child(RegisterButton)
 			}
 			else
-			{
-				
+			{	
+				CORS.pageLoad();
+				var WelcomeLabel = Create('h3')
+				.XY(new XY(25, 30))
+				.Text('Hello ' + username + '!');
+				UserPanel
+				.Child(WelcomeLabel)
+				.Child(MarketButton)
 			}
 		}
 		
@@ -345,18 +442,3 @@ window.InternetRuntime.Client = new function()
 	
 }
 
-
-
-//test
-function testLogin()
-{
-	gClient.login('333', '333');	
-}
-function testRegister()
-{
-	gClient.register('333', '333');	
-}	
-function testInitOption()
-{
-	gClient.initOption('share');	
-}	
