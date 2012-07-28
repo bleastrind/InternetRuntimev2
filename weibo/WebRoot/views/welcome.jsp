@@ -22,7 +22,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
   </head>
   
-  <body>&nbsp; 
+  <body>
+  <h1>Weibo stub</h1>
   <style>
 body{
 	background:url("http://qimeng.appsina.com/images/1.jpg");
@@ -32,13 +33,13 @@ body{
 <script> 
 function authLoad(){
  	App.AuthDialog.show({
-	client_id : '1876388041',    //必选，appkey
-	redirect_uri : 'http://apps.weibo.com/vinsiatest/weibot/home',     //必选，授权后的回调地址，例如：http://apps.weibo.com/giftabc
-	height: 120    //可选，默认距顶端120px
+	client_id : '1876388041',    //��ѡ��appkey
+	redirect_uri : 'http://apps.weibo.com/vinsiatest/weibot/home',     //��ѡ����Ȩ��Ļص���ַ�����磺http://apps.weibo.com/giftabc
+	height: 120    //��ѡ��Ĭ�Ͼඥ��120px
 	});
 }
 authLoad()
 </script>
-    This is my JSP page. <br>
+     
   </body>
 </html>

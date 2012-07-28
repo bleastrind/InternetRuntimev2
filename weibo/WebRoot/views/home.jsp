@@ -30,8 +30,6 @@
 		<script>
 		if (WB2.checkLogin()) alert(123)
 		</script>
-		<p>
-			seesionKey
-		</p>
+		<h1>Weibo Stub is running</h1>	
 	</body>
 </html>

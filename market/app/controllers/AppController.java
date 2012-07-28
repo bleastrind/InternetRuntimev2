@@ -41,11 +41,16 @@ public class AppController extends Controller {
 
 	public static void listAllApps() {
 		List<App> applist = AppService.getAllApps();
-
+		List<App> apps = new ArrayList();
 		//Boolean flag = AppService.market(getAccessToken());
-		
 		for (App app:applist){
 			AppXmlParser parser = new AppXmlParser(app.getInformation());
+			List<Signal> signals = parser.getSignals();
+			app.setDecription("能够接收的信号:");
+			for (Signal signal:signals){
+				app.setDecription(app.getDecription()+signal.name()+" ");
+			}
+			app.setDecription(app.getDecription()+"\n"+parser.getListeners().toString());
 		}
 		Boolean flag = false;
 //		if (getAccessToken()!=null)

@@ -1,38 +1,46 @@
 #{extends 'main.html' /}
 <html>
-
+<head>
+<style type="text/css">
+body.test1 {margin:0 ;padding-left: 1.5cm }
+table {border:1px solid blue; width:1250px;}
+th,td {border:1px solid blue }
+</style>
+</head>
+<body class="test1">
 #{if !flag}
 	<a href="javascript:void(document.body.appendChild(document.createElement('script')).src='http://internetrt.org:9000/assets/client/installRootApp.js');">Install Market</a>
+
 	#{/if}
 #{if applist.size()}
 	<h1>There are the apps:</h1>
-	<table>
-        <thead>
-            <tr>
+	<table border:1px solid blue>
+		<tr>
                 <th>Name</th>
-                <th>information</th>
-				<th>Action</th>								
-            </tr>
-        </thead>
-        <tbody>
+                <th>decription</th>
+		<th>Action</th>	
+		</tr>							
             #{list items:applist, as:'app'}
                 <tr>
-                    <td>${app.name}</td>
-                    <td>${app.information}</td>
-                    <td>
+                    <td width:100px; height:60px;overflow:hidden>${app.name}</td>
+                    <td border:1px solid blue; width:600px; height:100px; overflow:hidden>${app.decription}</td>
+		    <input type="hidden" name="information" value="${app.information}">
+                    <td width:200px; height:60px;overflow:hidden>
                         <a href="@{AppController.listApp(app)}">Details View</a>
                     </td>
-					
                 </tr>
+				
             #{/list}
-        </tbody>
-    </table>	
+    </table>
 #{/if}
 #{else}
-    <h3>There are no app!<h3>
+    <h3>There are no app!</h3>
 #{/else}
 
 <div>
+	<p>
 	<a href="@{AppController.listAllApp()}">My Apps</a>
+	</p>
 </div>
+</body>
 </html>

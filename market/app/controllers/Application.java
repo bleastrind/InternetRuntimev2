@@ -30,8 +30,11 @@ public class Application extends Controller {
         else login();
     }
     
-    public static void loginUser(String code) throws HttpException, IOException{
-		InternetRT irt = properties.irt;
+    public static void loginUser(String code,String msg) throws HttpException, IOException{
+		if (!msg.equals("success")) {
+			render("Application/err.html");
+		}
+    	InternetRT irt = properties.irt;
 		String accessToken = irt.setAccessTokenWithCode(code);
 		session.put("token", accessToken);
 		System.out.println("[Application : loginUser]: "+"Access Token:" + accessToken);
