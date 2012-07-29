@@ -33,7 +33,7 @@ public class AppDao {
 	Keyspace keyspacert = createKeyspace(KEYSPACEINRT,cluster);
 	Mutator<String> mrt = createMutator(keyspacert, se);
 	
-	
+
 	public void save(App instance){
 		System.out.println(instance.getId());
 		m.insert(instance.getId(), CF, createStringColumn("name", instance.getName()));
@@ -45,6 +45,7 @@ public class AppDao {
 		m.insert(instance.getId(), CF, createStringColumn("updateUrl", instance.getUpdateUrl()));
 		System.out.println( instance.getSecret());
 		m.insert(instance.getId(), CF, createStringColumn("secret", instance.getSecret()));		
+		m.insert(instance.getId(), CF, createStringColumn("logourl", instance.getLogourl()));	
 	}
 	
 
@@ -73,18 +74,26 @@ public class AppDao {
 		{
 			ColumnQuery<String, String, String> rowQuery = columnQuery.setColumnFamily(CF).setKey(row.getKey());
 			if (rowQuery.setName("name").execute().get() != null){
-				try{
+				String logourl = "";
+				try
+				{
+					logourl = rowQuery.setName("logourl").execute().get().getValue();
+				}
+				catch (Exception e)
+				{
+					logourl = "";
+				}
+				
 				App temp = new App(row.getKey(),
 					rowQuery.setName("name").execute().get().getValue(),
 					rowQuery.setName("information").execute().get().getValue(),
 					rowQuery.setName("installUrl").execute().get().getValue(),
 					rowQuery.setName("updated").execute().get().getValue(),
 					rowQuery.setName("updateUrl").execute().get().getValue(),
-					rowQuery.setName("secret").execute().get().getValue());
-					appList.add(temp);
-				} catch(Exception e){
-				}
-				
+					rowQuery.setName("secret").execute().get().getValue(),
+					logourl
+				);
+				appList.add(temp);
 			}
 		}
 		return appList;		
@@ -97,15 +106,25 @@ public class AppDao {
 		
 		if (rowQuery.setName("name").execute().get()!=null){
 			System.out.println(rowQuery.setName("information").execute().get().getValue());
-		App app = new App(id,
-			rowQuery.setName("name").execute().get().getValue(),
-			rowQuery.setName("information").execute().get().getValue(),
-			rowQuery.setName("installUrl").execute().get().getValue(),
-			rowQuery.setName("updated").execute().get().getValue(),
-			rowQuery.setName("updateUrl").execute().get().getValue(),
-			rowQuery.setName("secret").execute().get().getValue()
-		);
-		return app;
+			String logourl = "";
+			try
+			{
+				logourl = rowQuery.setName("logourl").execute().get().getValue();
+			}
+			catch (Exception e)
+			{
+				logourl = "";
+			}
+			App app = new App(id,
+				rowQuery.setName("name").execute().get().getValue(),
+				rowQuery.setName("information").execute().get().getValue(),
+				rowQuery.setName("installUrl").execute().get().getValue(),
+				rowQuery.setName("updated").execute().get().getValue(),
+				rowQuery.setName("updateUrl").execute().get().getValue(),
+				rowQuery.setName("secret").execute().get().getValue(),
+				logourl
+			);
+			return app;
 		} else
 			return null;
 	}

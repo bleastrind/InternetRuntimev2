@@ -20,14 +20,13 @@ window.InternetRuntime.Client = new function()
 		Point = new function()
 		{	
 			this.fresh = function()
-			{
+			{ 
 				this.ScreenCenter = new XY
 								(document.body.scrollLeft + window.innerWidth / 2
 								,document.body.scrollTop + window.innerHeight / 2);
 				this.ScreenRightbottom = new XY
-								(document.body.scrollLeft + document.body.clientWidth
-								,document.body.scrollTop + document.body.clientHeight);
-				alert(document.body.clientHeight);
+								(document.body.scrollLeft + document.documentElement.clientWidth
+								,document.body.scrollTop + window.innerHeight);
 			}
 			this.fresh();
 		}
@@ -35,17 +34,14 @@ window.InternetRuntime.Client = new function()
 	}
 	var CONST = 
 	{
-		BASE_URL: 'http://localhost:9000',
+		BASE_URL: 'http://internetrt.org:9000',
 		CORE_IFRAME_SRC: '/assets/client/Client.html',
 		Lib_SRC: '/assets/client/Lib.js',
 		LOGO_SRC: '/assets/client/InternetRuntime.png',
 		
-		MARKET_URL: 'http://localhost:9001',
-<<<<<<< HEAD
-=======
+		MARKET_URL: 'http://internetrt.org:9001',
 		
 		PAGE_LOAD_SIGNAL_NAME: 'clients/pageload'
->>>>>>> 94f3f7d8d7683cbcfcfbbd84e8c17ee651a6a912
 	}
 	
 	var CoreIframe;
@@ -298,11 +294,13 @@ window.InternetRuntime.Client = new function()
 		}
 		function showLoadingPanel()
 		{
+			
 			LoadingPanel
 			.WindowFather()
 			.Opacity(0)
 			.Time(600)
-			.CallBack(CORS.start)
+			.CallBack(CORS.start);
+			LoadingPanel
 			.Opacity(1)
 		}
 		showLoadingPanel();

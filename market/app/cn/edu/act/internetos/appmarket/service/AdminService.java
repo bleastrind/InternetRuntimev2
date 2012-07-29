@@ -25,13 +25,13 @@ public class AdminService{
     	return properties.irt.appregister("123");
     }
 
-    public static void addAppSave(String id,String name, String information, String installUrl,String email,String updated,String updateUrl,String secret)
+    public static void addAppSave(String id,String name, String information, String installUrl,String email,String updated,String updateUrl,String secret, String logourl)
     {
 		AppDao appdao = new AppDao();
 		try{
 			System.out.println(installUrl);
 			System.out.println(updateUrl);			
-			App app = new App(id,name, information, installUrl,updated,updateUrl,secret);
+			App app = new App(id,name, information, installUrl,updated,updateUrl,secret,logourl);
 			System.out.println(app.getId());
 			System.out.println(app.getInstallUrl());
 			System.out.println(app.getUpdateUrl());

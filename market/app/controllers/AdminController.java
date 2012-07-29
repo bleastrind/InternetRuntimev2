@@ -7,6 +7,8 @@ import play.mvc.*;
 import java.util.*;
 
 import org.internetrt.sdk.util.AppXmlParser;
+import org.internetrt.sdk.util.DescribedListenerConfig;
+import org.internetrt.sdk.util.Signal;
 
 import models.*;
 
@@ -18,6 +20,22 @@ public class AdminController extends Controller {
 	
     public static void welcome() {   
 		List<App> applist = AppService.getAllApps();
+		List<App> apps = new ArrayList();
+		//Boolean flag = AppService.market(getAccessToken());
+		for (App app:applist){
+			AppXmlParser parser = new AppXmlParser(app.getInformation());
+			List<Signal> signals = parser.getSignals();
+			app.setDecription("能够发出的信号:");
+			for (Signal signal:signals){
+				app.setDecription(app.getDecription()+signal.name()+" ");
+			}
+			app.setDecription(app.getDecription()+"能够接收的信号:");
+			List<DescribedListenerConfig> listeners = parser.getListeners();
+			
+			for (DescribedListenerConfig listen:listeners){
+				app.setDecription(app.getDecription()+listen.description()+" ");
+			}
+		}
         render("AdminService/welcome.html", applist);
 		//return ok(AdminService.welcome.render(applist));
     }
@@ -66,13 +84,13 @@ public class AdminController extends Controller {
         render("AdminService/addAppXml.html",id,secret);
     }
     
-    public static void addAppSaveXml(String id, String information,String secret,String email,String installUrl,String updateurl)
+    public static void addAppSaveXml(String id, String information,String secret,String email,String installUrl,String updateurl, String logourl)
     {
     	AppXmlParser parser = new AppXmlParser(information);
     	if (!"".equals(updateurl)&&updateurl!=null) 
-    		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"true",updateurl,secret);
+    		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"true",updateurl,secret, logourl);
     	else 
-    		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"false","",secret);
+    		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"false","",secret, logourl);
     	welcome();
     }
 }
