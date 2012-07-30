@@ -19,7 +19,7 @@ object ListenerRequestGenerator{
     try{
       format map (p => (generateDataByAdapter(p._1, signalData.get(p._1), p._2 ,extData)))
     }catch{
-      case e:java.util.NoSuchElementException => throw new DataNotEnoughException(format.values.map( adapter => adapter.node text).foldLeft[String]("")((all,t) => all + "," + t))
+      case e:java.util.NoSuchElementException => throw new DataNotEnoughException(format.keys.foldLeft[String]("")((all,t) => all + "," + t))
     }
   }
   
