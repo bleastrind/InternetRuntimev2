@@ -63,4 +63,4 @@ POST	/clients/install						org.internetrt.driver.userinterface.OAuthAPI.install
 #Auth
 GET		/auth/appregister		org.internetrt.driver.AppRegister.register
 #queryApp
-GET		/public/queryapp		org.internetrt.driver.userinterface.AppRegister.queryApp
+GET		/public/queryapp		org.internetrt.driver.AppRegister.queryApp
