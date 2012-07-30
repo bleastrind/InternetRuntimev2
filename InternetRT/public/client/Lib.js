@@ -50,6 +50,7 @@ window.InternetRuntime.UI = new function(){
 			
 			obj.Color('DCE9F9');
 			obj.DOMObject.style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
+			obj.DOMObject.style.backgroundImage = '-webkit-gradient(linear,0% 0%, 0% 100%, from(#EBF3FC), to(#DCE9F9))';
 			obj.DOMObject.style.boxShadow = '0 1px 0 rgba(255, 255, 255, 0.8) inset';
 			obj.DOMObject.style.border = '1px solid #CCCCCC';
 			obj.DOMObject.style.borderRadius = '6px 6px 6px 6px';
@@ -61,6 +62,7 @@ window.InternetRuntime.UI = new function(){
 			
 			obj.Color('DCE9F9');
 			obj.DOMObject.style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
+			obj.DOMObject.style.backgroundImage = '-webkit-gradient(linear,0% 0%, 0% 100%, from(#EBF3FC), to(#DCE9F9))';
 			obj.DOMObject.style.boxShadow = '0 1px 0 rgba(255, 255, 255, 0.8) inset';
 			obj.DOMObject.style.border = '1px solid #CCCCCC';
 			obj.DOMObject.style.borderRightStyle = 'none';
