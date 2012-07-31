@@ -11,6 +11,6 @@ h1{text-align:center;}
 #{/form}
 
 %{  }else{  }%
-	<a href="${redirect_uri}" target="_blank">next step</a>
+	<a href="${redirect_uri}" target="_blank" onclick="window.location.href='@{AppController.listAllApp()}'">next step</a>
 
 %{ } }%

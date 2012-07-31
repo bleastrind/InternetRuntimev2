@@ -146,20 +146,20 @@ move /Y ..\weibo\src\Servlet\WelcomeServlet.java1  ..\weibo\src\Servlet\WelcomeS
 sed s/localhost:9001/market.internetrt.org:9001/ ../weibo/src/Servlet/WelcomeServlet.java > ../weibo/src/Servlet/WelcomeServlet.java1
 move /Y ..\weibo\src\Servlet\WelcomeServlet.java1  ..\weibo\src\Servlet\WelcomeServlet.java
 
-sed s/localhost:9001/market.internetrt.org:9001/ ../market/app/views/appservice/listallapps.html > ../market/app/views/appservice/listallapps.html1
-move /Y ../market/app/views/appservice/listallapps.html1  ../market/app/views/appservice/listallapps.html
+sed s/localhost:9001/market.internetrt.org:9001/ ../market/app/views/appservice/listAllApps.html > ../market/app/views/appservice/listAllApps.html1
+move /Y ..\market\app\views\appservice\listAllApps.html1  ..\market\app\views\appservice\listAllApps.html
 
-sed s/localhost:9000/internetrt.org:9000/ ../market/app/views/appservice/listallapps.html > ../market/app/views/appservice/listallapps.html1
-move /Y ../market/app/views/appservice/listallapps.html1  ../market/app/views/appservice/listallapps.html
+sed s/localhost:9000/internetrt.org:9000/ ../market/app/views/appservice/listAllApps.html > ../market/app/views/appservice/listAllApps.html1
+move /Y ..\market\app\views\appservice\listAllApps.html1  ..\market\app\views\appservice\listAllApps.html
 
 sed s/localhost:9001/market.internetrt.org:9001/ ../IfApp/WebContent/start.html > ../IfApp/WebContent/start.html1
-move /Y ../IfApp/WebContent/start.html1  ../IfApp/WebContent/start.html
+move /Y ..\IfApp\WebContent\start.html1  ..\IfApp\WebContent\start.html
 
 sed s/localhost:9000/internetrt.org:9000/ ../IfApp/WebContent/start.html > ../IfApp/WebContent/start.html1
-move /Y ../IfApp/WebContent/start.html1  ../IfApp/WebContent/start.html
+move /Y ..\IfApp\WebContent\start.html1  ..\IfApp\WebContent\start.html
 
-sed s/localhost:8080/market.internetrt.org:8080/ ../market/app/views/appservice/listallapps.html > ../market/app/views/appservice/listallapps.html1
-move /Y ../market/app/views/appservice/listallapps.html1  ../market/app/views/appservice/listallapps.html
+sed s/localhost:8080/market.internetrt.org:8080/ ../market/app/views/appservice/listAllApp.html > ../market/app/views/appservice/listAllApp.html1
+move /Y ..\market\app/views\appservice/listAllApp.html1  ..\market\app\views\appservice\listAllApp.html
 
 
 
