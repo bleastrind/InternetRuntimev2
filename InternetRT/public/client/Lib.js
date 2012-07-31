@@ -50,19 +50,25 @@ window.InternetRuntime.UI = new function(){
 			
 			obj.Color('DCE9F9');
 			obj.DOMObject.style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
+			obj.DOMObject.style.backgroundImage = '-webkit-gradient(linear,0% 0%, 0% 100%, from(#EBF3FC), to(#DCE9F9))';
 			obj.DOMObject.style.boxShadow = '0 1px 0 rgba(255, 255, 255, 0.8) inset';
 			obj.DOMObject.style.border = '1px solid #CCCCCC';
 			obj.DOMObject.style.borderRadius = '6px 6px 6px 6px';
+			obj.DOMObject.style.padding = '0px';
+			obj.DOMObject.style.margin = '0px';
 		},
 		tag: function(obj)
 		{
 			
 			obj.Color('DCE9F9');
 			obj.DOMObject.style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
+			obj.DOMObject.style.backgroundImage = '-webkit-gradient(linear,0% 0%, 0% 100%, from(#EBF3FC), to(#DCE9F9))';
 			obj.DOMObject.style.boxShadow = '0 1px 0 rgba(255, 255, 255, 0.8) inset';
 			obj.DOMObject.style.border = '1px solid #CCCCCC';
 			obj.DOMObject.style.borderRightStyle = 'none';
 			obj.DOMObject.style.borderRadius = '6px 0px 0px 6px';
+			obj.DOMObject.style.padding = '0px';
+			obj.DOMObject.style.margin = '0px';
 		},
 		item: function(obj)
 		{
@@ -70,18 +76,33 @@ window.InternetRuntime.UI = new function(){
 			obj.DOMObject.style.borderStyle = 'solid';
 			obj.DOMObject.style.borderWidth = '1px';
 			//obj.DOMObject.style.padding = '0 4px';
-			
+			obj.DOMObject.style.textAlign = 'center';			
+			obj.DOMObject.style.font = '24px arial';		
+			obj.DOMObject.style.color = 'red';		
 			obj.Color('066099');
+			obj.DOMObject.style.MozUserSelect = 'none';
 			obj.DOMObject.style.borderRadius = '6px 6px 6px 6px';
+			obj.DOMObject.style.padding = '0px';
+			obj.DOMObject.style.margin = '0px';
 		},
 		wraper: function(obj)
 		{
 			obj.DOMObject.style.overflow = 'hidden';
+			obj.DOMObject.style.padding = '0px';
+			obj.DOMObject.style.margin = '0px';
 		},
 		hidden: function(obj)
 		{
-			obj.DOMObject.style.visibility = 'hidden';
+		
 			obj.DOMObject.style.display = 'none';
+			obj.DOMObject.style.padding = '0px';
+			obj.DOMObject.style.margin = '0px';
+		},
+		shown: function(obj)
+		{
+			obj.DOMObject.style.display = 'block';
+			obj.DOMObject.style.padding = '0px';
+			obj.DOMObject.style.margin = '0px';
 		}
 	};
 
@@ -175,11 +196,21 @@ window.InternetRuntime.UI = new function(){
 	//	DOM Object
 	function DOM_Object(domobj)
 	{
+		var This = this;
 		if ((!domobj) || (!domobj.style))
 			return null;
 		var Obj = domobj;
 		Obj.style.position = 'absolute';
 		this.DOMObject = Obj;
+		this.getObj = function()
+		{
+			return Obj;
+		}
+		this.setObj = function(obj)
+		{
+			Obj = obj;
+			return this;
+		}
 		var PosXY;
 		if (isNaN(parseInt(Obj.style.left)))
 			PosXY = new XY(0, 0);
@@ -436,7 +467,7 @@ window.InternetRuntime.UI = new function(){
 				var d = tween((NewTime - StartTime) / parseFloat(time));
 				if (time >= (NewTime - StartTime))
 				{
-					//alert(d);
+					
 					func(AnimeObject, d);
 					setTimeout(Run, 10);
 				}
@@ -505,7 +536,7 @@ window.InternetRuntime.UI = new function(){
 		function ResizeAll(objs, dxscale, dyscale, d)
 		{
 			for (var i = 0; i < objs.length; i++)
-				if (objs[i].DOMObject != Obj)
+				if (objs[i].getObj() != Obj)
 					objs[i].Resize(dxscale, dyscale, d, true);
 				else
 					objs[i].Resize(dxscale, dyscale, d, false);
@@ -564,11 +595,16 @@ window.InternetRuntime.UI = new function(){
 		}
 		
 		
-		this.Size = function(dxy)
+		this.Size = function(dxy, subnotworkflag)
 		{			
 			if (isNotNullOrUndefined(dxy))
 			{
-				var Resize_Objects = ComponentSearcher(this);
+				var Resize_Objects = [];
+				if (subnotworkflag)
+					Resize_Objects.push(this);
+				else
+					Resize_Objects = ComponentSearcher(this);
+					
 				var Resize_Time = Time;
 				var Resize_Tween = Tween;
 				var Resize_CallBack = CallBack;
@@ -610,7 +646,7 @@ window.InternetRuntime.UI = new function(){
 				if (AnimeState == REST)
 				{
 					AnimeState = RUN;
-					InFunc(InFuncDone);
+					InFunc(InFuncDone, This);
 				}
 			}
 			return this;
@@ -631,7 +667,7 @@ window.InternetRuntime.UI = new function(){
 				if (AnimeState == REST)
 				{
 					AnimeState = RUN;
-					OutFunc(OutFuncDone);
+					OutFunc(OutFuncDone, This);
 				}						
 			}
 			return this;
@@ -639,38 +675,42 @@ window.InternetRuntime.UI = new function(){
 		function InFuncDone()
 		{			
 			if (MouseState == OUT)
-				OutFunc(OutFuncDone);
+				OutFunc(OutFuncDone, This);
 			else
 				AnimeState = REST;			
 		}
 		function OutFuncDone()
 		{
 			if (MouseState == IN)
-				InFunc(InFuncDone);
+				InFunc(InFuncDone, This);
 			else
 				AnimeState = REST;				
 		};	
 		
+		
+		
 		var ClickFunc = function(){};
+		
+		var AnimeState_Click = REST; 
 		this.Click = function(dof, subnotworkflag)
 		{
 			ClickFunc = dof;
 			Obj.onclick = function(e)
-			{
+			{	
 				if (subnotworkflag && e.target != Obj)
 					return;
-				if (AnimeState == REST)
+				if (AnimeState_Click == REST)
 				{
 					if (Time != 0)
-						AnimeState = RUN;
-					ClickFunc(ClickFuncDone);
+						AnimeState_Click = RUN;
+					ClickFunc(ClickFuncDone, This);
 				}
 			}		
 			return this;
 		}
 		function ClickFuncDone()
 		{				
-			AnimeState = REST;			
+			AnimeState_Click = REST;			
 		}
 		
 		var LoadFunc = function(){};
@@ -688,7 +728,7 @@ window.InternetRuntime.UI = new function(){
 		
 		this.isContained = function(simpleobj)
 		{
-			return checkContain(simpleobj);
+			return checkContain(Obj, simpleobj);
 		}
 		function checkContain(Obj, simpleobj)
 		{
@@ -743,6 +783,45 @@ window.InternetRuntime.UI = new function(){
 				return BackGroundColor;
 		}
 		
+		var TextColor = "";
+		this.TextColor = function(clr)
+		{	
+			if (isNotNullOrUndefined(clr))
+			{
+				if (TextColor == "")
+				{
+					TextColor = clr;
+					Obj.style.color = '#' + TextColor;
+					return this;
+				}
+				var Color_Start = TextColor;
+				var Color_Time = Time;
+				var Color_Tween = Tween;
+				var Color_CallBack = CallBack;
+				CallBack = function(){};
+				
+				this.Anime(Color_Tween, Color_Time, 
+					function(obj, d)
+					{
+						var clrH = '0x' + clr;
+						var Color_StartH = '0x' + Color_Start;
+						var B = clrH % 0x100 - Color_StartH % 0x100;
+						var G = Math.floor(clrH % 0x10000 / 0x100) - Math.floor(Color_StartH % 0x10000 / 0x100);
+						var R = Math.floor(clrH % 0x1000000 / 0x10000) - Math.floor(Color_StartH % 0x1000000 / 0x10000);
+						
+						TextColor = parseInt(Color_StartH) + parseInt(d * B) 
+													  + parseInt(d * G) * 0x100
+													  + parseInt(d * R) * 0x10000;
+						TextColor = TextColor.toString(16);					
+						Obj.style.color = '#' + TextColor;				
+					},
+					Color_CallBack);
+				return this;
+			}
+			else
+				return TextColor;
+		} 
+		
 		this.Text = function(text)
 		{
 			var textnode = document.createTextNode(text);
@@ -763,9 +842,25 @@ window.InternetRuntime.UI = new function(){
 				return Hrefl
 		}
 		
+		this.Remove = function(rmv)
+		{	
+			var ans = [];
+			for (var i in Childs)
+				if (Childs[i] != rmv)
+					ans.push(Childs[i]);
+			Childs = ans;
+			Obj.removeChild(rmv.DOMObject);		
+			return this;
+		}
+		
+		this.Refresh = function()
+		{
+			SizeDXY = new DXY(parseInt(Obj.style.width), parseInt(Obj.style.height));
+			return this;
+		}
 		
 		
-	
+		
 		
 	}
 	//Create a DOM Obeject
@@ -773,6 +868,7 @@ window.InternetRuntime.UI = new function(){
 	{
 		return new DOM_Object(Lib_SimpleObject[type]());
 	}
+	
 };
 
 /*
@@ -811,5 +907,7 @@ window.InternetRuntime.UI = new function(){
 			Click(Function(done))
 			LoadFunc(Function())
 			Color('RRGGBB')
+			TextColor('RRGGBB')
 			Text(String)
+			setObj(obj)
 */

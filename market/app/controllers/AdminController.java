@@ -25,11 +25,11 @@ public class AdminController extends Controller {
 		for (App app:applist){
 			AppXmlParser parser = new AppXmlParser(app.getInformation());
 			List<Signal> signals = parser.getSignals();
-			app.setDecription("èƒ½å¤Ÿå‘å‡ºçš„ä¿¡å·:");
+			app.setDecription("ÄÜ¹»·¢³öµÄĞÅºÅ:");
 			for (Signal signal:signals){
 				app.setDecription(app.getDecription()+signal.name()+" ");
 			}
-			app.setDecription(app.getDecription()+"èƒ½å¤Ÿæ¥æ”¶çš„ä¿¡å·:");
+			app.setDecription(app.getDecription()+"ÄÜ¹»½ÓÊÕµÄĞÅºÅ:");
 			List<DescribedListenerConfig> listeners = parser.getListeners();
 			
 			for (DescribedListenerConfig listen:listeners){
@@ -84,13 +84,13 @@ public class AdminController extends Controller {
         render("AdminService/addAppXml.html",id,secret);
     }
     
-    public static void addAppSaveXml(String id, String information,String secret,String email,String installUrl,String updateurl)
+    public static void addAppSaveXml(String id, String information,String secret,String email,String installUrl,String updateurl, String logourl)
     {
     	AppXmlParser parser = new AppXmlParser(information);
     	if (!"".equals(updateurl)&&updateurl!=null) 
-    		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"true",updateurl,secret);
+    		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"true",updateurl,secret, logourl);
     	else 
-    		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"false","",secret);
+    		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"false","",secret, logourl);
     	welcome();
     }
 }

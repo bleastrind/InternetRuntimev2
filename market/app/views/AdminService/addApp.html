@@ -55,7 +55,7 @@ th,td {border:1px solid blue }
             return obj;
         }
         $(function() {
-        
+        	
            // $( ".button" ).button();
             $( "#addsignal").click(function() {
                  $("#signals")
@@ -125,7 +125,8 @@ th,td {border:1px solid blue }
                 alert(xml);
 
                 $.post(marketurl+"/admincontroller/addappsavexml",{information:xml,id:"${id}",secret:"${secret}",email:$("#attribute input[name='email']").val()
-                ,installUrl:$("#attribute input[name='installurl']").val(),updateurl:$("#attribute input[name='updateurl']").val()});    
+                ,installUrl:$("#attribute input[name='installurl']").val(),updateurl:$("#attribute input[name='updateurl']").val(),
+								logourl:$("#attribute input[name='logourl']").val()});    
                       
             })
             
@@ -147,6 +148,7 @@ th,td {border:1px solid blue }
         <label>updateurl</label> <input type="text" name="updateurl"></br>
         <label>installurl</label> <input type="text" name="installurl"></br>
         <label>email</label> <input type="text" name="email"></br>
+		<label>logourl</label> <input type="text" name="logourl"></br>
     </div>
 
     <div id="signals">

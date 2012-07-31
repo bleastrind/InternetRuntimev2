@@ -11,7 +11,9 @@ window.InternetRuntime.Explorer = new function()
 		EXPLORER_BASE_URL: 'http://internetrt.org:8080/Explorer',
 		ICON_SRC: '/assets/Cloud.png',
 		
-		SHARE_SIGNAL_NAME: 'share'
+		SHARE_SIGNAL_NAME: 'share',
+		
+		ICON_HIDE_DELAY: 1500
 		
 	}
 	
@@ -44,14 +46,61 @@ window.InternetRuntime.Explorer = new function()
 			ans = ans.concat(SearchAllElements(childs[c]));		
 		return ans;		
 	}
-	function show(e)
-	{
-		OperationObject = e.target;
-		floaticon.show(new XY(e.clientX, e.clientY));
-	}
-	function hide(e)
-	{
 	
+	var MouseState = 0;		//0:hidden	1:shown
+	var AnimeState = 0;		//0:hidden	1:shown
+	var DelayStartTime;
+	function hoverIn(e)
+	{
+		MouseState = 1;
+		if (AnimeState == 0)
+		{
+			OperationObject = e.target;
+			AnimeState = 1;
+			floaticon.show(new XY(e.clientX, e.clientY));
+		}
+		else
+		{
+			DelayStartTime = new Date().getTime();
+		}
+	
+	}
+	function hoverOut(e)
+	{
+		MouseState = 0;
+		if (AnimeState == 0)
+		{}
+		else
+		{
+			DelayStartTime = new Date().getTime();
+			function check()
+			{
+				var NowTime = new Date().getTime();
+				if (NowTime - DelayStartTime >= CONST.ICON_HIDE_DELAY)
+				{
+					if (AnimeState == 1 && MouseState == 0)
+					{
+						AnimeState = 0;
+						floaticon.hide()
+					}
+				}
+				else
+					setTimeout(check, 100);
+			}
+			check();
+		}
+	}
+	
+	function close(e)
+	{
+		if (AnimeState == 1 && !floaticon.Obj.isContained(e.target))
+		{
+			AnimeState = 0;
+			floaticon.hide();
+			MouseState = 0;
+			AnimeState = 0;
+			
+		}
 	}
 	
 	
@@ -64,19 +113,25 @@ window.InternetRuntime.Explorer = new function()
 		
 		for (var obj in objs)
 		{
-			objs[obj].addEventListener('mouseover', show, false);
-			objs[obj].addEventListener('mouseout', hide, false);
+			objs[obj].addEventListener('mouseover', hoverIn, false);
+			objs[obj].addEventListener('mouseout', hoverOut, false);
 		}
+		window.addEventListener('click', close, false);
 		
 	}
 	
-	
+	var GRID = 5;
 	function MenuItem(size)
 	{
 		var Choice;
 		var Img;
 		var SubMemu;
 		var ContainerMenu;
+		var MenuOpen = false;
+		this.setMenuOpen = function(mo)
+		{
+			MenuOpen = mo;
+		}
 		var Obj = Create('div')
 		.Style('item')
 		.Size(size)
@@ -84,13 +139,15 @@ window.InternetRuntime.Explorer = new function()
 			Obj
 			.Time(150)
 			.CallBack(done)
-			.Color('ff0000');
+			.Color('ff0000')
+			.TextColor('066099');
 		})
 		.HoverOut(function(done){
 			Obj
 			.Time(150)
 			.CallBack(done)
-			.Color('066099');
+			.Color('066099')
+			.TextColor('ff0000');
 		});		
 		this.getChoice = function()
 		{
@@ -105,7 +162,11 @@ window.InternetRuntime.Explorer = new function()
 		{
 			Obj
 			.Click(function(done){
-				func(Choice);
+				if (!MenuOpen)
+				{
+					MenuOpen = true;
+					func(Choice);
+				}
 				done();
 			},
 			true);
@@ -122,14 +183,13 @@ window.InternetRuntime.Explorer = new function()
 		this.Obj = Obj;
 		this.showSubMenu = function()
 		{
-			
-			var MenuXY = new XY(110, 0);
+			var MenuXY = new XY(106, -GRID-2);
 			SubMemu.show(Obj, MenuXY);
 		}
 	}
 	function Menu()
 	{	
-		var GRID = 5;
+		
 		var MenuSize = new DXY(1, GRID);
 		var Obj = Create('div')
 		.Style('first')
@@ -152,6 +212,7 @@ window.InternetRuntime.Explorer = new function()
 		}
 		this.show = function(fromObj, toxy)
 		{
+			
 			var StartXY = new XY(0, 0);
 			var SmallStartSize = new DXY(30, 30);
 			Obj
@@ -159,7 +220,7 @@ window.InternetRuntime.Explorer = new function()
 			.Size(SmallStartSize)
 			.Opacity(0.1)
 			.Father(fromObj)
-			.Time(300)
+			.Time(150)
 			.Size(MenuSize)
 			.To(toxy)
 			.Opacity(1)
@@ -175,43 +236,71 @@ window.InternetRuntime.Explorer = new function()
 		var Img = Create('img')
 		.Size(ICON_SIZE)
 		.Src(CONST.EXPLORER_BASE_URL + CONST.ICON_SRC);
+		this.MenuOpen = false;
 		var Obj = Create('div')
 		.Size(ICON_SIZE)
 		.Child(Img)
-		.Click(function(){
+		.Click(function(done){
+			done();
 			
-
-			var MenuXY = new XY(50, 0);
-			ExplorerMainMenu.show(Obj, MenuXY);
+			if (!floaticon.MenuOpen)
+			{
+				floaticon.MenuOpen = true;
+				MouseState = 1;
+				var MenuXY = new XY(50, 0);
+				ExplorerMainMenu.show(Obj, MenuXY);
+			}
 		})
+		.Style('hidden')
 		.WindowFather();
+		
+		this.Obj = Obj;
 		
 		this.show = function(xy)
 		{
 			Obj
+			.Style('shown')
 			.Time(0)
 			.Opacity(0)
 			.XY(xy)
-			.Time(300)
+			.Time(150)
 			.Opacity(1);
 		}
 		this.hide = function()
 		{
 			Obj			
-			.Time(300)
-			.Opacity(1);
+			.Time(150)
+			.CallBack(function(){
+				Obj.Style('hidden');
+				resetMainMenu();
+			})
+			.Opacity(0);
+			
 		}
 	}
 	
-	var ExplorerMainMenu = new Menu();
-	var ShareItem = new MenuItem(new DXY(100, 30));
-	ExplorerMainMenu.pushItem(ShareItem);
-	ShareItem.setClick(function(){
-		window.InternetRuntime.Client.initOption(CONST.SHARE_SIGNAL_NAME,
-												function(option){
-													OptionHandler(option, ShareItem)
-												});
-	});
+	var ExplorerMainMenu = null;
+	var ShareItem;
+	function resetMainMenu()
+	{
+		
+		if (floaticon.Obj.Childs().length > 1)
+		{
+			floaticon.Obj.Remove(ExplorerMainMenu.Obj);
+		}
+		floaticon.MenuOpen = false;
+		ExplorerMainMenu = new Menu();
+		ShareItem = new MenuItem(new DXY(100, 30));
+		ShareItem.Obj.Text('Share');
+		ExplorerMainMenu.pushItem(ShareItem);
+		ShareItem.setClick(function(){
+			window.InternetRuntime.Client.initOption(CONST.SHARE_SIGNAL_NAME,
+													function(option){
+														OptionHandler(option, ShareItem)
+													});
+		});
+	}
+	resetMainMenu();
 	
 	function OptionHandler(option, optionitem)
 	{

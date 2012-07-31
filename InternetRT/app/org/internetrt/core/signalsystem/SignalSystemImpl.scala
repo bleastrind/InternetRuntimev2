@@ -29,9 +29,9 @@ abstract class SignalSystemImpl extends SignalSystem {
   def initActionOptions(s: Signal, options: Map[String, String]): Map[String, Seq[scala.xml.Node]] = {
     workflowEngine.checkStatus(getRouting(s), options) match {
       case OptionMissingState(s) => s
-      case OkState(_,_) =>{
+      case OkState(_,node) =>{
         System.out.println("[SignalSystemImpl:initActionOptions]:"+"already OK")
-        Map.empty
+        Map("uniqueListener" -> node)
       }
       case NoRequestListener(_) => {
         System.out.println("[SignalSystemImpl:initActionOptions]:"+"No requestListener,no need")
