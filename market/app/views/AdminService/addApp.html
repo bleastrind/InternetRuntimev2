@@ -1,13 +1,21 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
+<head>
+<style type="text/css">
+body.test1 {margin:20px auto;text-align:center;}
+table {border:1px solid blue; width:800px;padding-left: 1cm;align=center;margin: auto;}
+th,td {border:1px solid blue }
+</style>
+</head>
+#{extends 'main.html' /}
 #{set title:'Home' /}
 <head>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
     <script>
     try{
-        var irturl = "http://localhost:9000";
-        var marketurl ="http://localhost:9001";
+        var irturl = "http://internetrt.org:9000";
+        var marketurl ="http://internetrt.org:9001";
   
         function param(obj,value){
             alert(value);
@@ -29,7 +37,7 @@
         }
         function addpara(obj){
 
-            var params = $('<div><label>key</label><input type="text" name="key"><label>value</label></div>');
+            var params = $('<div><label>key</label><input type="text" name="key"></br><label>value</label></div>');
 
             alert(params.html());
             var select = $('<select><option value ="<var></var>">the var in the signal</option><option value ="key">new key</option><option value ="<var><ID></ID></var>">RoutingInstanceID</option><option value ="const" >Const value</option></select>');
@@ -60,7 +68,7 @@
 			});
 
             $("#addlistener").click(function() {
-                var obj = $('<div name="listener"><select name="listener"><option value ="RequestListener">RequestListener</option><option value ="EventListener">EventListener</option><option value ="RequestListener">PipeListener</option></select><label>Description</label><input type="text" name="description"><label>Url</label><input type="text" name="url"><label>Signalname</label><input type="text" name="signalname">' +
+                var obj = $('<div name="listener"><select name="listener"><option value ="RequestListener">RequestListener</option><option value ="EventListener">EventListener</option><option value ="RequestListener">PipeListener</option></select></br><label>Description</label><input type="text" name="description"></br><label>Url</label><input type="text" name="url"></br><label>Signalname</label><input type="text" name="signalname"></br>' +
                         '<a class="button">AddPara</a></div></br>');
                 alert(obj.find(".button").html());
                 $(obj).find(".button").click(function(){addpara(obj);});
@@ -134,11 +142,11 @@
 
  <div>
     <div id="attribute">
-        <label>Name</label> <input type="text" name="name">
-        <label>AppOwner</label> <input type="text" name="appowner">
-        <label>updateurl</label> <input type="text" name="updateurl">
-        <label>installurl</label> <input type="text" name="installurl">
-        <label>email</label> <input type="text" name="email">
+        <label>Name</label> <input type="text" name="name"></br>
+        <label>AppOwner</label> <input type="text" name="appowner"></br>
+        <label>updateurl</label> <input type="text" name="updateurl"></br>
+        <label>installurl</label> <input type="text" name="installurl"></br>
+        <label>email</label> <input type="text" name="email"></br>
     </div>
 
     <div id="signals">

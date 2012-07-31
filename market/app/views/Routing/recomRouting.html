@@ -1,5 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+#{extends 'main.html' /}
+<style type="text/css">
+body{margin:auto;text-align:left;}
+</style>
 <html>
+
   <head>
     <title>recomRoutingBaseFrom.html</title>
 	
@@ -14,7 +19,7 @@
   
   <body onload>
   <h1>There're some new signal matching you may be interested in</h1>
- #{form @RoutingRecomController.ConfirmRecomRouting()}
+  #{form @RoutingRecomController.ConfirmRecomRouting()}
    <input type="hidden" name="redirect_uri" value="${redirect_uri}"/>
  	#{list items:choices, as:'choice'}
                <input type="checkbox" name="choices" value="${choice.routing}" checked/> 
@@ -22,7 +27,7 @@
                <span alt="${choice.listenerDescription}">${choice.listenerAppName}<br/>
     #{/list}
     <input type = "submit" value = "confirm">
- #{/form}
+  #{/form}
     
   </body>
 </html>

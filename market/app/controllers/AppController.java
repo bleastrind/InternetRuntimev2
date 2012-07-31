@@ -7,6 +7,7 @@ import play.mvc.*;
 import play.cache.*;
 import play.mvc.Http.*;
 import java.util.*;
+
 import models.*;
 
 import java.io.IOException;
@@ -46,11 +47,16 @@ public class AppController extends Controller {
 		for (App app:applist){
 			AppXmlParser parser = new AppXmlParser(app.getInformation());
 			List<Signal> signals = parser.getSignals();
-			app.setDecription("能够接收的信号:");
+			app.setDecription("能够发出的信号:");
 			for (Signal signal:signals){
 				app.setDecription(app.getDecription()+signal.name()+" ");
 			}
-			app.setDecription(app.getDecription()+"\n"+parser.getListeners().toString());
+			app.setDecription(app.getDecription()+"能够接收的信号:");
+			List<DescribedListenerConfig> listeners = parser.getListeners();
+			
+			for (DescribedListenerConfig listen:listeners){
+				app.setDecription(app.getDecription()+listen.description()+" ");
+			}
 		}
 		Boolean flag = false;
 //		if (getAccessToken()!=null)
@@ -63,6 +69,22 @@ public class AppController extends Controller {
 	public static void listAllApp() {
 		String token = getAccessToken();
 		List<App> applist = AppService.getUserApps(token);
+		List<App> apps = new ArrayList();
+		//Boolean flag = AppService.market(getAccessToken());
+		for (App app:applist){
+			AppXmlParser parser = new AppXmlParser(app.getInformation());
+			List<Signal> signals = parser.getSignals();
+			app.setDecription("能够发出的信号:");
+			for (Signal signal:signals){
+				app.setDecription(app.getDecription()+signal.name()+" ");
+			}
+			app.setDecription(app.getDecription()+"能够接收的信号:");
+			List<DescribedListenerConfig> listeners = parser.getListeners();
+			
+			for (DescribedListenerConfig listen:listeners){
+				app.setDecription(app.getDecription()+listen.description()+" ");
+			}
+		}
 		// List<AppConfig> configlist = AppService.getAllConfig(user);
 		// TODO:nick name
 		render("AppService/listAllApp.html", applist, token);
