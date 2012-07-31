@@ -144,6 +144,48 @@ window.InternetRuntime.Client = new function()
 		.Style('first')
 		.WindowFather();
 		
+		var ExitButton = Create('div')
+		.Size(new DXY(70, 27))
+		.Text('Close')
+		.XY(new XY(size.dx - 80, size.dy - 40))
+		.Style('item')
+		.HoverIn(function(done){
+			ExitButton
+			.Time(150)
+			.CallBack(done)
+			.Color('ff0000')
+			.TextColor('066099');
+		})
+		.HoverOut(function(done){
+			ExitButton
+			.Time(150)
+			.CallBack(done)
+			.Color('066099')
+			.TextColor('ff0000');
+		})
+		.Click(function(){
+			IframeBox
+			.Opacity(1)
+			.Time(300)
+			.Opacity(0);
+			CoreIframe
+			.Opacity(1)
+			.Time(300)
+			.CallBack(function(){
+				IframeBox
+				.Style('hidden');
+				CoreIframe
+				.Time(0)
+				.XY(new XY(1, 1))
+				.Size(new DXY(1, 1));
+				ExitButton
+				.Style('hidden');
+			})
+			.Opacity(0);
+		})
+		.Father(IframeBox);
+		ExitButton.DOMObject.style.zIndex = 200;
+		
 		if (xy == 'center')
 		{
 			IframeBox.CenterXY(Point.ScreenCenter);

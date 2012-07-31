@@ -84,8 +84,11 @@ object BrowserBaseClientInputs extends Controller {
               System.out.println("XML" + xml);
 
               val success = SiteUserInterface.installRootApp(uid, xml);
-
-              Ok(success.toString());
+			  
+			  if (success.toString() == "true")
+				Ok(views.html.installRootAppSuccess());
+			  else
+				Ok(success.toString());
             }
             case _ => InternalServerError
           }
