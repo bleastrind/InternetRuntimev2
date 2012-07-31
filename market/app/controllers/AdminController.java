@@ -6,9 +6,9 @@ import play.cache.Cache;
 import play.mvc.*;
 import java.util.*;
 
-import org.internetrt.sdk.util.AppXmlParser;
-import org.internetrt.sdk.util.DescribedListenerConfig;
-import org.internetrt.sdk.util.Signal;
+import org.internetrt.sdk.*;
+import org.internetrt.sdk.util.*;
+
 
 import models.*;
 
@@ -25,16 +25,7 @@ public class AdminController extends Controller {
 		for (App app:applist){
 			AppXmlParser parser = new AppXmlParser(app.getInformation());
 			List<Signal> signals = parser.getSignals();
-			app.setDecription("能够发出的信号:");
-			for (Signal signal:signals){
-				app.setDecription(app.getDecription()+signal.name()+" ");
-			}
-			app.setDecription(app.getDecription()+"能够接收的信号:");
-			List<DescribedListenerConfig> listeners = parser.getListeners();
-			
-			for (DescribedListenerConfig listen:listeners){
-				app.setDecription(app.getDecription()+listen.description()+" ");
-			}
+			app.setDecription(parser.getDescription());
 		}
         render("AdminService/welcome.html", applist);
 		//return ok(AdminService.welcome.render(applist));
