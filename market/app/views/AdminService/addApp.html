@@ -3,7 +3,7 @@
 <html>
 <head>
 <style type="text/css">
-body.test1 {margin:20px auto;text-align:center;}
+.warpper {margin:20px;padding:30px;}
 table {border:1px solid blue; width:800px;padding-left: 1cm;align=center;margin: auto;}
 th,td {border:1px solid blue }
 </style>
@@ -14,12 +14,10 @@ th,td {border:1px solid blue }
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
     <script>
     try{
-        var irturl = "http://internetrt.org:9000";
-        var marketurl ="http://internetrt.org:9001";
+        var irturl = "http://localhost:9000";
+        var marketurl ="http://localhost:9001";
   
         function param(obj,value){
-            alert(value);
-            alert(obj.html())
             if (value=="key") {
                 obj.show();
                 obj.val( "input new key");
@@ -39,7 +37,6 @@ th,td {border:1px solid blue }
 
             var params = $('<div><label>key</label><input type="text" name="key"></br><label>value</label></div>');
 
-            alert(params.html());
             var select = $('<select><option value ="<var></var>">the var in the signal</option><option value ="key">new key</option><option value ="<var><ID></ID></var>">RoutingInstanceID</option><option value ="const" >Const value</option></select>');
             var input = $('<input name="value" type="text"/>');
 
@@ -70,7 +67,7 @@ th,td {border:1px solid blue }
             $("#addlistener").click(function() {
                 var obj = $('<div name="listener"><select name="listener"><option value ="RequestListener">RequestListener</option><option value ="EventListener">EventListener</option><option value ="RequestListener">PipeListener</option></select></br><label>Description</label><input type="text" name="description"></br><label>Url</label><input type="text" name="url"></br><label>Signalname</label><input type="text" name="signalname"></br>' +
                         '<a class="button">AddPara</a></div></br>');
-                alert(obj.find(".button").html());
+
                 $(obj).find(".button").click(function(){addpara(obj);});
                 $("#signalhandler") .append(obj);
             });
@@ -79,9 +76,11 @@ th,td {border:1px solid blue }
 
                 var xml = '<?xml version="1.0" encoding="UTF-8"?>'+
                        '<Application>'+
-                        '<Name>'+$("#attribute input[name='name']").val()+'</Name>'+
+                        '<Name>'+$("input[name='name']").val()+'</Name>'+
                         '<AppID>'+"${id}"+'</AppID>'+
-                        '<AppOwner>'+$("#attribute input[name='appowner']").val()+'</AppOwner>';
+                        '<AppOwner>'+$("input[name='appowner']").val()+'</AppOwner>'+
+						'<Description>'+$("textarea[name='description']").val()+'</Description>'
+						;
                 
                 xml += "<AccessRequests>"
                 $("#requestAccesses input[name='requestAccess']").each(function(index,Element){
@@ -122,11 +121,12 @@ th,td {border:1px solid blue }
                 
                     xml+= '</SignalHanlders>'+
                 '</Application>';
-                alert(xml);
 
-                $.post(marketurl+"/admincontroller/addappsavexml",{information:xml,id:"${id}",secret:"${secret}",email:$("#attribute input[name='email']").val()
-                ,installUrl:$("#attribute input[name='installurl']").val(),updateurl:$("#attribute input[name='updateurl']").val(),
-								logourl:$("#attribute input[name='logourl']").val()});    
+                $.post(marketurl+"/admincontroller/addappsavexml",{information:xml,id:"${id}",secret:"${secret}",email:$("input[name='email']").val()
+                ,installUrl:$("input[name='installurl']").val(),updateurl:$("input[name='updateurl']").val(),
+								logourl:$("input[name='logourl']").val()},function(data){
+									window.location.href="welcome";
+								});    
                       
             })
             
@@ -138,17 +138,15 @@ th,td {border:1px solid blue }
     </script>
 </head>
 <body>
+<div class="warpper">
 <h1>Hello Admin!You can manage every appliacation here!</h1>
-<h3> Your Appid:${id} ,Your Secret:${secret}</h3>
+<h3> Your Appid:${id} </h3><h3>Your Secret:${secret}</h3>
 
- <div>
+<div>
     <div id="attribute">
         <label>Name</label> <input type="text" name="name"></br>
         <label>AppOwner</label> <input type="text" name="appowner"></br>
-        <label>updateurl</label> <input type="text" name="updateurl"></br>
-        <label>installurl</label> <input type="text" name="installurl"></br>
-        <label>email</label> <input type="text" name="email"></br>
-		<label>logourl</label> <input type="text" name="logourl"></br>
+        <label>homeurl</label> <input type="text" name="installurl"></br>
     </div>
 
     <div id="signals">
@@ -164,10 +162,21 @@ th,td {border:1px solid blue }
     
      <a class="button" id="addsignal">Add Signal</a>
     <div id= "signalhandler">
-
+	
     </div>
      <a class="button" id="addlistener">Add listener</a>
+	 
+	 <hr/>
+	 <div id="optional">
+		<h4>optional attributes</h4>
+		<label>updateurl</label> <input type="text" name="updateurl"></br>
+        <label>email</label> <input type="text" name="email"></br>
+		<label>logourl</label> <input type="text" name="logourl"></br>
+		<label>description</label> <textarea name="description"></textarea>
+	</div>
+	<hr/>
  </div>
 <a class="button" id="send">Submit</a>
+</div>
 </body>
 </html>

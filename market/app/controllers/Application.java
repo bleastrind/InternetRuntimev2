@@ -17,7 +17,7 @@ import models.*;
 public class Application extends Controller {
 
     public static void index() {
-       Controller.redirect("AppController.listAllApps");
+       render();
     }
 
     public static void login() {

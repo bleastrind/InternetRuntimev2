@@ -34,7 +34,7 @@ window.InternetRuntime.Client = new function()
 	}
 	var CONST = 
 	{
-		BASE_URL: 'http://internetrt.org:9000',
+		BASE_URL: 'http://localhost:9000',
 		CORE_IFRAME_SRC: '/assets/client/Client.html',
 		Lib_SRC: '/assets/client/Lib.js',
 		LOGO_SRC: '/assets/client/InternetRuntime.png',

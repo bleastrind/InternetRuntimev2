@@ -44,10 +44,13 @@ function Work()
 			.HoverIn(function(done, Obj){
 				done();
 				Obj.getObj().style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #33CC33)';
+				Obj.getObj().style.backgroundImage = '-webkit-gradient(linear,0% 0%, 0% 100%, from(#EBF3FC), to(#33CC33))';
 			})
 			.HoverOut(function(done, Obj){
 				done();
 				Obj.getObj().style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
+				Obj.getObj().style.backgroundImage = '-webkit-gradient(linear,0% 0%, 0% 100%, from(#EBF3FC), to(#DCE9F9))';
+				
 			})
 			.Click(function(done, Obj){
 				if (!Obj.OpenState)
