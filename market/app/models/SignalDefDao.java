@@ -23,7 +23,7 @@ import me.prettyprint.hector.api.query.RangeSlicesQuery;
 public class SignalDefDao {
 
 	final static String KEYSPACEINRT = "InternetRT_Global";
-	final static String CFRT = "GlobalApp";
+	final static String CFRT = "SignalDefination";
 	
 	final static StringSerializer se = new StringSerializer();
 	

@@ -5,7 +5,7 @@ import java.util.List;
 import models.SignalDefDao;
 
 public class SignalDefService {
-	public List<String> getSignalDefs(){
+	public static List<String> getSignalDefs(){
 		return new SignalDefDao().getAllSignals();
 	}
 }

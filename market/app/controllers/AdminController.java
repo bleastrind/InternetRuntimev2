@@ -53,7 +53,12 @@ public class AdminController extends Controller {
     	Map<String,String> map = AdminService.appregister();
     	String id = map.get("id");
     	String secret = map.get("secret");
-        render("AdminService/addApp.html",id,secret);
+    	StringBuffer signalsbuf = new StringBuffer();
+    	for(String signal:SignalDefService.getSignalDefs()){
+    		signalsbuf.append("'"+signal+"',");
+    	}
+    	String signaldefs = "[" + signalsbuf + "]";
+        render("AdminService/addApp.html",id,secret,signaldefs);
     }
     
     public static void addAppSave(String id,String name, String AccessRequest, String installUrl,String email,String updated,String updateUrl,String secret)
