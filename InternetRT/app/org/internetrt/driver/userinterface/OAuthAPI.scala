@@ -57,7 +57,9 @@ object OAuthAPI extends Controller {
                 val app = SiteUserInterface.queryApp(appID)
                 if(app == null)
                   Redirect(redirect_uri + "?msg=AppNotRegistered");
-                else
+                else if(app.isRoot)
+					Redirect(redirect_uri + "?msg=RootAppMustInstallFirst");
+				else
                   Ok(views.html.auth(app, redirect_uri))
               }
             }

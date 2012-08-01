@@ -7,6 +7,7 @@ import play.mvc.*;
 import play.cache.*;
 import play.mvc.Http.*;
 import java.util.*;
+
 import models.*;
 
 import java.io.IOException;
@@ -29,6 +30,11 @@ public class AppController extends Controller {
 	public static void checkUser() {
 		System.out.println("[AppController : checkUser]: "+"checkUser");
 		String token = getAccessToken();
+		  
+		if(request.params.get("msg") == "RootAppMustInstallFirst"){
+		    render("Please install market");
+		}
+		
 		if (token == null) {
 			System.out.println("[AppController : checkUser]: "+properties.irt.getAuthCodeUrl());
 			Controller.redirect(properties.irt.getAuthCodeUrl());
@@ -46,11 +52,16 @@ public class AppController extends Controller {
 		for (App app:applist){
 			AppXmlParser parser = new AppXmlParser(app.getInformation());
 			List<Signal> signals = parser.getSignals();
-			app.setDecription("能够接收的信号:");
+			app.setDecription("能够发出的信号:");
 			for (Signal signal:signals){
 				app.setDecription(app.getDecription()+signal.name()+" ");
 			}
-			app.setDecription(app.getDecription()+"\n"+parser.getListeners().toString());
+			app.setDecription(app.getDecription()+"能够接收的信号:");
+			List<DescribedListenerConfig> listeners = parser.getListeners();
+			
+			for (DescribedListenerConfig listen:listeners){
+				app.setDecription(app.getDecription()+listen.description()+" ");
+			}
 		}
 		Boolean flag = false;
 //		if (getAccessToken()!=null)
@@ -63,6 +74,22 @@ public class AppController extends Controller {
 	public static void listAllApp() {
 		String token = getAccessToken();
 		List<App> applist = AppService.getUserApps(token);
+		List<App> apps = new ArrayList();
+		//Boolean flag = AppService.market(getAccessToken());
+		for (App app:applist){
+			AppXmlParser parser = new AppXmlParser(app.getInformation());
+			List<Signal> signals = parser.getSignals();
+			app.setDecription("能够发出的信号:");
+			for (Signal signal:signals){
+				app.setDecription(app.getDecription()+signal.name()+" ");
+			}
+			app.setDecription(app.getDecription()+"能够接收的信号:");
+			List<DescribedListenerConfig> listeners = parser.getListeners();
+			
+			for (DescribedListenerConfig listen:listeners){
+				app.setDecription(app.getDecription()+listen.description()+" ");
+			}
+		}
 		// List<AppConfig> configlist = AppService.getAllConfig(user);
 		// TODO:nick name
 		render("AppService/listAllApp.html", applist, token);
@@ -81,13 +108,13 @@ public class AppController extends Controller {
 
 	public static void addUserAppSave(String id, String name,
 			String information, String installUrl, String updated,
-			String updateUrl, String secret) {
+			String updateUrl, String secret, String logourl) {
 		String token = getAccessToken();
 		System.out.println("[AppController : addUserAppSave]: "+"AppID"+id);
 		
 		System.out.println("[AppController : addUserAppSave]: "+"accessToken"+token);
 		App app = new App(id, name, information, installUrl, updated,
-				updateUrl, secret);
+				updateUrl, secret, logourl);
 		if (AppService.addUserApp(app, token)){
 			RoutingRecomController.index(id,updateUrl);}
 		else
