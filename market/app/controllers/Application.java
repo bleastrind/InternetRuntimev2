@@ -9,6 +9,7 @@ import java.util.*;
 
 import org.apache.commons.httpclient.HttpException;
 import org.internetrt.sdk.InternetRT;
+import org.internetrt.sdk.exceptions.ServerSideException;
 
 import config.properties;
 
@@ -30,7 +31,7 @@ public class Application extends Controller {
         else login();
     }
     
-    public static void loginUser(String code,String msg) throws HttpException, IOException{
+    public static void loginUser(String code,String msg) throws HttpException, IOException,ServerSideException{
 		if (!msg.equals("success")) {
 			render("Application/err.html");
 		}
