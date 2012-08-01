@@ -1,10 +1,251 @@
-#{extends 'main.html' /}
-#{set title:'Home' /}
-<a style="text-align:center;font-size:100px;"href="javascript:void(document.body.appendChild(document.createElement('script')).src='http://internetrt.org:9000/assets/client/installRootApp.js');">Install Market</a>
-</br>
-<body style="text-align:center;font-size:20px;">
- if you have not installed market,please install market.otherwise <a href="@{AppController.listallapps()}">click here</a>.
-</body>
-<script type="text/javascript" charset="${_response_encoding}">
-    sessvars.$.clearMem()
+<html>
+<head>
+<title>index</title>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+  <style type="text/css">
+.pop{
+        width: 350px;
+        height: 200px;
+        border: 1px solid #00f;
+        background-color: #ffffee;
+        display: none;
+        position:absolute;  /* 注：弹出框必须为绝对定位 */
+    }
+   
+   html {
+    background: #e0e0e0;
+}
+
+body {
+    width: 880px;
+    margin:auto;
+    font-family: Arial;
+    font-size: 100%;
+    color: rgb(54, 47, 45);
+    background: #fff;
+    -webkit-border-radius: 8px;
+    -webkit-box-shadow: 0 0 10px rgba(0,0,0,.2);
+    -moz-border-radius: 8px;
+    -moz-box-shadow: 0 0 10px rgba(0,0,0,.2);
+} 
+   
+#header {
+    height: 200px;
+    position: relative;
+    background: #fff url(../../../public/images/AppMarket.jpg) 0px -90px ;
+}
+
+#header h1 {
+    margin: 0;
+    background: #333;
+    color: #eee;
+    border-bottom: 1px solid rgba(255,255,255,.5);
+    font-weight: lighter;
+    font-size: 18px;
+    padding: 10px 20px;
+    text-shadow: 0 0 5px rgba(255,255,255,.5);
+}
+
+#header #options {
+    position: absolute;
+    right: 10px;
+    top: 13px;
+    font-size: 80%;
+    color: #eee;
+}
+
+#header #options a {
+    color: #eee;
+}
+
+#footer {
+    padding: 10px;
+    font-size: 70%;
+    border-top: 1px dotted #ccc;
+    text-align: center;
+}
+</style>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+<script type="text/javascript">
+ function hidedetails(thisDiv){
+            $("#"+thisDiv).hide();
+        }
+ function showdetails(thisObj,thisDiv){
+            var d = $(thisObj);
+            var pos = d.offset();
+            var t = pos.top + d.height() + 5; // 弹出框的上边位置
+            var l = pos.left + d.width() + 5;  // 弹出框的左边位置
+            $("#"+thisDiv).css({ "top": t, "left": l }).show();
+			var html = "";
+			html += '<img src="'+ "../../../public/images/"+thisDiv+".png" +'">'
+            $("#"+thisDiv).html(html);
+        }
 </script>
+</head>
+<body>
+<div id="header">
+    <h1>Welcome to the AppMarket</h1>
+	<div id="options">
+    <a href="@{Application.index()}">Index</a>
+	</div>
+</div>
+<div>
+	<h1>This is overview of all the operations in the AppMarket. According to this flow diagram, you will be familiar of our product quickly.</h1>
+</div>
+<div align="center" bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<!-- Save for Web Slices (Untitled-3) -->
+<table id="Table_01" width="532" height="837" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td colspan="8">
+			<img src="../../../public/images/backgroud_01.gif" width="531" height="18" alt=""></td>
+		<td>
+			<img src="../../../public/images/spacer.gif" width="1" height="18" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="3" rowspan="6">
+			<img src="../../../public/images/backgroud_02.gif" width="195" height="389" alt=""></td>
+		<td background="../../../public/images/backgroud_03.gif">
+        <div align="center">
+        	<h3>
+            <a onMouseOver="showdetails(this,'registerDetail')" onMouseOut="hidedetails('registerDetail')" href="http://internetrt.org:9000/clients/register"><u>Register/</u></a>
+            <div id="registerDetail" class="pop"></div>
+            <a onMouseOver="showdetails(this,'loginDetail')" onMouseOut="hidedetails('loginDetail')" href="http://internetrt.org:9000/clients/login"><u>Login</u></a>
+            <div id="loginDetail" class="pop"></div>
+            </h3>
+        </div>
+      </td>
+		<td colspan="4" rowspan="6">
+			<img src="../../../public/images/backgroud_04.gif" width="194" height="389" alt=""></td>
+		<td>
+			<img src="../../../public/images/spacer.gif" width="1" height="106" alt=""></td>
+	</tr>
+	<tr>
+		<td>
+			<img src="../../../public/images/backgroud_05.gif" width="142" height="35" alt=""></td>
+		<td>
+			<img src="../../../public/images/spacer.gif" width="1" height="35" alt=""></td>
+	</tr>
+	<tr>
+		<td  background = "../../../public/images/backgroud_06.gif">
+        <h3 align="center">
+		  <a href="javascript:void(document.body.appendChild(document.createElement('script')).src='http://internetrt.org:9000/assets/client/installRootApp.js" onMouseOver="showdetails(this,'installMarket')" onMouseOut="hidedetails('installMarket')"><u>Install market</u></a>
+          <div id="installMarket" class="pop"></div>
+         </h3>
+		</td>
+		<td>
+			<img src="../../../public/images/spacer.gif" width="1" height="107" alt=""></td>
+	</tr>
+	<tr>
+		<td>
+			<img src="../../../public/images/backgroud_07.gif" width="142" height="35" alt=""></td>
+		<td>
+			<img src="../../../public/images/spacer.gif" width="1" height="35" alt=""></td>
+	</tr>
+	<tr>
+		<td background = "../../../public/images/backgroud_08.gif">
+		  <div align="center">
+		    <h4><u><a href="http://internetrt.org:9001/appcontroller/listallapps" onMouseOver="showdetails(this,'listAllApps')" onMouseOut="hidedetails('listAllApps')">List all the apps</a>
+            <div id="listAllApps"class="pop"></div>
+	        </u></h4>
+        </div></td>
+<td>
+			<img src="../../../public/images/spacer.gif" width="1" height="89" alt=""></td>
+	</tr>
+	<tr>
+		<td rowspan="6">
+			<img src="../../../public/images/backgroud_09.gif" width="142" height="283" alt=""></td>
+		<td>
+			<img src="../../../public/images/spacer.gif" width="1" height="17" alt=""></td>
+	</tr>
+	<tr>
+		<td rowspan="7">
+			<img src="../../../public/images/backgroud_10.gif" width="35" height="430" alt=""></td>
+		<td background="../../../public/images/backgroud_11.gif">
+        <div align="center">
+		    <h4><u><a href="http://market.internetrt.org:9001/appcontroller/listallapp" onMouseOver="showdetails(this,'listMyApps')" onMouseOut="hidedetails('listMyApps')">List all my apps</a>
+            <div id="listMyApps" class="pop"></div>
+            </u></h4>
+	    </div>
+      </td>
+        
+		<td rowspan="7">
+		<img src="../../../public/images/backgroud_12.gif" width="18" height="430" alt=""></td>
+		<td rowspan="7">
+			<img src="../../../public/images/backgroud_13.gif" width="35" height="430" alt=""></td>
+		<td background="../../../public/images/backgroud_14.gif" colspan="2" rowspan="2"><div align="center">
+		  <h5><a href="http://internetrt.org:9001/appcontroller/listallapps" onMouseOver="showdetails(this,'installApp')" onMouseOut="hidedetails('installApp')"><u>Install the selected one</u></a></h5>
+          <div id="installApp" class="pop"></div>
+		</div></td>
+		<td rowspan="7">
+			<img src="../../../public/images/backgroud_15.gif" width="17" height="430" alt=""></td>
+		<td>
+			<img src="../../../public/images/spacer.gif" width="1" height="71" alt=""></td>
+	</tr>
+	<tr>
+		<td rowspan="2">
+			<img src="../../../public/images/backgroud_16.gif" width="142" height="53" alt=""></td>
+		<td>
+			<img src="../../../public/images/spacer.gif" width="1" height="18" alt=""></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<img src="../../../public/images/backgroud_17.gif" width="142" height="35" alt=""></td>
+		<td>
+			<img src="../../../public/images/spacer.gif" width="1" height="35" alt=""></td>
+	</tr>
+	<tr>
+		<td background="../../../public/images/backgroud_18.gif"><div align="center">
+		  <h5><a href="http://internetrt.org:8080/IfApp/accessTokenServlet"><u>ScriptEditor</u></a>
+          <div id="scriptEditor" class="pop"></div>
+          </h5>
+		</div></td>
+		
+        <td background="../../../public/images/backgroud_19.gif"><div align="center">
+          <h5><a onMouseOver="showdetails(this,'recommendation')" onMouseOut="hidedetails('recommendation')"><u>Recommendation</u></a>
+          <div id="recommendation" class="pop"></div></h5>
+          
+      </div></td>
+        
+		<td rowspan="4">
+			<img src="../../../public/images/backgroud_20.gif" width="18" height="306" alt=""></td>
+		<td>
+			<img src="../../../public/images/spacer.gif" width="1" height="89" alt=""></td>
+	</tr>
+	<tr>
+		<td rowspan="3">
+			<img src="../../../public/images/backgroud_21.gif" width="142" height="217" alt=""></td>
+		<td>
+			<img src="../../../public/images/backgroud_22.gif" width="124" height="53" alt=""></td>
+		<td>
+			<img src="../../../public/images/spacer.gif" width="1" height="53" alt=""></td>
+	</tr>
+	<tr>
+		<td background="../../../public/images/backgroud_23.gif"><div align="center">
+		  <h4>Connection works
+		  </h4>
+		</div></td>
+		
+        <td background="../../../public/images/backgroud_24.gif"><div align="center">
+          <h4>App is being initiated</h4>
+        </div></td>
+        
+		<td>
+			<img src="../../../public/images/spacer.gif" width="1" height="89" alt=""></td>
+	</tr>
+	<tr>
+		<td>
+			<img src="../../../public/images/backgroud_25.gif" width="142" height="75" alt=""></td>
+		<td>
+			<img src="../../../public/images/backgroud_26.gif" width="124" height="75" alt=""></td>
+		<td>
+			<img src="../../../public/images/spacer.gif" width="1" height="75" alt=""></td>
+	</tr>
+</table>
+</div>
+
+ <div id="footer">
+            Created with <a href="http://www.playframework.org">play framework</a> and really inspirated from the booking sample application provided by <a href="http://seamframework.org/">seam framework</a>
+ </div>
+        
+</body>
+</html>

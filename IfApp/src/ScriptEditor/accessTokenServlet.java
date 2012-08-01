@@ -33,8 +33,6 @@ public class accessTokenServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String code = null;
-		String appID = "927259c0-1d4b-4170-826a-8dea43a7a7a7";
-		String appSecret = "6337a390-0dda-4b02-9a13-b5fd175bb1c1";
 		InternetRT rt = config.properties.irt;
 		
 		if(request.getParameter("code") == null){
@@ -48,7 +46,7 @@ public class accessTokenServlet extends HttpServlet {
 			
 			
 			
-			String accessTokenString = rt.getAccessToken(code, appID, appSecret);
+			String accessTokenString = rt.getAccessToken(code, config.properties.appID, config.properties.appSecret);
 			
 			System.out.println("[accessTokenServlet : doGet]: "+"accessTokenString"+accessTokenString);
 			
