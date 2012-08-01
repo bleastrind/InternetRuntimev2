@@ -15,16 +15,18 @@ window.InternetRuntime.Client.Core = new function()
 		INSTALL_ROOT_APP_URL: '/clients/installapp',
 		INIT_OPTION_URL: '/signal/initOption/client/',
 		INIT_URL: '/signal/init/client/',
+		QUERY_APP_URL: '/public/queryapp',
 		
 		
 		FORMAT_PARAM_NAME: 'format',
 		CID_PARAM_NAME: 'CID',
-		STATUS_PARAM_NAME: 'CLIENTSTATUS',		
+		STATUS_PARAM_NAME: 'CLIENTSTATUS',	
+		APPID_PARAM_NAME: 'appID',		
 		STATUS_ACTIVE: 'Active',
 		STATUS_BACKGROUND: 'Backgroung',
 		STATUS_SLEEP: 'Sleep',
 		
-		IFRAME_SIZE: {dx: 400, dy: 230}
+		IFRAME_SIZE: {dx: 500, dy: 230}
 	}
 	
 	var CORS = new function()
@@ -60,6 +62,10 @@ window.InternetRuntime.Client.Core = new function()
 			initOption: function(data)
 			{
 				window.InternetRuntime.Client.Core.initOption(data.signalname, data.id);
+			},
+			queryApp: function(data)
+			{
+				window.InternetRuntime.Client.Core.queryApp(data.appid, data.id);
 			},
 			start: function(data)
 			{
@@ -99,6 +105,16 @@ window.InternetRuntime.Client.Core = new function()
 				type: 'initOptionBack',
 				id: id,
 				option: option
+			}
+			postMessage(msg);
+		}
+		this.queryAppBack = function(data, id)
+		{
+			var msg = 
+			{
+				type: 'queryAppBack',
+				id: id,
+				data: data
 			}
 			postMessage(msg);
 		}
@@ -205,6 +221,11 @@ window.InternetRuntime.Client.Core = new function()
 	this.initOption = function(signalname, id)
 	{
 		Communication.initOption(signalname, id);
+	}
+	
+	this.queryApp = function(appid, id)
+	{
+		Communication.queryApp(appid, id);
 	}
 	
 	var Communication = new function()
@@ -353,9 +374,34 @@ window.InternetRuntime.Client.Core = new function()
 			.setOKCallBack(function(response){
 							initOptionBack(response, id);
 							})
+			.setErrorCallBack(function(response){
+							initOptionBack(response, id);
+							})
 			.send();
 		}
 		
+		
+		function queryAppBack(response, id)
+		{
+			CORS.queryAppBack(response.responseText, id);
+		}
+		this.queryApp = function(appid, id)
+		{
+			var Url = CONST.BASE_URL + CONST.QUERY_APP_URL;
+			new asynHttpRequest()
+			.setType('Get')
+			.setUrl(Url)
+			.pushParam(CONST.APPID_PARAM_NAME, appid)
+			.pushParam(CONST.FORMAT_PARAM_NAME, 'json')
+			.setOKCallBack(function(response){
+							queryAppBack(response, id);
+							})
+			.setErrorCallBack(function(response){
+							queryAppBack(response, id);
+							})
+			.send();
+
+		}
 		
 		
 		

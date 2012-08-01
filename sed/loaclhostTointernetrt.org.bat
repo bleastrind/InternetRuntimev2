@@ -1,7 +1,6 @@
 sed s/localhost:9000/internetrt.org:9000/ ../IfApp/src/config/properties.java > ../IfApp/src/config/properties.java1
 move /Y ..\IfApp\src\config\properties.java1  ..\IfApp\src\config\properties.java
 
-
 sed s/localhost:9000/internetrt.org:9000/ ../IfApp/WebContent/installRootApp.html > ../IfApp/WebContent/installRootApp.html1
 move /Y ..\IfApp\WebContent\installRootApp.html1  ..\IfApp\WebContent\installRootApp.html
 
@@ -13,7 +12,6 @@ move /Y ..\InternetRT\bin\public\client\client.js1  ..\InternetRT\bin\public\cli
 
 sed s/localhost:9000/internetrt.org:9000/ ../InternetRT/bin/public/client/installRootApp.js > ../InternetRT/bin/public/client/installRootApp.js1
 move /Y ..\InternetRT\bin\public\client\installRootApp.js1  ..\InternetRT\bin\public\client\installRootApp.js
-
 
 sed s/localhost:9000/internetrt.org:9000/ ../InternetRT/bin/public/client/Test.html > ../InternetRT/bin/public/client/Test.html1
 move /Y ..\InternetRT\bin\public\client\Test.html1  ..\InternetRT\bin\public\client\Test.html
@@ -74,7 +72,6 @@ move /Y ..\weibo\src\Servlet\WelcomeServlet.java1  ..\weibo\src\Servlet\WelcomeS
 
 sed s/localhost:9001/market.internetrt.org:9001/ ../IfApp/src/config/properties.java > ../IfApp/src/config/properties.java1
 move /Y ..\IfApp\src\config\properties.java1  ..\IfApp\src\config\properties.java
-
 
 sed s/localhost:9001/market.internetrt.org:9001/ ../IfApp/WebContent/installRootApp.html > ../IfApp/WebContent/installRootApp.html1
 move /Y ..\IfApp\WebContent\installRootApp.html1  ..\IfApp\WebContent\installRootApp.html
@@ -161,7 +158,8 @@ move /Y ..\IfApp\WebContent\start.html1  ..\IfApp\WebContent\start.html
 sed s/localhost:8080/market.internetrt.org:8080/ ../market/app/views/appservice/listAllApp.html > ../market/app/views/appservice/listAllApp.html1
 move /Y ..\market\app/views\appservice/listAllApp.html1  ..\market\app\views\appservice\listAllApp.html
 
-
+sed s/localhost:9000/internetrt.org:9000/ ../market/app/views/AdminService/addsignal.html > ../market/app/views/AdminService/addsignal.html1
+move /Y ..\market\app\views\AdminService\addsignal.html1  ..\market\app\views\AdminService\addsignal.html
 
 
 

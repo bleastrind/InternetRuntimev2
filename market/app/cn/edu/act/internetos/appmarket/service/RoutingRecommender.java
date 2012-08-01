@@ -15,6 +15,8 @@ import org.internetrt.sdk.util.DescribedListenerConfig;
 import org.internetrt.sdk.util.ListenerConfig;
 import org.internetrt.sdk.util.Signal;
 
+import models.*;
+
 
 public class RoutingRecommender {
 	
@@ -25,11 +27,24 @@ public class RoutingRecommender {
 		String appXmlString = rt.getAppDetail(fromAppID, accessToken);
 		
 		List<scala.Tuple3<String,Signal,DescribedListenerConfig>> a = new ArrayList<scala.Tuple3<String,Signal,DescribedListenerConfig>>();
+		List<scala.Tuple3<String,Signal,DescribedListenerConfig>> ans = new ArrayList<scala.Tuple3<String,Signal,DescribedListenerConfig>>();
 		AppXmlParser appXmlParser = new AppXmlParser(appXmlString);
 		
 		addNewListeners(accessToken, appXmlParser, a);
 		addNewSignalSource(accessToken, appXmlParser,a);
-
+		return a;
+	}
+	
+	public List<scala.Tuple3<String,Signal,DescribedListenerConfig>> getUserRoutings(String accessToken){
+		
+		List<App> applist = AppService.getUserApps(accessToken);
+		List<scala.Tuple3<String,Signal,DescribedListenerConfig>> a = new ArrayList<scala.Tuple3<String,Signal,DescribedListenerConfig>>();
+		for (App app:applist){
+			String appXmlString = rt.getAppDetail(app.getId(), accessToken);
+			AppXmlParser appXmlParser = new AppXmlParser(appXmlString);
+			addNewListeners(accessToken, appXmlParser, a);
+			addNewSignalSource(accessToken, appXmlParser,a);
+		}
 		return a;
 	}
 	

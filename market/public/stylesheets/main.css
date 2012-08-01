@@ -3,13 +3,13 @@ html {
 }
 
 body {
-    width: 880px;
-    margin:auto;
+    width:880px;
+    margin: 0px auto;
     font-family: Arial;
     font-size: 100%;
     color: rgb(54, 47, 45);
     background: #fff;
-    -webkit-border-radius: 8px;
+    -webkit-border-radius: 0px;
     -webkit-box-shadow: 0 0 10px rgba(0,0,0,.2);
     -moz-border-radius: 8px;
     -moz-box-shadow: 0 0 10px rgba(0,0,0,.2);
@@ -107,10 +107,10 @@ th {
 }
 
 td, th {
-    padding: 1px;
+    padding: 0px;
     text-align: left;
-    border-right:1px solid #aaa;
-    border-bottom: 1px solid #aaa;
+    border-right: 0px solid #aaa;
+    border-bottom: 0px solid #aaa;
 }
 
 /** Forms **/

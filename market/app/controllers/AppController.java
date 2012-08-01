@@ -30,9 +30,14 @@ public class AppController extends Controller {
 	public static void checkUser() {
 		System.out.println("[AppController : checkUser]: "+"checkUser");
 		String token = getAccessToken();
+		  
 		if (token == null) {
-			System.out.println("[AppController : checkUser]: "+properties.irt.getAuthCodeUrl());
-			Controller.redirect(properties.irt.getAuthCodeUrl());
+			if(request.params.get("msg") == "RootAppMustInstallFirst"){
+			    index();
+			}else{
+				System.out.println("[AppController : checkUser]: "+properties.irt.getAuthCodeUrl());
+				Controller.redirect(properties.irt.getAuthCodeUrl());
+			}
 		}
 	}
 
@@ -79,6 +84,30 @@ public class AppController extends Controller {
 		// List<AppConfig> configlist = AppService.getAllConfig(user);
 		// TODO:nick name
 		render("AppService/listAllApp.html", applist, token);
+	}
+	
+	public static void listAllAppRoutingMap() {
+		String token = getAccessToken();
+		List<App> applist = AppService.getUserApps(token);
+		List<App> apps = new ArrayList();
+		//Boolean flag = AppService.market(getAccessToken());
+		for (App app:applist){
+			AppXmlParser parser = new AppXmlParser(app.getInformation());
+			List<Signal> signals = parser.getSignals();
+			app.setDecription("Outgoing Signal:");
+			for (Signal signal:signals){
+				app.setDecription(app.getDecription()+signal.name()+" ");
+			}
+			app.setDecription(app.getDecription()+"Receving Signal:");
+			List<DescribedListenerConfig> listeners = parser.getListeners();
+			
+			for (DescribedListenerConfig listen:listeners){
+				app.setDecription(app.getDecription()+listen.description()+" ");
+			}
+		}
+		// List<AppConfig> configlist = AppService.getAllConfig(user);
+		// TODO:nick name
+		render("AppService/listAllAppRoutingMap.html", applist, token);
 	}
 	
 

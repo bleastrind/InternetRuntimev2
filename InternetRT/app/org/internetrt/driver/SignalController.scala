@@ -48,8 +48,8 @@ object SignalController extends Controller {
 	def registerSignal(signalname:String)= Action{
 	  request=>
 	    val map = request.body.asFormUrlEncoded
-	    val first = map.get(signalname)
-	    Ok(SiteInternetRuntime.registerSignal(signalname,first.head).toString());
+	    val first = map.get("xml")
+	    Ok(SiteInternetRuntime.registerSignal(signalname,first.head).toString()).withHeaders("Access-Control-Allow-Origin" -> "*");
 	}
 	
 	def getSignalDef(signalname:String)= Action{

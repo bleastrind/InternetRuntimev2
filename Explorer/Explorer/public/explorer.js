@@ -12,6 +12,8 @@ window.InternetRuntime.Explorer = new function()
 		ICON_SRC: '/assets/Cloud.png',
 		
 		SHARE_SIGNAL_NAME: 'share',
+		OPEN_SIGNAL_NAME: 'open',
+		EXTEND_SIGNAL_NAME: 'extendsignal',
 		
 		ICON_HIDE_DELAY: 1500
 		
@@ -50,14 +52,17 @@ window.InternetRuntime.Explorer = new function()
 	var MouseState = 0;		//0:hidden	1:shown
 	var AnimeState = 0;		//0:hidden	1:shown
 	var DelayStartTime;
+	
+	
 	function hoverIn(e)
 	{
 		MouseState = 1;
-		if (AnimeState == 0)
+		if (OperationObject != e.target || AnimeState == 0)
 		{
 			OperationObject = e.target;
 			AnimeState = 1;
-			floaticon.show(new XY(e.clientX, e.clientY));
+			floaticon.show(new XY(document.body.scrollLeft + e.clientX,
+								  document.body.scrollTop + e.clientY));
 		}
 		else
 		{
@@ -93,13 +98,11 @@ window.InternetRuntime.Explorer = new function()
 	
 	function close(e)
 	{
-		if (AnimeState == 1 && !floaticon.Obj.isContained(e.target))
+		if ((!e) || (AnimeState == 1 && !floaticon.Obj.isContained(e.target)))
 		{
 			AnimeState = 0;
 			floaticon.hide();
-			MouseState = 0;
-			AnimeState = 0;
-			
+			MouseState = 0;			
 		}
 	}
 	
@@ -281,6 +284,7 @@ window.InternetRuntime.Explorer = new function()
 	
 	var ExplorerMainMenu = null;
 	var ShareItem;
+	var OpenItem;
 	function resetMainMenu()
 	{
 		
@@ -296,55 +300,117 @@ window.InternetRuntime.Explorer = new function()
 		ShareItem.setClick(function(){
 			window.InternetRuntime.Client.initOption(CONST.SHARE_SIGNAL_NAME,
 													function(option){
-														OptionHandler(option, ShareItem)
+														OptionHandler(option, ShareItem, CONST.SHARE_SIGNAL_NAME)
 													});
 		});
+		OpenItem = new MenuItem(new DXY(100, 30));
+		OpenItem.Obj.Text('Open');
+		ExplorerMainMenu.pushItem(OpenItem);
+		OpenItem.setClick(function(){
+			window.InternetRuntime.Client.initOption(CONST.OPEN_SIGNAL_NAME,
+													function(option){
+														OptionHandler(option, OpenItem, CONST.OPEN_SIGNAL_NAME)
+													});
+		});s
 	}
 	resetMainMenu();
 	
-	function OptionHandler(option, optionitem)
+	function getAppDetail(id)
 	{
-		var OptionObj;
-		eval("OptionObj=" + option);
-		if (OptionObj["Options"]["entry"])
+	}
+	
+	function OptionHandler(option, optionitem, signalname)
+	{
+		var OptionObj = null;
+		var SubMenu = new Menu();
+		try
 		{
-			var Choices = OptionObj["Options"]["entry"]["value"]["Choice"];
-			
-			var SubMenu = new Menu();
-			for (var c in Choices)
+			eval("OptionObj=" + option);
+		}catch(e)
+		{}
+		if (OptionObj)
+		{
+			if (OptionObj["Options"]["entry"]["value"]["Choice"])
 			{
+				var Choices = OptionObj["Options"]["entry"]["value"]["Choice"];				
+				for (var c in Choices)
+				{
+					var item = new MenuItem(new DXY(100, 30));
+					item.setChoice(Choices[c]);
+					
+					var CallBackParams = {};
+					CallBackParams.item = item;
+					window.InternetRuntime.Client.queryApp(Choices[c]['RequestListener']['runat'],
+															function(appdetail, callbackparams){
+																var AppObj = null;
+																eval("AppObj=" + appdetail);
+																var AppName = AppObj['Application']['Name'];
+																callbackparams.item.Obj.Text(AppName);
+															},
+															CallBackParams);
+					
+					item.setClick(function(choice){
+									var params = {};
+									params.requestListenerIndex = '<choice>'
+									+ '<RoutingId>' + choice['RoutingId'] + '</RoutingId>'
+									+ '<RequestListenerId>' + choice['RequestListenerId'] + '</RequestListenerId>'
+									+ '</choice>';
+									params.url = OperationObject.href;
+									params.format = 'redirecturl';
+									window.InternetRuntime.Client.init(signalname, params, 
+																		function(url){
+																			close();
+																			window.open(url);
+																			//document.location.href = url;
+																		});
+								});
+					SubMenu.pushItem(item);
+				}
+			}
+			else
+			{
+				var Choice = OptionObj["Options"]["entry"]["value"];
 				var item = new MenuItem(new DXY(100, 30));
-				item.setChoice(Choices[c]);
-				item.Obj.Text(c);
+				var CallBackParams = {};
+				CallBackParams.item = item;
+				window.InternetRuntime.Client.queryApp(Choice['RequestListener']['runat'],
+														function(appdetail, callbackparams){
+															var AppObj = null;
+															eval("AppObj=" + appdetail);
+															var AppName = AppObj['Application']['Name'];
+															callbackparams.item.Obj.Text(AppName);
+														},
+														CallBackParams);
 				item.setClick(function(choice){
-								var params = {};
-								params.requestListenerIndex = '<choice>'
-								+ '<RoutingId>' + choice['RoutingId'] + '</RoutingId>'
-								+ '<RequestListenerId>' + choice['RequestListenerId'] + '</RequestListenerId>'
-								+ '</choice>';
+								var params = {};							
 								params.url = OperationObject.href;
 								params.format = 'redirecturl';
-								window.InternetRuntime.Client.init(CONST.SHARE_SIGNAL_NAME, params, 
+								window.InternetRuntime.Client.init(signalname, params, 
 																	function(url){
-																
-																		document.location.href = url;
+																		close();
+																		window.open(url);
+																		//document.location.href = url;
 																	});
 							});
 				SubMenu.pushItem(item);
 			}
-			optionitem.setSubMemu(SubMenu);
-			optionitem.showSubMenu();
 		}
-		else
-		{
-			var params = {};
-			params.url = OperationObject.href;
-			params.format = 'redirecturl';
-			window.InternetRuntime.Client.init(CONST.SHARE_SIGNAL_NAME, params, 
-												function(url){
-													document.location.href = url;
-												});
-		}
+		var extenditem = new MenuItem(new DXY(100, 30));
+		extenditem.Obj.Text('Extend');
+		extenditem.setClick(function(choice){
+								var params = {};							
+								params.signalname = signalname;
+								params.format = 'redirecturl';
+								window.InternetRuntime.Client.init(CONST.EXTEND_SIGNAL_NAME, params, 
+																	function(url){
+																		close();
+																		window.open(url);
+																		//document.location.href = url;
+																	});
+							});
+		SubMenu.pushItem(extenditem);		
+		optionitem.setSubMemu(SubMenu);
+		optionitem.showSubMenu();
 		
 	}
 	

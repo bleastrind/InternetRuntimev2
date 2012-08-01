@@ -4,7 +4,7 @@
 <head>
 <style type="text/css">
 .warpper {margin:20px;padding:30px;}
-table {border:1px solid blue; width:800px;padding-left: 1cm;align=center;margin: auto;}
+table {border:1px solid blue; width:800px;padding-left: 1cm;align:center;margin: auto;}
 th,td {border:1px solid blue }
 </style>
 </head>
@@ -12,6 +12,7 @@ th,td {border:1px solid blue }
 #{set title:'Home' /}
 <head>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="../../../public/javascripts/jquery-ui-1.8.22.custom.min.js"></script>
     <script>
     try{
         var irturl = "http://localhost:9000";
@@ -37,6 +38,7 @@ th,td {border:1px solid blue }
 
             var params = $('<div><label>key</label><input type="text" name="key"></br><label>value</label></div>');
 
+
             var select = $('<select><option value ="<var></var>">the var in the signal</option><option value ="key">new key</option><option value ="<var><ID></ID></var>">RoutingInstanceID</option><option value ="const" >Const value</option></select>');
             var input = $('<input name="value" type="text"/>');
 
@@ -52,13 +54,26 @@ th,td {border:1px solid blue }
             return obj;
         }
         $(function() {
-        	
+
+            var availableTags = ${signaldefs}
+
            // $( ".button" ).button();
             $( "#addsignal").click(function() {
                  $("#signals")
-                         .append('<div><label>Runat</label><select name="runat"><option value ="userinterface">userinterface</option><option value ="${id}">Appid</option></select></br><label>Signalname</label><input type="text" name="signalname"></div></br>'
+                         .append('<div><label>Runat</label><select name="runat"><option value ="userinterface">userinterface</option><option value ="${id}">Appid</option></select></br><label>Signalname</label><input type="text" name="signalname""></div></br>'
                  );
+                 
+                 var availableTags = ${signaldefs}
+                 $("#signals div").each(function(index,Element){
+                 	$(Element).find("input[name='signalname']").autocomplete({
+						source:availableTags
+						});
+                    $(Element).find("input[name='signalname']").blur( function(){
+                        if (!($(Element).find("input[name='signalname']").val() in availableTags)) {alert("signal does not defined");window.location.href="addsignal"}
+                    });
             });
+
+        });
 			
 			$("#addrequestAccesses").click(function(){
 				$("#requestAccesses").append('<input type="text" name="requestAccess" value="'+$("#newrequest").val()+'"/><br/>')
@@ -67,13 +82,20 @@ th,td {border:1px solid blue }
             $("#addlistener").click(function() {
                 var obj = $('<div name="listener"><select name="listener"><option value ="RequestListener">RequestListener</option><option value ="EventListener">EventListener</option><option value ="RequestListener">PipeListener</option></select></br><label>Description</label><input type="text" name="description"></br><label>Url</label><input type="text" name="url"></br><label>Signalname</label><input type="text" name="signalname"></br>' +
                         '<a class="button">AddPara</a></div></br>');
-
                 $(obj).find(".button").click(function(){addpara(obj);});
                 $("#signalhandler") .append(obj);
             });
             
             $("#send").click(function(){
-
+				
+				var availableTags = ${signaldefs}
+				var flag = 1
+				$("#signals div").each(function(index,Element){
+					var f = $(Element).find("input[name='signalname']").val() in availableTags
+                 	if (f==0) flag = 0
+                })
+                if (flag==0) {window.location.href = "addsignal"}
+                
                 var xml = '<?xml version="1.0" encoding="UTF-8"?>'+
                        '<Application>'+
                         '<Name>'+$("input[name='name']").val()+'</Name>'+

@@ -14,7 +14,7 @@ class AppXmlParser (xml:String){
   def getDescription():String = {
   	(xmlFile \ "Description").text
   }
-  
+ 
   def throwFormatException(term: String, description: String){
      if (term == null || term == "")
       {

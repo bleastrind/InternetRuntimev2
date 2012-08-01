@@ -6,9 +6,9 @@ import play.cache.Cache;
 import play.mvc.*;
 import java.util.*;
 
-import org.internetrt.sdk.*;
-import org.internetrt.sdk.util.*;
-
+import org.internetrt.sdk.util.AppXmlParser;
+import org.internetrt.sdk.util.DescribedListenerConfig;
+import org.internetrt.sdk.util.Signal;
 
 import models.*;
 
@@ -25,7 +25,16 @@ public class AdminController extends Controller {
 		for (App app:applist){
 			AppXmlParser parser = new AppXmlParser(app.getInformation());
 			List<Signal> signals = parser.getSignals();
-			app.setDecription(parser.getDescription());
+			app.setDecription("�ܹ��������ź�:");
+			for (Signal signal:signals){
+				app.setDecription(app.getDecription()+signal.name()+" ");
+			}
+			app.setDecription(app.getDecription()+"�ܹ����յ��ź�:");
+			List<DescribedListenerConfig> listeners = parser.getListeners();
+			
+			for (DescribedListenerConfig listen:listeners){
+				app.setDecription(app.getDecription()+listen.description()+" ");
+			}
 		}
         render("AdminService/welcome.html", applist);
 		//return ok(AdminService.welcome.render(applist));
@@ -53,7 +62,16 @@ public class AdminController extends Controller {
     	Map<String,String> map = AdminService.appregister();
     	String id = map.get("id");
     	String secret = map.get("secret");
-        render("AdminService/addApp.html",id,secret);
+    	StringBuffer signalsbuf = new StringBuffer();
+    	for(String signal:SignalDefService.getSignalDefs()){
+    		signalsbuf.append("'"+signal+"',");
+    	}
+    	String signaldefs = "[" + signalsbuf + "]";
+        render("AdminService/addApp.html",id,secret,signaldefs);
+    }
+    
+    public static void addsignal(){
+    	render("AdminService/addsignal.html");
     }
     
     public static void addAppSave(String id,String name, String AccessRequest, String installUrl,String email,String updated,String updateUrl,String secret)

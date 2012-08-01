@@ -45,7 +45,7 @@ public class RoutingRecomController extends Controller{
 			System.out.println("[RoutingRecomController : index]: "+choices.size());
 			if(choices.size()> 0)
 				render("Routing/recomRouting.html",choices,redirect_uri);
-			else if(redirect_uri==null||redirect_uri.equals("")||redirect_uri.equals("123"))
+			else if(redirect_uri==null||redirect_uri.equals(""))
 				AppController.listAllApp();
 				else Controller.redirect(redirect_uri);
 		}

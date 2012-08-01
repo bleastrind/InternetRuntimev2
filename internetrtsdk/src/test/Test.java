@@ -1,8 +1,13 @@
 package test;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.internetrt.sdk.InternetRT;
+import org.internetrt.sdk.InternetRTConfig;
 import org.internetrt.sdk.exceptions.DataNotEnoughException;
 import org.internetrt.sdk.util.AppXmlParser;
 import org.internetrt.sdk.util.DescribedListenerConfig;
@@ -28,6 +33,39 @@ public class Test {
 			for(ListenerConfig config:parser.getEventListeners()){
 				System.out.println("[Test : main]: "+config.node());
 			}
+		}
+		InternetRT irt = new InternetRT();
+		String appID = "5c71fed6-04b5-44d8-afe9-73516f59060f";
+		String appSecret ="8d9389fa-6fc9-4f27-856d-74587c71e677";
+			try {
+				InternetRTConfig config = new InternetRTConfig();
+
+				config.updatePropertiy("appID", appID);
+				config.updatePropertiy("appSecret",
+						appSecret);
+				config.updatePropertiy("redirect_URI",
+						"http://localhost:9001/Application/loginUser"); //Play 1.0 and Play 2.0 will conflict on session, if domain is same & port is different
+				config.updatePropertiy("baseURL", "http://localhost:9000");
+				config.updatePropertiy("accessTokenURL",
+						"http://localhost:9000/oauth/accesstoken");
+				config.updatePropertiy("routingInstanceURl",
+						"http://localhost:9000/oauth/workflow");
+				config.updatePropertiy("authorizeURL",
+						"http://localhost:9000/oauth/authorize");
+			
+				irt = InternetRT.create(config);
+			} catch (Exception e) {
+				System.out.println("Internet Runtime Creation Failure!");
+				e.printStackTrace();
+		}
+		Map<String,String> map = new HashMap();
+		map.put("message", "value");
+		String token = "93a134ba-52ce-4f54-9e7d-ad79bbb5f378";
+		try {
+			irt.send(token, "updatestatus", map);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
