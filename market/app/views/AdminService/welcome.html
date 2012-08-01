@@ -24,7 +24,7 @@ th,td {border:1px solid blue }
                 <tr>
                     <td width:100px; height:100px;overflow:hidden>${app.name}</td>
                     <td border:1px solid blue; width:600px; height:100px;overflow:hidden>${app.decription}</td>
-		    <input type="hidden" name="information" value="${app.information}">
+		  			  <input type="hidden" name="information" value="${app.information}">
                     <td width:100px; height:100px;overflow:hidden>
                         <a href="@{AdminController.deleteApp(app,app.getId())}">Delete The App</a>
                     </td>
