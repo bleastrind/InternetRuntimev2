@@ -7,15 +7,14 @@ import org.internetrt.exceptions.ConsideredException
 
 object BrowserBaseClientInputs extends Controller {
   def register() = Action {
-    implicit request =>
+    request =>
       if (request.method == "GET") {
         Ok(views.html.register())
       } else {
         val username = request.body.asFormUrlEncoded.get("username").head;
         val password = request.body.asFormUrlEncoded.get("password").head;
-		SiteUserInterface.register(username, password)
-		val mainpage = controllers.routes.Application.index().absoluteURL(false)
-        Ok(views.html.login(mainpage,"Register successed,please login"))
+
+        Ok(SiteUserInterface.register(username, password));
       }
   }
   def getName() = Action {
@@ -29,7 +28,7 @@ object BrowserBaseClientInputs extends Controller {
       val mainpage = controllers.routes.Application.index().absoluteURL(false)
       if (request.method == "GET") {
         val oldurl = request.queryString.get("oldurl").getOrElse(Seq.empty).headOption.getOrElse(mainpage);
-        Ok(views.html.login(oldurl,""))
+        Ok(views.html.login(oldurl))
       } else {
         val username = request.body.asFormUrlEncoded.get("username").headOption;
         val password = request.body.asFormUrlEncoded.get("password").headOption;
@@ -45,7 +44,7 @@ object BrowserBaseClientInputs extends Controller {
         } catch {
           case e:ConsideredException => {
             e.printStackTrace();
-            Ok(views.html.login(mainpage,"Login failed,Please try again."))
+            Unauthorized("Login Failed")
           }
         }
       }
@@ -67,7 +66,7 @@ object BrowserBaseClientInputs extends Controller {
         }
         case None => {
           val thispage = controllers.routes.Application.index().absoluteURL(false)
-          Ok(views.html.login(thispage,"login first"))
+          Ok(views.html.login(thispage))
         }
       }
   }
@@ -85,15 +84,18 @@ object BrowserBaseClientInputs extends Controller {
               System.out.println("XML" + xml);
 
               val success = SiteUserInterface.installRootApp(uid, xml);
-
-              Ok(success.toString());
+			  
+			  if (success.toString() == "true")
+				Ok(views.html.installRootAppSuccess());
+			  else
+				Ok(success.toString());
             }
             case _ => InternalServerError
           }
         }
         case None => {
           val thispage = controllers.routes.Application.index().absoluteURL(false)
-          Ok(views.html.login(thispage,"login first"))
+          Ok(views.html.login(thispage))
         }
       };
 

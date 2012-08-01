@@ -1,8 +1,4 @@
 #{extends 'main.html' /}
-<style type="text/css">
-body{text-align:center;}
-h1{text-align:center;}
-</style>
 <h1>Success!</h1><br/>
 %{ if (redirect_uri == null || redirect_uri == ""){ }%
 
@@ -11,6 +7,6 @@ h1{text-align:center;}
 #{/form}
 
 %{  }else{  }%
-	<a href="${redirect_uri}" target="_blank" onclick="window.location.href='@{AppController.listAllApp()}'">next step</a>
+	<a href="${redirect_uri}">next step</a>
 
 %{ } }%

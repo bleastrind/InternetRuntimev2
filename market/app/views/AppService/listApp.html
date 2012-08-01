@@ -1,7 +1,7 @@
 #{extends 'main.html' /}
 <html>
 <style type="text/css">
-body {MARGIN:auto; text-align:center;}
+body {margin:0 ;padding-left: 1.5cm }
 </style>
 <body>
 <h3>App name:</h3>
@@ -18,7 +18,7 @@ body {MARGIN:auto; text-align:center;}
 	<input type="hidden" name="updateUrl" value="${app.getUpdateUrl()}">
 	<input type="hidden" name="secret" value="${app.getSecret()}">
 	<input type="hidden" name="decription" value="${app.getDecription()}">
-	<input type="hidden" name="requestUrl" value="http://localhost:9000/appcontroller/installConfig">
+	<input type="hidden" name="requestUrl" value="http://internetrt.org:9000/appcontroller/installConfig">
 	<input type="submit" id="ok" value="Install and config the application!">
 #{/form}
 </body>

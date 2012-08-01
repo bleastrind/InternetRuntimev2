@@ -34,7 +34,7 @@ window.InternetRuntime.Client = new function()
 	}
 	var CONST = 
 	{
-		BASE_URL: 'http://localhost:9000',
+		BASE_URL: 'http://internetrt.org:9000',
 		CORE_IFRAME_SRC: '/assets/client/Client.html',
 		Lib_SRC: '/assets/client/Lib.js',
 		LOGO_SRC: '/assets/client/InternetRuntime.png',
@@ -100,6 +100,7 @@ window.InternetRuntime.Client = new function()
 	
 	var CallBackPoolId = 0;
 	var CallBackPool = {};
+	var CallBackParamsPool = {}
 	this.initOption = function(signalname, callback)
 	{
 		var Id = CallBackPoolId;
@@ -115,9 +116,17 @@ window.InternetRuntime.Client = new function()
 	{
 		var Id = CallBackPoolId;
 		CallBackPoolId++;
-		CallBackPool[Id] = callback
-		
+		CallBackPool[Id] = callback;		
 		CORS.init(signalname, params, Id);
+	}
+	
+	this.queryApp = function(appid, callback, callbackparams)
+	{
+		var Id = CallBackPoolId;
+		CallBackPoolId++;
+		CallBackPool[Id] = callback;
+		CallBackParamsPool[Id] = callbackparams;
+		CORS.queryApp(appid, Id);
 	}
 	
 	function jumpToUrl(url)
@@ -134,6 +143,48 @@ window.InternetRuntime.Client = new function()
 		.Size(new DXY(size.dx, size.dy))
 		.Style('first')
 		.WindowFather();
+		
+		var ExitButton = Create('div')
+		.Size(new DXY(70, 27))
+		.Text('Close')
+		.XY(new XY(size.dx - 80, size.dy - 40))
+		.Style('item')
+		.HoverIn(function(done){
+			ExitButton
+			.Time(150)
+			.CallBack(done)
+			.Color('ff0000')
+			.TextColor('066099');
+		})
+		.HoverOut(function(done){
+			ExitButton
+			.Time(150)
+			.CallBack(done)
+			.Color('066099')
+			.TextColor('ff0000');
+		})
+		.Click(function(){
+			IframeBox
+			.Opacity(1)
+			.Time(300)
+			.Opacity(0);
+			CoreIframe
+			.Opacity(1)
+			.Time(300)
+			.CallBack(function(){
+				IframeBox
+				.Style('hidden');
+				CoreIframe
+				.Time(0)
+				.XY(new XY(1, 1))
+				.Size(new DXY(1, 1));
+				ExitButton
+				.Style('hidden');
+			})
+			.Opacity(0);
+		})
+		.Father(IframeBox);
+		ExitButton.DOMObject.style.zIndex = 200;
 		
 		if (xy == 'center')
 		{
@@ -177,8 +228,13 @@ window.InternetRuntime.Client = new function()
 			initBack: function(data)
 			{
 				if (data.id != null)
-				CallBackPool[data.id](data.data);
-			},	
+					CallBackPool[data.id](data.data);
+			},
+			queryAppBack: function(data)
+			{
+				if (data.id != null)
+					CallBackPool[data.id](data.data, CallBackParamsPool[data.id]);
+			},
 			showIframe: function(data)
 			{
 				showIframe(data.xy, data.size);
@@ -234,6 +290,16 @@ window.InternetRuntime.Client = new function()
 				type: 'init',
 				signalname: signalname,
 				params: params,
+				id: id
+			}
+			postMessage(msg);
+		}
+		this.queryApp = function(appid, id)
+		{
+			var msg =
+			{
+				type: 'queryApp',
+				appid: appid,
 				id: id
 			}
 			postMessage(msg);
@@ -355,7 +421,7 @@ window.InternetRuntime.Client = new function()
 			.Child(UserPanel)
 			.XY(Point.ScreenRightbottom.minus(UserPanelWrapper.Size()));
 			
-			document.body.addEventListener('scroll', ScrollFresh, false);
+			window.addEventListener('scroll', ScrollFresh, false);
 			function ScrollFresh()
 			{
 				Point.fresh();

@@ -10,7 +10,7 @@ th,td {border:1px solid blue }
 </head>
 <body class="test1">
 #{if !flag}
-	<a href="javascript:void(document.body.appendChild(document.createElement('script')).src='http://localhost:9000/assets/client/installRootApp.js');">Install Market</a>
+	<a href="javascript:void(document.body.appendChild(document.createElement('script')).src='http://internetrt.org:9000/assets/client/installRootApp.js');">Install Market</a>
 
 	#{/if}
 #{if applist.size()}
@@ -22,7 +22,7 @@ th,td {border:1px solid blue }
 		<img class = "apptitle" src = ${app.logourl} style="position:absolute ;left:10px;top:10px;width:50px;height:50px">
 		</img>
 		<div class = "apptitle" style="position:absolute ;left:70px;top:21px;">
-			<a style="position:absolute ;left:8px;top:7px" href="${app.installUrl}">${app.name}</a>
+			${app.name}
 		</div>
 		<div class = "appowner" style="position:absolute ;left:633px;top:49px;">
 			Owner : somebody

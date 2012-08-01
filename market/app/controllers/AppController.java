@@ -30,6 +30,11 @@ public class AppController extends Controller {
 	public static void checkUser() {
 		System.out.println("[AppController : checkUser]: "+"checkUser");
 		String token = getAccessToken();
+		  
+		if(request.params.get("msg") == "RootAppMustInstallFirst"){
+		    render("Please install market");
+		}
+		
 		if (token == null) {
 			System.out.println("[AppController : checkUser]: "+properties.irt.getAuthCodeUrl());
 			Controller.redirect(properties.irt.getAuthCodeUrl());

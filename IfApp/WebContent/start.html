@@ -22,6 +22,7 @@ var appsByTri = [];
 
 function accessToken()
 {
+	alert("START");
 	$.ajax({
 		url:'GetAppsServlet',
 		type: 'GET',
@@ -89,6 +90,7 @@ function choose_trigger_id(id)
 
 function getActionChannels()
 {
+	alert("getActionChannels");
 	var params={
 			'trigger':trigger,
 	}
@@ -144,6 +146,7 @@ function render_triggerChannels()
 function choose_triggerChannel_id(id)
 {
 	triggerChannel = appsByTri[id].appID;
+	alert(triggerChannel);
 	render_actionChannels();
 	actionChannelMoreApps();
 }
@@ -166,12 +169,14 @@ function render_actionChannels()
 function choose_actionChannel_id(id)
 {
 	actionChannel = actionChannels[id].appID;
+	alert(actionChannel);
 	genRouting();
 }
 
 
 function genRouting() 
 {	
+	alert("SUBMIT")
 	var params={
 			'trigger':trigger,
 			'triggerChannel':triggerChannel,
@@ -184,6 +189,7 @@ function genRouting()
 		dataType: 'json',
 		success : function(data)
 		{
+			alert("SUCCESS");
 			result = eval(data);
 			routing = result.routingXml;
 			var r = confirm(routing);
@@ -210,7 +216,6 @@ function restoreRouting(data)
 		success : function()
 		{
 			alert("SUCCESS");
-			window.location.href="http://market.internetrt.org/appcontroller/listallapp":
 		}
 	
 	}
@@ -220,7 +225,7 @@ function restoreRouting(data)
 function triggerChannelMoreApps()
 {
 	var html = "";
-	html += '<a target="_blank" href="http://localhost:9000/signal/client/extendSignal?signalname='
+	html += '<a target="_blank" href="http://internetrt.org:9000/signal/client/extendSignal?signalname='
 			+trigger+'&format=browserredirect">Install more apps</a><br/>';
 	$("#triggerChannelMoreApps").html(html);
 }
@@ -228,7 +233,7 @@ function triggerChannelMoreApps()
 function actionChannelMoreApps()
 {
 	var html = "";
-	html += '<a target="_blank" href="http://localhost:9000/signal/client/extendSignal?signalname='
+	html += '<a target="_blank" href="http://internetrt.org:9000/signal/client/extendSignal?signalname='
 			+trigger+'&format=browserredirect">Install more apps</a><br/>';
 	$("#actionChannelMoreApps").html(html);
 }

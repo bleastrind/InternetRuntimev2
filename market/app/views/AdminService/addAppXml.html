@@ -1,13 +1,5 @@
-<head>
-<style type="text/css">
-body.test1 {margin:20px auto;height:900px;text-align:center;}
-table {border:1px solid blue; width:800px;height:900px; padding-left: 1cm;align=center;margin: auto;}
-th,td {border:1px solid blue }
-</style>
-</head>
-#{extends 'main.html' /}
 #{set title:'Home' /}
-<body>
+
 <h1>Hello Admin!You can manage every appliacation here!</h1>
 
 	<h3> Your Appid:${id} ,Your Secret:${secret}</h3>
@@ -18,10 +10,10 @@ th,td {border:1px solid blue }
  
 	    <p>
 		<label for="xml"> xml:</label>
-		<input type="text name="information" id="information"></br>
-		<label>updateurl</label> <input type="text" name="updateurl"></br>
-        <label>installurl</label> <input type="text" name="installurl"></br>
-        <label>email</label> <input type="text" name="email"></br>
+		<textarea name="information" id="information"></textarea>
+		<label>updateurl</label> <input type="text" name="updateurl">
+        <label>installurl</label> <input type="text" name="installurl">
+        <label>email</label> <input type="text" name="email">
 		</p>
 
      <input type = "submit" value = "save">
@@ -30,7 +22,6 @@ th,td {border:1px solid blue }
 	 <h1></h1>
 	#{form @AdminController.welcome()}
 		<input type = "submit" value = "back">
-	#{/form}	
-</body> 
+	#{/form}	 
    
 

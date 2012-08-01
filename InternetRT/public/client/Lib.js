@@ -84,6 +84,7 @@ window.InternetRuntime.UI = new function(){
 			obj.DOMObject.style.borderRadius = '6px 6px 6px 6px';
 			obj.DOMObject.style.padding = '0px';
 			obj.DOMObject.style.margin = '0px';
+			obj.DOMObject.style.cursor = 'pointer';
 		},
 		wraper: function(obj)
 		{

@@ -1,12 +1,25 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
 
+<div id="login">
+   
 
-<a style="text-align:center;font-size:100px;"href="javascript:void(document.body.appendChild(document.createElement('script')).src='http://internetrt.org:9000/assets/client/installRootApp.js');">Install Market</a>
-</br>
-<body style="text-align:center;font-size:20px;">
- if you have not installed market,please install market.otherwise <a href="@{AppController.listallapps()}">click here</a>.
-</body>
+    #{form @Application.getAccount(), id:'formLogin'}
+    <p>
+        <label for="account">Login Name:</label>
+        <input type="text" name="account" id="account" value="${params.account}" />
+    </p>
+    <p>
+        <label for="password">Password:</label>
+        <input type="text" name="password" id="password" value="${params.password}" />
+    </p>
+    <p>
+        <input type="submit" value="OK" />
+    </p>
+    #{/form}
+
+</div>
+
 <script type="text/javascript" charset="${_response_encoding}">
     sessvars.$.clearMem()
 </script>
