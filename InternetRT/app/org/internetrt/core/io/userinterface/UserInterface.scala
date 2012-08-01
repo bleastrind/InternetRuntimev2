@@ -54,6 +54,7 @@ abstract class UserInterface {
     }
     
   }
+  
   def installApp(uid:String, xml:String,accesses:Seq[String],isRoot:Boolean = false):Boolean ={
     val app = Application(XML.loadString(xml))
     aclSystem.grantAccess(uid,app.id, accesses,isRoot)

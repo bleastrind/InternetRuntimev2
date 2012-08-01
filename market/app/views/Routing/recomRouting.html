@@ -1,5 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+#{extends 'main.html' /}
+<style type="text/css">
+body{margin:auto;text-align:left;}
+</style>
 <html>
+
   <head>
     <title>recomRoutingBaseFrom.html</title>
 	
@@ -13,16 +18,27 @@
   </head>
   
   <body onload>
-  <h1>There're some new signal matching you may be interested in</h1>
- #{form @RoutingRecomController.ConfirmRecomRouting()}
+  <div style="padding:30px;">
+  <h1>Which connection would you like to establish.</h1>
+  #{form @RoutingRecomController.ConfirmRecomRouting()}
+  <table style="text-align:center;">
+
    <input type="hidden" name="redirect_uri" value="${redirect_uri}"/>
+	  <tr>
+		<th>check</th>
+		<th>from</th>
+		<th>to</th>
+	  </tr>
  	#{list items:choices, as:'choice'}
-               <input type="checkbox" name="choices" value="${choice.routing}" checked/> 
-               <span alt="${choice.signalDescription}">${choice.signalName}@${choice.signalAppName}</span>:
-               <span alt="${choice.listenerDescription}">${choice.listenerAppName}<br/>
+	  <tr>
+              <td> <input type="checkbox" name="choices" value="${choice.routing}" checked/> </td>
+              <td> <span alt="${choice.signalDescription}">${choice.signalName}@${choice.signalAppName}</span></td>
+              <td> <span alt="${choice.listenerDescription}">${choice.listenerAppName}<br/> </td>
+	  </tr>
     #{/list}
+	</table>
     <input type = "submit" value = "confirm">
- #{/form}
-    
+  #{/form}
+  </div>
   </body>
 </html>

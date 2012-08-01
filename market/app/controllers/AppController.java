@@ -86,6 +86,30 @@ public class AppController extends Controller {
 		render("AppService/listAllApp.html", applist, token);
 	}
 	
+	public static void listAllAppRoutingMap() {
+		String token = getAccessToken();
+		List<App> applist = AppService.getUserApps(token);
+		List<App> apps = new ArrayList();
+		//Boolean flag = AppService.market(getAccessToken());
+		for (App app:applist){
+			AppXmlParser parser = new AppXmlParser(app.getInformation());
+			List<Signal> signals = parser.getSignals();
+			app.setDecription("Outgoing Signal:");
+			for (Signal signal:signals){
+				app.setDecription(app.getDecription()+signal.name()+" ");
+			}
+			app.setDecription(app.getDecription()+"Receving Signal:");
+			List<DescribedListenerConfig> listeners = parser.getListeners();
+			
+			for (DescribedListenerConfig listen:listeners){
+				app.setDecription(app.getDecription()+listen.description()+" ");
+			}
+		}
+		// List<AppConfig> configlist = AppService.getAllConfig(user);
+		// TODO:nick name
+		render("AppService/listAllAppRoutingMap.html", applist, token);
+	}
+	
 
 	public static void listAppBySignalName(String signalname){
 		List<App> applist = AppService.getAppsBySignal(signalname);

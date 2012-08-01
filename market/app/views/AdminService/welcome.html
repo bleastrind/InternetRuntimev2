@@ -1,6 +1,12 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
-
+<head>
+<style type="text/css">
+body.test1 {margin:20px auto;text-align:center;}
+table {border:1px solid blue; width:800px;padding-left: 1cm;align=center;margin: auto;}
+th,td {border:1px solid blue }
+</style>
+</head>
 <h1>Hello Admin!You can manage every appliacation here!</h1>
 
 #{if applist.size()}
@@ -16,9 +22,10 @@
         <tbody>
             #{list items:applist, as:'app'}
                 <tr>
-                    <td>${app.name}</td>
-                    <td>${app.information}</td>
-                    <td>
+                    <td width:100px; height:100px;overflow:hidden>${app.name}</td>
+                    <td border:1px solid blue; width:600px; height:100px;overflow:hidden>${app.decription}</td>
+		    <input type="hidden" name="information" value="${app.information}">
+                    <td width:100px; height:100px;overflow:hidden>
                         <a href="@{AdminController.deleteApp(app,app.getId())}">Delete The App</a>
                     </td>
                 </tr>
@@ -32,10 +39,10 @@
 #{/else}
 <h3>
      #{form @AdminController.addApp()}
-          <input type = "submit" value = "Add a new app">
+          <input style="margin:30px;" type = "submit" value = "Add a new app">
      #{/form}
 </h3>
-<h3><a href = "@{Application.index()}">log out</a></h3>
+<h3 style="margin:30px;" ><a href = "@{Application.index()}">log out</a></h3>
 
 
 

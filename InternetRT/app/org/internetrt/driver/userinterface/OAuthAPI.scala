@@ -29,7 +29,7 @@ object OAuthAPI extends Controller {
               Ok("Install failed!")
           }
           case None => {
-            Ok(views.html.login(request.uri))
+            Ok(views.html.login(request.uri,"login first"))
           }
         }
       } catch {
@@ -66,7 +66,7 @@ object OAuthAPI extends Controller {
 
           }
           case None => {
-            Ok(views.html.login(request.uri))
+            Ok(views.html.login(request.uri,"login first"))
           }
         }
       } catch {

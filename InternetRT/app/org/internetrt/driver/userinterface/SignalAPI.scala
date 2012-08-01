@@ -95,7 +95,9 @@ object SignalAPI extends Controller {
       val baseurl = RoutingXmlParser.getListenerUrl(config);
       val params = RoutingXmlParser.getRequiredFormats(config)
         .filter(f => f.kind == "params")
-        .headOption match {
+        .headOption 
+		System.out.println("[SignalAPI params format]"+params);
+	  val paramstr = params match {
           case Some(format) => "?" + HttpHelper.generatorParamString( ListenerRequestGenerator.generateDataByFormat(
             request.queryString,
             format,
@@ -103,7 +105,7 @@ object SignalAPI extends Controller {
           case None => ""
         }
       //TODO the data should be Map[String,Map[String]]
-      baseurl + params
+      baseurl + paramstr
     };
   }
 }

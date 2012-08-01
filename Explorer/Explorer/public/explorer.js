@@ -12,6 +12,7 @@ window.InternetRuntime.Explorer = new function()
 		ICON_SRC: '/assets/Cloud.png',
 		
 		SHARE_SIGNAL_NAME: 'share',
+		OPEN_SIGNAL_NAME: 'open',
 		EXTEND_SIGNAL_NAME: 'extendsignal',
 		
 		ICON_HIDE_DELAY: 1500
@@ -283,6 +284,7 @@ window.InternetRuntime.Explorer = new function()
 	
 	var ExplorerMainMenu = null;
 	var ShareItem;
+	var OpenItem;
 	function resetMainMenu()
 	{
 		
@@ -298,9 +300,18 @@ window.InternetRuntime.Explorer = new function()
 		ShareItem.setClick(function(){
 			window.InternetRuntime.Client.initOption(CONST.SHARE_SIGNAL_NAME,
 													function(option){
-														OptionHandler(option, ShareItem)
+														OptionHandler(option, ShareItem, CONST.SHARE_SIGNAL_NAME)
 													});
 		});
+		OpenItem = new MenuItem(new DXY(100, 30));
+		OpenItem.Obj.Text('Open');
+		ExplorerMainMenu.pushItem(OpenItem);
+		OpenItem.setClick(function(){
+			window.InternetRuntime.Client.initOption(CONST.OPEN_SIGNAL_NAME,
+													function(option){
+														OptionHandler(option, OpenItem, CONST.OPEN_SIGNAL_NAME)
+													});
+		});s
 	}
 	resetMainMenu();
 	
@@ -308,7 +319,7 @@ window.InternetRuntime.Explorer = new function()
 	{
 	}
 	
-	function OptionHandler(option, optionitem)
+	function OptionHandler(option, optionitem, signalname)
 	{
 		var OptionObj = null;
 		var SubMenu = new Menu();
@@ -346,7 +357,7 @@ window.InternetRuntime.Explorer = new function()
 									+ '</choice>';
 									params.url = OperationObject.href;
 									params.format = 'redirecturl';
-									window.InternetRuntime.Client.init(CONST.SHARE_SIGNAL_NAME, params, 
+									window.InternetRuntime.Client.init(signalname, params, 
 																		function(url){
 																			close();
 																			window.open(url);
@@ -374,7 +385,7 @@ window.InternetRuntime.Explorer = new function()
 								var params = {};							
 								params.url = OperationObject.href;
 								params.format = 'redirecturl';
-								window.InternetRuntime.Client.init(CONST.SHARE_SIGNAL_NAME, params, 
+								window.InternetRuntime.Client.init(signalname, params, 
 																	function(url){
 																		close();
 																		window.open(url);
@@ -388,7 +399,7 @@ window.InternetRuntime.Explorer = new function()
 		extenditem.Obj.Text('Extend');
 		extenditem.setClick(function(choice){
 								var params = {};							
-								params.signalname = CONST.SHARE_SIGNAL_NAME;
+								params.signalname = signalname;
 								params.format = 'redirecturl';
 								window.InternetRuntime.Client.init(CONST.EXTEND_SIGNAL_NAME, params, 
 																	function(url){
