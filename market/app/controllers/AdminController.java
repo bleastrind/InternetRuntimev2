@@ -25,11 +25,11 @@ public class AdminController extends Controller {
 		for (App app:applist){
 			AppXmlParser parser = new AppXmlParser(app.getInformation());
 			List<Signal> signals = parser.getSignals();
-			app.setDecription("ÄÜ¹»·¢³öµÄÐÅºÅ:");
+			app.setDecription("ï¿½Ü¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½:");
 			for (Signal signal:signals){
 				app.setDecription(app.getDecription()+signal.name()+" ");
 			}
-			app.setDecription(app.getDecription()+"ÄÜ¹»½ÓÊÕµÄÐÅºÅ:");
+			app.setDecription(app.getDecription()+"ï¿½Ü¹ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½Åºï¿½:");
 			List<DescribedListenerConfig> listeners = parser.getListeners();
 			
 			for (DescribedListenerConfig listen:listeners){
@@ -68,6 +68,10 @@ public class AdminController extends Controller {
     	}
     	String signaldefs = "[" + signalsbuf + "]";
         render("AdminService/addApp.html",id,secret,signaldefs);
+    }
+    
+    public static void addsignal(){
+    	render("AdminService/addsignal.html");
     }
     
     public static void addAppSave(String id,String name, String AccessRequest, String installUrl,String email,String updated,String updateUrl,String secret)
