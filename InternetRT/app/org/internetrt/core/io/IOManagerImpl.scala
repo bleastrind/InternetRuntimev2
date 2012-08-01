@@ -29,7 +29,7 @@ import org.internetrt.sdk.util.HttpHelper
 	     def sendToUrl(uid:String,url:String,msg:String){
 	        import net.liftweb.json._;
 	        import net.liftweb.json.JsonAST._;
-	        
+	        System.out.println("[IOManagerImpl:sendToUrl]:" + url)
 	       val u = new URI(url); 
 	       u.protocal.toLowerCase() match{
 	         case "http" => HttpHelper.httpClientGet(url)

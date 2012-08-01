@@ -22,7 +22,7 @@ public class MessageReciver extends HttpServlet {
 		String userid = irt.getUserIdByToken(irt.setAccessTokenWithCode(irt.getAuthCodeByRoutingInstanceID(rid)));
 			UserSpace us = Initer.User.get(userid);
 			Initer.feedstub.publish(Message,us.getSessionKey());
-		} catch (WeiboException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			System.out.println("can't publish");
 			e.printStackTrace();

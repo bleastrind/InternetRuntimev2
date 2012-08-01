@@ -2,7 +2,7 @@ var CONST =
 {
 	BASE_URL: 'http://internetrt.org:9000',
 	Lib_SRC: '/assets/client/Lib.js',
-	MARKET_URL: 'http://internetrt.org:9001',
+	MARKET_URL: 'http://market.internetrt.org:9001',
 	PAGE_LOAD_SIGNAL_NAME: 'clients/pageload'
 }
 if (!window.InternetRuntime)
