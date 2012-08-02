@@ -67,9 +67,6 @@ move /Y ..\weibo\src\config\properties.java1  ..\weibo\src\config\properties.jav
 sed s/localhost:9000/internetrt.org:9000/ ../weibo/src/Servlet/WelcomeServlet.java > ../weibo/src/Servlet/WelcomeServlet.java1
 move /Y ..\weibo\src\Servlet\WelcomeServlet.java1  ..\weibo\src\Servlet\WelcomeServlet.java
 
-sed s/localhost:9000/internetrt.org:9000/ ../weibo/src/Servlet/WelcomeServlet.java > ../weibo/src/Servlet/WelcomeServlet.java1
-move /Y ..\weibo\src\Servlet\WelcomeServlet.java1  ..\weibo\src\Servlet\WelcomeServlet.java
-
 sed s/localhost:9001/market.internetrt.org:9001/ ../IfApp/src/config/properties.java > ../IfApp/src/config/properties.java1
 move /Y ..\IfApp\src\config\properties.java1  ..\IfApp\src\config\properties.java
 
@@ -136,9 +133,6 @@ move /Y ..\renren\src\config\properties.java1  ..\renren\src\config\properties.j
 
 sed s/localhost:9001/market.internetrt.org:9001/ ../weibo/src/config/properties.java > ../weibo/src/config/properties.java1
 move /Y ..\weibo\src\config\properties.java1  ..\weibo\src\config\properties.java
-
-sed s/localhost:9001/market.internetrt.org:9001/ ../weibo/src/Servlet/WelcomeServlet.java > ../weibo/src/Servlet/WelcomeServlet.java1
-move /Y ..\weibo\src\Servlet\WelcomeServlet.java1  ..\weibo\src\Servlet\WelcomeServlet.java
 
 sed s/localhost:9001/market.internetrt.org:9001/ ../weibo/src/Servlet/WelcomeServlet.java > ../weibo/src/Servlet/WelcomeServlet.java1
 move /Y ..\weibo\src\Servlet\WelcomeServlet.java1  ..\weibo\src\Servlet\WelcomeServlet.java

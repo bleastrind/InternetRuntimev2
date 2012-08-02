@@ -51,46 +51,54 @@ public class FeedStub implements Runnable{
 	public void run()
 	{
 		RenrenApiClient apiClient = RenrenApiClient.getInstance();
-		while (true) {
-			if (up.size()!=0){
-				Set<String>	messages = new HashSet<String>();
-				UserSpace t = up.poll();
-				sessionKey = t.getSessionKey();
-				renrenUserId = t.getRenrenUserId();
-				message = t.getMessage();
-				feedInfo = apiClient.getFeedService().getFeed("10", Integer.parseInt(renrenUserId), 1, 10,new SessionKey(sessionKey));
-				if (feedInfo != null && feedInfo.size()>0) {
-				
-					for (int i=0;i<feedInfo.size();i++)
-					{
-						JSONObject currentFeed = (JSONObject) feedInfo.get(i);
+		int defaultsleeptime = 100000;
+		int sleeptime = defaultsleeptime;
+			while (true) {
+				try{
+					getInfo(apiClient);
+					sleeptime = defaultsleeptime;
+					Thread.sleep(sleeptime);
+				} catch(Exception e) {
+					sleeptime = sleeptime * 2;
+				}	
+		}
+	}
 
-						if (currentFeed != null){
-							String message = (String) currentFeed.get("message");
-							messages.add(message);
-							System.out.println("[FeedStub : run]: "+"messsage: "+message);
-							if (!this.message.contains(message)){
-								Map<String,String> map = new HashMap();
-								map.put("message", URLEncoder.encode(message));
-								try {
-									config.properties.irt.send(t.getToken(),"updatestatus", map);
-								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-								System.out.println("[FeedStub : run]: "+"messsage: "+message);
+	private void getInfo(RenrenApiClient apiClient) {
+		if (up.size()!=0){
+			Set<String>	messages = new HashSet<String>();
+			UserSpace t = up.poll();
+			sessionKey = t.getSessionKey();
+			renrenUserId = t.getRenrenUserId();
+			message = t.getMessage();
+			feedInfo = apiClient.getFeedService().getFeed("10", Integer.parseInt(renrenUserId), 1, 10,new SessionKey(sessionKey));
+			if (feedInfo != null && feedInfo.size()>0) {
+		
+				for (int i=0;i<feedInfo.size();i++)
+				{
+					JSONObject currentFeed = (JSONObject) feedInfo.get(i);
+
+					if (currentFeed != null){
+						String message = (String) currentFeed.get("message");
+						messages.add(message);
+						System.out.println("[FeedStub : run]: "+"messsage: "+message);
+						if (!this.message.contains(message)){
+							Map<String,String> map = new HashMap();
+							map.put("message", URLEncoder.encode(message));
+							map.put("from",URLEncoder.encode("renren"));
+							try {
+								config.properties.irt.send(t.getToken(),"updatestatus", map);
+							} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 							}
+							System.out.println("[FeedStub : run]: "+"messsage: "+message);
 						}
 					}
 				}
-				t.updateMessage(messages);
-				up.add(t);
 			}
-			try{
-				Thread.sleep(50000);
-			} catch(Exception e) {
-				e.printStackTrace();
-			}	
-		}
+		t.updateMessage(messages);
+		up.add(t);
+}
 	}
 }
