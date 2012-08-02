@@ -21,6 +21,10 @@ public class Application extends Controller {
        render();
     }
 
+    public static void logout(){
+    	session.remove("token", null);
+        AppController.listAllApp();
+    }
     public static void login() {
         render();
     }
@@ -32,8 +36,8 @@ public class Application extends Controller {
     }
     
     public static void loginUser(String code,String msg) throws HttpException, IOException,ServerSideException{
-		if (!msg.equals("success")) {
-			render("Application/err.html");
+		if (msg.equals("RootAppMustInstallFirst")) {
+			AppController.index();
 		}
     	InternetRT irt = properties.irt;
 		String accessToken = irt.setAccessTokenWithCode(code);
