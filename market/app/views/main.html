@@ -15,11 +15,10 @@
         
         <div id="header">
             <h1>Welcome to the AppMarket</h1>
-            #{if user?.id}
+            #{if (session.get("token")!=null || !"".equals(session.get("token"))}
                 <div id="options">
-                    Connected as ${user.name}
-                    |
-                    <a href="@{Application.index()}">Logout</a>
+                    
+                    <a href="@{Application.logout()}">Logout</a>
                 </div>
             #{/if}
 			#{else}
