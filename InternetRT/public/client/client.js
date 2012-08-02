@@ -39,7 +39,7 @@ window.InternetRuntime.Client = new function()
 		Lib_SRC: '/assets/client/Lib.js',
 		LOGO_SRC: '/assets/client/InternetRuntime.png',
 		
-		MARKET_URL: 'http://internetrt.org:9001',
+		MARKET_URL: 'http://localhost:9001',
 
 		
 		PAGE_LOAD_SIGNAL_NAME: 'clients/pageload'

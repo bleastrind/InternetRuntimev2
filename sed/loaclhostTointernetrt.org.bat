@@ -162,7 +162,14 @@ sed s/localhost:9000/internetrt.org:9000/ ../market/app/views/AdminService/addsi
 move /Y ..\market\app\views\AdminService\addsignal.html1  ..\market\app\views\AdminService\addsignal.html
 
 
+sed s/localhost:8080/market.internetrt.org:8080/ ../market/app/views/Application/index.html > ../market/app/views/Application/index.html1
+move /Y ..\market\app\views\Application\index.html1  ..\market\app\views\Application\index.html
 
+sed s/localhost:9000/internetrt.org:9000/ ../market/app/views/Application/index.html > ../market/app/views/Application/index.html1
+move /Y ..\market\app\views\Application\index.html1  ..\market\app\views\Application\index.html
+
+sed s/localhost:9001/market.internetrt.org:9001/ ../market/app/views/Application/index.html > ../market/app/views/Application/index.html1
+move /Y ..\market\app\views\Application\index.html1  ..\market\app\views\Application\index.html
 
 
 
