@@ -35,12 +35,8 @@ public class AppController extends Controller {
 		String token = getAccessToken();
 		  
 		if (token == null) {
-			if(request.params.get("msg") == "RootAppMustInstallFirst"){
-			    index();
-			}else{
-				System.out.println("[AppController : checkUser]: "+properties.irt.getAuthCodeUrl());
-				Controller.redirect(properties.irt.getAuthCodeUrl());
-			}
+			System.out.println("[AppController : checkUser]: "+properties.irt.getAuthCodeUrl());
+			Controller.redirect(properties.irt.getAuthCodeUrl());
 		}
 	}
 

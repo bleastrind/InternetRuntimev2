@@ -25,16 +25,7 @@ public class AdminController extends Controller {
 		for (App app:applist){
 			AppXmlParser parser = new AppXmlParser(app.getInformation());
 			List<Signal> signals = parser.getSignals();
-			app.setDecription("�ܹ��������ź�:");
-			for (Signal signal:signals){
-				app.setDecription(app.getDecription()+signal.name()+" ");
-			}
-			app.setDecription(app.getDecription()+"�ܹ����յ��ź�:");
-			List<DescribedListenerConfig> listeners = parser.getListeners();
-			
-			for (DescribedListenerConfig listen:listeners){
-				app.setDecription(app.getDecription()+listen.description()+" ");
-			}
+			app.setDecription(parser.getDescription());
 		}
         render("AdminService/welcome.html", applist);
 		//return ok(AdminService.welcome.render(applist));

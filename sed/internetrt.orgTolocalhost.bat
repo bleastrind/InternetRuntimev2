@@ -164,7 +164,14 @@ move /Y ..\market\app\views\appservice\listAllApp.html1  ..\market\app\views\app
 sed s/internetrt.org:9000/localhost:9000/ ../market/app/views/AdminService/addsignal.html > ../market/app/views/AdminService/addsignal.html1
 move /Y ..\market\app\views\AdminService\addsignal.html1  ..\market\app\views\AdminService\addsignal.html
 
+sed s/market.internetrt.org:8080/localhost:8080/ ../market/app/views/Application/index.html > ../market/app/views/Application/index.html1
+move /Y ..\market\app\views\Application\index.html1  ..\market\app\views\Application\index.html
 
+sed s/internetrt.org:9000/localhost:9000/ ../market/app/views/Application/index.html > ../market/app/views/Application/index.html1
+move /Y ..\market\app\views\Application\index.html1  ..\market\app\views\Application\index.html
+
+sed s/market.internetrt.org:9001/localhost:9001/ ../market/app/views/Application/index.html > ../market/app/views/Application/index.html1
+move /Y ..\market\app\views\Application\index.html1  ..\market\app\views\Application\index.html
 
 
 sed s/internetrt.org:9000/localhost:9000/ ../InternetRT/public/client/Client.html > ../InternetRT/public/client/Client.html1
