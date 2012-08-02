@@ -135,6 +135,10 @@ window.InternetRuntime.Explorer = new function()
 		{
 			MenuOpen = mo;
 		}
+		this.getMenuOpen = function()
+		{
+			return MenuOpen;
+		}
 		var Obj = Create('div')
 		.Style('item')
 		.Size(size)
@@ -189,6 +193,10 @@ window.InternetRuntime.Explorer = new function()
 			var MenuXY = new XY(106, -GRID-2);
 			SubMemu.show(Obj, MenuXY);
 		}
+		this.hideSubMenu = function()
+		{
+			SubMemu.hide();
+		}
 	}
 	function Menu()
 	{	
@@ -230,6 +238,19 @@ window.InternetRuntime.Explorer = new function()
 			.Move();
 			
 		}
+		this.hide = function(fromObj, toxy)
+		{
+			Obj
+			.Time(0)
+			.Opacity(1)
+			.Time(150)
+			.CallBack(function(){
+				Obj.Style('hidden');
+			})
+			.Opacity(0);
+			
+		}
+		
 	}
 	
 	
@@ -298,6 +319,11 @@ window.InternetRuntime.Explorer = new function()
 		ShareItem.Obj.Text('Share');
 		ExplorerMainMenu.pushItem(ShareItem);
 		ShareItem.setClick(function(){
+			if (OpenItem.getMenuOpen())
+			{
+				OpenItem.setMenuOpen(false);
+				OpenItem.hideSubMenu();
+			}
 			window.InternetRuntime.Client.initOption(CONST.SHARE_SIGNAL_NAME,
 													function(option){
 														OptionHandler(option, ShareItem, CONST.SHARE_SIGNAL_NAME)
@@ -307,11 +333,16 @@ window.InternetRuntime.Explorer = new function()
 		OpenItem.Obj.Text('Open');
 		ExplorerMainMenu.pushItem(OpenItem);
 		OpenItem.setClick(function(){
+			if (ShareItem.getMenuOpen())
+			{
+				ShareItem.setMenuOpen(false);
+				ShareItem.hideSubMenu();
+			}
 			window.InternetRuntime.Client.initOption(CONST.OPEN_SIGNAL_NAME,
 													function(option){
 														OptionHandler(option, OpenItem, CONST.OPEN_SIGNAL_NAME)
 													});
-		});s
+		});
 	}
 	resetMainMenu();
 	
@@ -361,6 +392,7 @@ window.InternetRuntime.Explorer = new function()
 																		function(url){
 																			close();
 																			window.open(url);
+																			
 																			//document.location.href = url;
 																		});
 								});

@@ -210,6 +210,7 @@ window.InternetRuntime.UI = new function(){
 		this.setObj = function(obj)
 		{
 			Obj = obj;
+			this.DOMObject = Obj;
 			return this;
 		}
 		var PosXY;
@@ -632,17 +633,17 @@ window.InternetRuntime.UI = new function(){
 		var REST = 1, RUN = 2;
 		var AnimeState = REST; 
 		
+		
+		
 		this.HoverIn = function(inf, subworkflag)
 		{
 			InFunc = inf;
 			Obj.onmouseover = function(e)
-			{						
+			{		
 				if (e.relatedTarget && checkContain(Obj, e.relatedTarget))				
 					return;		
 				if (!subworkflag && e.target != Obj)
 					return;
-		
-		
 				MouseState = IN;
 				if (AnimeState == REST)
 				{
@@ -657,8 +658,7 @@ window.InternetRuntime.UI = new function(){
 		{
 			OutFunc = outf;
 			Obj.onmouseout = function(e)
-			{	
-				
+			{					
 				if (e.relatedTarget &&  checkContain(Obj, e.relatedTarget))				
 					return;			
 				if (!subworkflag && e.target != Obj)
