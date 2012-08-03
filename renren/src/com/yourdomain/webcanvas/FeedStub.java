@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -21,7 +22,7 @@ public class FeedStub implements Runnable{
 	public static JSONArray feedInfo;
 	public static String sessionKey,renrenUserId;
 	public static Set<String> message = new HashSet<String>();
-	public static Queue<UserSpace> up = new PriorityBlockingQueue<UserSpace>();
+	public static Queue<UserSpace> up = new LinkedList<UserSpace>();
 	
 	public void addFeedUser(String sessionKey,String renrenUserId,String token){
 		RenrenApiClient apiClient = RenrenApiClient.getInstance();
@@ -38,7 +39,7 @@ public class FeedStub implements Runnable{
 			}
 		}
 		UserSpace t = new UserSpace(sessionKey,renrenUserId,messages,token);
-		up.add(t);
+		up.offer(t);
 		ApiInitListener.User.put(config.properties.irt.getUserIdByToken(token),
 				t);
 	}

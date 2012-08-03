@@ -30,10 +30,9 @@ import weibo4j.org.json.JSONObject;
 
 public class FeedStub implements Runnable {
 	public static String sessionKey;
-	public static Queue<UserSpace> up = new PriorityBlockingQueue<UserSpace>();
-	public static Queue<UserSpace> upt = new PriorityBlockingQueue<UserSpace>();
+	public static Queue<UserSpace> up = new LinkedList<UserSpace>();
 	public static Weibo weibo = new Weibo();
-
+	public Boolean flag;
 	public void addFeedUser(String sessionKey, String Token) {
 		synchronized (this) {
 			try {
@@ -43,13 +42,18 @@ public class FeedStub implements Runnable {
 				weibo.setToken(sessionKey);
 				StatusWapper sw = new Timeline().getUserTimeline();
 				List<Status> status = sw.getStatuses();
+				System.out.println("0");
 				UserSpace us = new UserSpace(sessionKey, status, Token,new ArrayList<String>());
-				up.add(us);
+				System.out.println("1");
+				flag = up.offer(us);
+				System.out.println("2");
 				Initer.User.put(config.properties.irt.getUserIdByToken(Token),
 						us);
+				System.out.println("3");
 			} catch (Exception err) {
 				System.out.print("[FeedStub : addFeedUser]: "
 						+ "add feed user err");
+				err.printStackTrace();
 			}
 		}
 	}
@@ -95,23 +99,18 @@ public class FeedStub implements Runnable {
 				UserSpace us = up.poll();
 				List<Status> status = us.getMessage();
 				List<Status> sts = new LinkedList<Status>();
+				String sessionKey = us.getSessionKey();
+				weibo.setToken(sessionKey);
 				Timeline tl = new Timeline();
 				try {
 					sts = tl.getUserTimeline().getStatuses();
 				} catch (Exception err) {
-				}
-				String sessionKey = us.getSessionKey();
-				weibo.setToken(sessionKey);
+				}		
 				for (Status x : sts) {
-					status.add(x);
-					if (us.msg.contains(x.getText()))
-						System.out
-								.println("*****************************************");
+					System.out.println("[FeedStub : run]: " + x.getText());
 					if ((!status.contains(x))&&(!us.msg.contains(x.getText()))) {
-						System.out.println("[FeedStub : run]: " + x.getText());
 						try {
-							System.out.println("[FeedStub : run]: " + "token:"
-									+ us.getToken());
+							System.out.println("[Sina]:"+x.getText());
 							Map<String, String> map = new HashMap();
 							map.put("message", URLEncoder.encode(x.getText()));
 							map.put("from", URLEncoder.encode("sina"));
@@ -123,12 +122,11 @@ public class FeedStub implements Runnable {
 							e.printStackTrace();
 						}
 					}
+					status.add(x);
 				}
 				UserSpace ut = new UserSpace(sessionKey, status, us.getToken(),us.msg);
-				upt.add(ut);
+				up.add(ut);
 			}
-			up = upt;
-			upt = new PriorityBlockingQueue<UserSpace>();
 		}
 	}
 

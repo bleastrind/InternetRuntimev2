@@ -23,6 +23,7 @@ public class HomeServlet extends HttpServlet{
 		throws ServletException, java.io.IOException {
 			String Auth=(String)request.getParameter("signed_request");
 			String Token=(String)request.getSession().getAttribute("accessToken");
+			if (Auth!=null&&Token!=null) request.setAttribute("msg", "running"); else request.setAttribute("msg", "down");
 			System.out.println("[HomeServlet : doPost]: "+Token);
 			Oauth oauth = new Oauth();
 			try{

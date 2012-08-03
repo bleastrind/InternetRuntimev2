@@ -28,7 +28,6 @@ public class MessageReciver extends HttpServlet {
 				String userid = irt.getUserIdByToken(irt.setAccessTokenWithCode(irt.getAuthCodeByRoutingInstanceID(rid)));
 				UserSpace us = Initer.User.get(userid);
 				us.msg.add(Message);
-				System.out.println( "**********"+"us.msg.add + "+ Message);
 				Initer.feedstub.publish(Message,us.getSessionKey());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

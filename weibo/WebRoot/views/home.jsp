@@ -30,6 +30,6 @@
 		<script>
 		if (WB2.checkLogin()) alert(123)
 		</script>
-		<h1>Weibo Stub is running</h1>	
+		<h1>Weibo Stub is ${requestScope.msg}</h1>	
 	</body>
 </html>
