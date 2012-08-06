@@ -69,20 +69,14 @@ public class AppController extends Controller {
 		for (App app:applist){
 			AppXmlParser parser = new AppXmlParser(app.getInformation());
 			List<Signal> signals = parser.getSignals();
-			app.setDecription("Outgoing Signal:");
-			for (Signal signal:signals){
-				app.setDecription(app.getDecription()+signal.name()+" ");
-			}
-			app.setDecription(app.getDecription()+"Receving Signal:");
-			List<DescribedListenerConfig> listeners = parser.getListeners();
-			
-			for (DescribedListenerConfig listen:listeners){
-				app.setDecription(app.getDecription()+listen.description()+" ");
-			}
+			app.setDecription(parser.getDescription());
 		}
+		RoutingRecommender routingRecommender = new RoutingRecommender();
+		List<scala.Tuple3<String,Signal,DescribedListenerConfig>> result = routingRecommender.getUserRoutings(token);
+		List<RoutingChoice> choices = generateChoieces(result);
 		// List<AppConfig> configlist = AppService.getAllConfig(user);
 		// TODO:nick name
-		render("AppService/listAllApp.html", applist, token);
+		render("AppService/listAllApp.html", applist, token, choices);
 	}
 	
 	public static void listAllAppRoutingMap() {

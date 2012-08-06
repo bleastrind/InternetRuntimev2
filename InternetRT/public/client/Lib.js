@@ -45,6 +45,17 @@ window.InternetRuntime.UI = new function(){
 	{
 		Default: function(obj)
 		{},
+		menu: function(obj)
+		{
+			obj.Color('DCE9F9');
+			obj.DOMObject.style.backgroundImage = '-moz-linear-gradient(center top , #CCFFFF, #CCFFFF)';
+			obj.DOMObject.style.backgroundImage = '-webkit-gradient(linear,0% 0%, 0% 100%, from(#CCFFFF), to(#CCFFFF))';
+			obj.DOMObject.style.boxShadow = '0 1px 0 rgba(255, 255, 255, 0.8) inset';
+			obj.DOMObject.style.border = '1px solid #CCCCCC';
+			obj.DOMObject.style.borderRadius = '6px 6px 6px 6px';
+			obj.DOMObject.style.padding = '0px';
+			obj.DOMObject.style.margin = '0px';
+		},
 		first: function(obj)
 		{
 			
@@ -78,8 +89,12 @@ window.InternetRuntime.UI = new function(){
 			//obj.DOMObject.style.padding = '0 4px';
 			obj.DOMObject.style.textAlign = 'center';			
 			obj.DOMObject.style.font = '24px arial';		
-			obj.DOMObject.style.color = 'red';		
-			obj.Color('066099');
+			obj.DOMObject.style.color = '#066099';		
+			obj.Color('FFCC33');
+			
+			obj.DOMObject.style.backgroundImage = '-moz-linear-gradient(center top , #6699CC, #86B5D9)';
+			obj.DOMObject.style.backgroundImage = '-webkit-gradient(linear,0% 0%, 0% 100%, from(#6699CC), to(#86B5D9))';
+			
 			obj.DOMObject.style.MozUserSelect = 'none';
 			obj.DOMObject.style.borderRadius = '6px 6px 6px 6px';
 			obj.DOMObject.style.padding = '0px';

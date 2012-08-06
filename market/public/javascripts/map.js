@@ -66,58 +66,63 @@ function Work()
 	{
 		function showItem(i)
 		{
-			var StartXY = Center;
-			var SmallStartSize = new DXY(10, 10);
-			var FinalSize = new DXY(70, 70);
-			var item = Create('div').setObj(document.getElementById(idarray[i])).Refresh();
-			item
-			.XY(StartXY)
-			.Size(SmallStartSize)
-			.Opacity(0.1)
-			.Style('shown')
-			.Style('first')
-			.HoverIn(function(done, Obj){
-				done();
-				Obj.getObj().style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #33CC33)';
-				Obj.getObj().style.backgroundImage = '-webkit-gradient(linear,0% 0%, 0% 100%, from(#EBF3FC), to(#33CC33))';
-			},
-			true)
-			.HoverOut(function(done, Obj){
-				done();
-				Obj.getObj().style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
-				Obj.getObj().style.backgroundImage = '-webkit-gradient(linear,0% 0%, 0% 100%, from(#EBF3FC), to(#DCE9F9))';
-				
-			},
-			true)
-			.Click(function(done, Obj){
-				if (!Obj.OpenState)
-				{
-					Obj.OpenState = 1;
-					Obj
-					.Time(300)
-					.Tween('Quad')
-					.CallBack(done)
-					.Size(new DXY(Obj.Size().dx + 300, Obj.Size().dy + 100), true);
-				}
-				else
-				{
-					Obj.OpenState = 0;
-					Obj
-					.Time(300)
-					.Tween('Quad')
-					.CallBack(done)
-					.Size(new DXY(Obj.Size().dx - 300, Obj.Size().dy - 100), true);
-				}
-			})
-			.Time(150)
-			.Size(FinalSize)
-			.To(Pos[idarray[i]])
-			.Opacity(1)
-			.Move();
+			if (document.getElementById(idarray[i]))
+			{
+				var StartXY = Center;
+				var SmallStartSize = new DXY(10, 10);
+				var FinalSize = new DXY(70, 70);
+				var item = Create('div').setObj(document.getElementById(idarray[i])).Refresh();
+				item
+				.XY(StartXY)
+				.Size(SmallStartSize)
+				.Opacity(0.1)
+				.Style('shown')
+				.Style('first')
+				.HoverIn(function(done, Obj){
+					done();
+					Obj.getObj().style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #33CC33)';
+					Obj.getObj().style.backgroundImage = '-webkit-gradient(linear,0% 0%, 0% 100%, from(#EBF3FC), to(#33CC33))';
+				},
+				true)
+				.HoverOut(function(done, Obj){
+					done();
+					Obj.getObj().style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
+					Obj.getObj().style.backgroundImage = '-webkit-gradient(linear,0% 0%, 0% 100%, from(#EBF3FC), to(#DCE9F9))';
+					
+				},
+				true)
+				.Click(function(done, Obj){
+					if (!Obj.OpenState)
+					{
+						Obj.OpenState = 1;
+						Obj
+						.Time(300)
+						.Tween('Quad')
+						.CallBack(done)
+						.Size(new DXY(Obj.Size().dx + 300, Obj.Size().dy + 100), true);
+					}
+					else
+					{
+						Obj.OpenState = 0;
+						Obj
+						.Time(300)
+						.Tween('Quad')
+						.CallBack(done)
+						.Size(new DXY(Obj.Size().dx - 300, Obj.Size().dy - 100), true);
+					}
+				})
+				.Time(150)
+				.Size(FinalSize)
+				.To(Pos[idarray[i]])
+				.Opacity(1)
+				.Move();
+			}
 			if (i + 1 < idarray.length)
 				setTimeout(function(){showItem(i + 1);}, 300);
 			else
+			{
 				setTimeout(function(){Line()}, 300);
+			}
 		}
 		setTimeout(function(){showItem(0);}, 300);
 	}
@@ -127,7 +132,7 @@ function Work()
 		var script2 = document.body.appendChild(document.createElement('script'));
 		script2.onload = function()
 		{
-			var jsplumbscript = document.body.appendChild(document.createElement('script'));
+			var jsplumbscript = document.body.appendChild(document.createElement('script'));			
 			jsplumbscript.onload = Init;
 			jsplumbscript.src='/public/javascripts/jquery.jsPlumb-1.3.6-all-min.js';
 		}
@@ -214,10 +219,7 @@ function Work()
 		}
 	}
 
-	function Confirm()
-	{
-	
-	}
-	var confirm
+
+
 }
 

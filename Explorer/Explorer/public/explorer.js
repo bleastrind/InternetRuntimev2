@@ -146,15 +146,15 @@ window.InternetRuntime.Explorer = new function()
 			Obj
 			.Time(150)
 			.CallBack(done)
-			.Color('ff0000')
-			.TextColor('066099');
+			.Color('066099')
+			.TextColor('ff0000');
 		})
 		.HoverOut(function(done){
 			Obj
 			.Time(150)
 			.CallBack(done)
-			.Color('066099')
-			.TextColor('ff0000');
+			.Color('ff0000')
+			.TextColor('066099');
 		});		
 		this.getChoice = function()
 		{
@@ -203,7 +203,7 @@ window.InternetRuntime.Explorer = new function()
 		
 		var MenuSize = new DXY(1, GRID);
 		var Obj = Create('div')
-		.Style('first')
+		.Style('menu')
 		.SizeOne(MenuSize);
 		var items = [];
 		this.Obj = Obj;
@@ -256,7 +256,7 @@ window.InternetRuntime.Explorer = new function()
 	
 	var floaticon = new function FloatIcon()
 	{
-		var ICON_SIZE = new DXY(45, 46);
+		var ICON_SIZE = new DXY(32, 32);
 		var Img = Create('img')
 		.Size(ICON_SIZE)
 		.Src(CONST.EXPLORER_BASE_URL + CONST.ICON_SRC);
@@ -271,7 +271,7 @@ window.InternetRuntime.Explorer = new function()
 			{
 				floaticon.MenuOpen = true;
 				MouseState = 1;
-				var MenuXY = new XY(50, 0);
+				var MenuXY = new XY(35, 0);
 				ExplorerMainMenu.show(Obj, MenuXY);
 			}
 		})
@@ -376,7 +376,7 @@ window.InternetRuntime.Explorer = new function()
 																var AppObj = null;
 																eval("AppObj=" + appdetail);
 																var AppName = AppObj['Application']['Name'];
-																callbackparams.item.Obj.Text(AppName);
+																callbackparams.item.Obj.Text(AppName);																
 															},
 															CallBackParams);
 					
