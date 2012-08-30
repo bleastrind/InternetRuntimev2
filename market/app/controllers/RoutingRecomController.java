@@ -1,5 +1,6 @@
 package controllers;
 
+import cn.edu.act.internetos.appmarket.service.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,10 @@ import org.internetrt.sdk.util.Signal;
 import cn.edu.act.internetos.appmarket.service.RoutingRecommender;
 
 import config.properties;
+
+import models.*;
+import org.internetrt.sdk.*;
+import org.internetrt.sdk.util.*;
 
 
 import play.mvc.Before;
@@ -37,14 +42,23 @@ public class RoutingRecomController extends Controller{
 		}
 	   
 		public static void index(String fromAppIDString,String redirect){
+			
 			String accessToken = getAccessToken();
+			List<App> applist = AppService.getUserApps(accessToken);
+			for (App app:applist){
+				AppXmlParser parser = new AppXmlParser(app.getInformation());
+				List<Signal> signals = parser.getSignals();
+				app.setDecription(parser.getDescription());
+			}
 			String redirect_uri = redirect;
 			RoutingRecommender routingRecommender = new RoutingRecommender();
 			List<scala.Tuple3<String,Signal,DescribedListenerConfig>> result = routingRecommender.getPossibleRoutings(fromAppIDString, accessToken);
 			List<RoutingChoice> choices = generateChoieces(result);
+			List<scala.Tuple3<String,Signal,DescribedListenerConfig>> allresult = routingRecommender.getUserRoutings(accessToken);
+			List<RoutingChoice> allchoices = generateChoieces(allresult);
 			System.out.println("[RoutingRecomController : index]: "+choices.size());
 			if(choices.size()> 0)
-				render("Routing/recomRouting.html",choices,redirect_uri);
+				render("Routing/recomRouting.html",choices,redirect_uri,allchoices,applist);
 			else if(redirect_uri==null||redirect_uri.equals(""))
 				AppController.listAllApp();
 				else Controller.redirect(redirect_uri);

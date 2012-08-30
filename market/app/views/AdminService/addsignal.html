@@ -10,7 +10,7 @@
         $(function(){
             $("#send").click(function(){
                 alert(123);
-                 var irturl = "http://internetrt.org:9000";
+                 var irturl = "http://localhost:9000";
                  var xml ='<?xml version=\"1.0\" encoding=\"UTF-8\"?><Signal>'+"<name>"+$("input[name='signalname']").val()+"</name>"+"<vars>"
                  var vars = $("input[name='vars']").val();
                  var t = ""

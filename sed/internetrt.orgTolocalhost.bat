@@ -174,6 +174,25 @@ sed s/market.internetrt.org:9001/localhost:9001/ ../market/app/views/Application
 move /Y ..\market\app\views\Application\index.html1  ..\market\app\views\Application\index.html
 
 
+sed s/internetrt.org:9000/localhost:9000/ ../InternetRT/public/client/Client.html > ../InternetRT/public/client/Client.html1
+move /Y ..\InternetRT\public\client\Client.html1  ..\InternetRT\public\client\Client.html
+
+sed s/internetrt.org:9000/localhost:9000/ ../InternetRT/public/client/client.js > ../InternetRT/public/client/client.js1
+move /Y ..\InternetRT\public\client\client.js1  ..\InternetRT\public\client\client.js
+
+sed s/internetrt.org:9000/localhost:9000/ ../InternetRT/public/client/confirmRootButton.js > ../InternetRT/public/client/confirmRootButton.js1
+move /Y ..\InternetRT\public\client\confirmRootButton.js1  ..\InternetRT\public\client\confirmRootButton.js
+
+sed s/internetrt.org:9000/localhost:9000/ ../InternetRT/public/client/installRootApp.js > ../InternetRT/public/client/installRootApp.js1
+move /Y ..\InternetRT\public\client\installRootApp.js1  ..\InternetRT\public\client\installRootApp.js
+
+sed s/internetrt.org:9000/localhost:9000/ ../InternetRT/public/client/startClient.js > ../InternetRT/public/client/startClient.js1
+move /Y ..\InternetRT\public\client\startClient.js1  ..\InternetRT\public\client\startClient.js
+
+
+
+
+
 
 
 
