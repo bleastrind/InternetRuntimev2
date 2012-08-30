@@ -16,6 +16,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.internetrt.sdk.exceptions.NoDataException;
+import org.internetrt.sdk.exceptions.ServerSideException;
 
 public class HttpHelper {
 	public static String generatorParamString(Pair[] parameters) {
@@ -56,7 +57,7 @@ public class HttpHelper {
 			return "";
 	}
 
-	public static String httpClientGet(String requestUrl) throws UnsupportedEncodingException {
+	public static String httpClientGet(String requestUrl) {
 		System.out.println("[SDK HttpHelper:httpClientGet]:"+requestUrl);
 		byte[] responseBody = null;
 		HttpClient httpClient = new HttpClient();
@@ -79,7 +80,17 @@ public class HttpHelper {
 		} finally {
 			getMethod.releaseConnection();
 		}
-		String result = new String(responseBody, "utf-8");
+		String result = null;
+		try {
+			result = new String(responseBody, "utf-8");
+			
+			System.out.println("[HttpHelper: httpClientGet] returns result: "+ result);
+			
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			assert(false);
+			System.out.println("HttpGet returns result is false");
+		}
 		return result;
 	}
 
