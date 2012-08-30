@@ -247,7 +247,7 @@ public class InternetRT {
 
 		String resultString = HttpHelper.httpClientGet(requestUrl);
 		System.out.println("ConfirmRouting returns " + resultString);
-	}
+	}f
 
 	public boolean installApp(String token,String xml){
 		Map<String,String> parameters = new HashMap<String,String>();

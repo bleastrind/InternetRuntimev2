@@ -13,7 +13,7 @@ class RoutingGenerator (signalXmlString:String, appXmlString:String){
 	  val signalNode =  generateSignalNode(signal, from, to, userID)
 	  val RequestListenerNodes  =  generateRequestListenerNodes()
 	  val EventListenerNodes = appXml \ "SignalHanlders" \ "EventListener"
-	  (<Routing id = "{routingID}">
+	  (<Routing id = {"\""+routingID+"\""}>
 	      {signalNode}{RequestListenerNodes}{EventListenerNodes}
 	     </Routing>).toString()
 	}
