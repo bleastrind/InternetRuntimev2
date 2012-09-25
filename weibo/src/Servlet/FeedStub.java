@@ -24,37 +24,42 @@ import weibo4j.model.Comment;
 import weibo4j.model.CommentWapper;
 import weibo4j.model.Status;
 import weibo4j.model.StatusWapper;
+import weibo4j.model.User;
 import weibo4j.model.WeiboException;
 import weibo4j.org.json.JSONArray;
 import weibo4j.org.json.JSONObject;
+import weibo4j.util.WeiboConfig;
 
 public class FeedStub implements Runnable {
 	public static String sessionKey;
 	public static Queue<UserSpace> up = new LinkedList<UserSpace>();
-	public static Weibo weibo = new Weibo();
 	public Boolean flag;
+
 	public void addFeedUser(String sessionKey, String Token) {
-		synchronized (this) {
-			try {
-				System.out.println("[FeedStub : addFeedUser]: " + "add user");
-				System.out.println("[FeedStub : addFeedUser]: " + "Token: "
-						+ Token);
-				weibo.setToken(sessionKey);
-				StatusWapper sw = new Timeline().getUserTimeline();
-				List<Status> status = sw.getStatuses();
-				System.out.println("0");
-				UserSpace us = new UserSpace(sessionKey, status, Token,new ArrayList<String>());
-				System.out.println("1");
-				flag = up.offer(us);
-				System.out.println("2");
-				Initer.User.put(config.properties.irt.getUserIdByToken(Token),
-						us);
-				System.out.println("3");
-			} catch (Exception err) {
-				System.out.print("[FeedStub : addFeedUser]: "
-						+ "add feed user err");
-				err.printStackTrace();
-			}
+		try {
+			System.out.println("[FeedStub : addFeedUser]: " + "add user");
+			System.out
+					.println("[FeedStub : addFeedUser]: " + "Token: " + Token);
+			System.out.println("[FeedStub : addFeedUser]: "
+					+ WeiboConfig.getValue("baseURL"));
+			System.out.println("[FeedStub : addFeedUser]: SessionKey"
+					+ sessionKey);
+			Timeline tl = new Timeline();
+			tl.setToken(sessionKey);
+			StatusWapper sw = tl.getUserTimeline();
+			List<Status> status = sw.getStatuses();
+			System.out.println("0");
+			UserSpace us = new UserSpace(sessionKey, status, Token,
+					new ArrayList<String>());
+			System.out.println("1");
+			flag = up.offer(us);
+			System.out.println("2");
+			Initer.User.put(config.properties.irt.getUserIdByToken(Token), us);
+			System.out.println("3");
+		} catch (Exception err) {
+			System.out
+					.print("[FeedStub : addFeedUser]: " + "add feed user err");
+			err.printStackTrace();
 		}
 	}
 
@@ -68,12 +73,10 @@ public class FeedStub implements Runnable {
 
 	private void publishMessage(String Message, String token)
 			throws WeiboException {
-		synchronized (this) {
-			System.out.println("[FeedStub:publish]");
-			weibo.setToken(token);
-			Timeline tl = new Timeline();
-			tl.UpdateStatus(Message);
-		}
+		System.out.println("[FeedStub:publish]");
+		Timeline tl = new Timeline();
+		tl.setToken(token);
+		tl.UpdateStatus(Message);
 	}
 
 	@Override
@@ -94,38 +97,52 @@ public class FeedStub implements Runnable {
 	}
 
 	private void getInfo() {
-		synchronized (this) {
-			if (up.size() != 0) {
-				UserSpace us = up.poll();
-				List<Status> status = us.getMessage();
-				List<Status> sts = new LinkedList<Status>();
-				String sessionKey = us.getSessionKey();
-				weibo.setToken(sessionKey);
-				Timeline tl = new Timeline();
+		if (up.size() != 0) {
+			UserSpace us = up.poll();
+			List<Status> status = us.getMessage();
+			List<Status> sts = new LinkedList<Status>();
+			String sessionKey = us.getSessionKey();
+			Timeline tl = new Timeline();
+			tl.setToken(sessionKey);
+			Boolean flag = true;
+			try {
+				sts = tl.getUserTimeline().getStatuses();
+			} catch (WeiboException err) {
+				flag = false;
+				err.printStackTrace();
+			} catch (Exception err) {
+				err.printStackTrace();
 				try {
 					sts = tl.getUserTimeline().getStatuses();
-				} catch (Exception err) {
-				}		
-				for (Status x : sts) {
-					System.out.println("[FeedStub : run]: " + x.getText());
-					if ((!status.contains(x))&&(!us.msg.contains(x.getText()))) {
-						try {
-							System.out.println("[Sina]:"+x.getText());
-							Map<String, String> map = new HashMap();
-							map.put("message", URLEncoder.encode(x.getText()));
-							map.put("from", URLEncoder.encode("sina"));
-							Thread thread = new Thread(new Send(us.getToken(),
-									"updatestatus", map));
-							thread.start();
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-					status.add(x);
+				} catch (Exception e) {
+					flag = false;
 				}
-				UserSpace ut = new UserSpace(sessionKey, status, us.getToken(),us.msg);
-				up.add(ut);
+			} finally {
+				if (flag) {
+					for (Status x : sts) {
+						System.out.println("[FeedStub : run]: " + x.getText());
+						if ((!status.contains(x))
+								&& (!us.msg.contains(x.getText()))) {
+							try {
+								System.out.println("[Sina]:" + x.getText());
+								Map<String, String> map = new HashMap();
+								map.put("message", URLEncoder.encode(x
+										.getText()));
+								map.put("from", URLEncoder.encode("sina"));
+								Thread thread = new Thread(new Send(us
+										.getToken(), "updatestatus", map));
+								thread.start();
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						status.add(x);
+					}
+					UserSpace ut = new UserSpace(sessionKey, status, us
+							.getToken(), us.msg);
+					up.add(ut);
+				}
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
@@ -22,8 +22,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
   </head>
   
-  <body>
-  <h1>Weibo stub</h1>
+  <body>&nbsp; 
   <style>
 body{
 	background:url("http://qimeng.appsina.com/images/1.jpg");
@@ -33,13 +32,13 @@ body{
 <script> 
 function authLoad(){
  	App.AuthDialog.show({
-	client_id : '1876388041',    //��ѡ��appkey
-	redirect_uri : 'http://apps.weibo.com/vinsiatest/weibot/home',     //��ѡ����Ȩ��Ļص���ַ�����磺http://apps.weibo.com/giftabc
-	height: 120    //��ѡ��Ĭ�Ͼඥ��120px
+	client_id : '1876388041',    //必选，appkey
+	redirect_uri : 'http://other.internetrt.org:8080/weibot/home',     //必选，授权后的回调地址，例如：http://apps.weibo.com/giftabc
+	height: 120    //可选，默认距顶端120px
 	});
 }
 authLoad()
 </script>
-     
+    欢迎使用IRT分享工具 <br>
   </body>
 </html>

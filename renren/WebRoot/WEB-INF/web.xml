@@ -17,17 +17,33 @@
   <servlet-name>messageReciver</servlet-name>
   <servlet-class>com.yourdomain.webcanvas.messageReciver</servlet-class>
  </servlet>
+ <servlet>
+  <servlet-name>ActiveServlet</servlet-name>
+  <servlet-class>com.yourdomain.webcanvas.ActiveServlet</servlet-class>
+ </servlet>
+ <servlet>
+  <servlet-name>LoginServlet</servlet-name>
+  <servlet-class>com.yourdomain.webcanvas.LoginServlet</servlet-class>
+ </servlet>
  <servlet-mapping>
   <servlet-name>WelcomeServlet</servlet-name>
-  <url-pattern>/renrenapp/welcome</url-pattern>
+  <url-pattern>/welcome</url-pattern>
  </servlet-mapping>
  <servlet-mapping>
   <servlet-name>HomeServlet</servlet-name>
-  <url-pattern>/renrenapp/home</url-pattern>
+  <url-pattern>/home</url-pattern>
  </servlet-mapping>
  <servlet-mapping>
   <servlet-name>messageReciver</servlet-name>
-  <url-pattern>/renrenapp/reciver</url-pattern>
+  <url-pattern>/reciver</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+  <servlet-name>ActiveServlet</servlet-name>
+  <url-pattern>/activate</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+  <servlet-name>LoginServlet</servlet-name>
+  <url-pattern>/login</url-pattern>
  </servlet-mapping>
  <welcome-file-list>
   <welcome-file>index.jsp</welcome-file>

@@ -18,7 +18,7 @@ public class WelcomeServlet extends HttpServlet {
 		String msg = request.getParameter("msg");
 		request.setAttribute("appId", com.yourdomain.webcanvas.config.AppConfig.APP_ID);
 		if(request.getParameter("code") == null){
-			response.sendRedirect("http://internetrt.org:9000/oauth/authorize?appID="+appID+"&redirect_uri=http://apps.renren.com/vinsiademo/welcome");
+			response.sendRedirect("http://internetrt.org:9000/oauth/authorize?appID="+appID+"&redirect_uri=http://apps.renren.com/irtshare/welcome");
 		} else 	{
 			code = request.getParameter("code");
 			String accessTokenString = config.properties.irt.getAccessToken(code, appID, appSecret);
