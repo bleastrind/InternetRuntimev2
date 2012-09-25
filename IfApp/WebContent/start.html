@@ -209,7 +209,7 @@ function restoreRouting(data)
 		dataType: 'json',
 		success : function()
 		{
-			window.location.href="http://market.internetrt.org/appcontroller/listallapp";
+			window.location.href="http://localhost:8080/IfApp/start.html";
 		}
 	
 	}
@@ -219,7 +219,7 @@ function restoreRouting(data)
 function triggerChannelMoreApps()
 {
 	var html = "";
-	html += '<a target="_blank" href="http://internetrt.org:9000/signal/client/extendSignal?signalname='
+	html += '<a target="_blank" href="http://localhost:9000/signal/client/extendSignal?signalname='
 			+trigger+'&format=browserredirect">Install more apps</a><br/>';
 	$("#triggerChannelMoreApps").html(html);
 }
@@ -227,7 +227,7 @@ function triggerChannelMoreApps()
 function actionChannelMoreApps()
 {
 	var html = "";
-	html += '<a target="_blank" href="http://internetrt.org:9000/signal/client/extendSignal?signalname='
+	html += '<a target="_blank" href="http://localhost:9000/signal/client/extendSignal?signalname='
 			+trigger+'&format=browserredirect">Install more apps</a><br/>';
 	$("#actionChannelMoreApps").html(html);
 }

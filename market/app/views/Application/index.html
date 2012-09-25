@@ -89,8 +89,8 @@ body {
     <a href="@{Application.index()}">Index</a>
 	</div>
 </div>
-<div>
-	<h1>This is overview of all the operations in the AppMarket. According to this flow diagram, you will be familiar of our product quickly.</h1>
+<div style="padding:30px">
+	<h1>This is overview of all the operations in the AppMarket.</h1>
 </div>
 <div align="center" bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
 <!-- Save for Web Slices (Untitled-3) -->
@@ -107,9 +107,9 @@ body {
 		<td background="../../../public/images/backgroud_03.gif">
         <div align="center">
         	<h3>
-            <a onMouseOver="showdetails(this,'registerDetail')" onMouseOut="hidedetails('registerDetail')" href="http://internetrt.org:9000/clients/register"><u>Register/</u></a>
+            <a onMouseOver="showdetails(this,'registerDetail')" onMouseOut="hidedetails('registerDetail')" href="http://localhost:9000/clients/register"><u>Register/</u></a>
             <div id="registerDetail" class="pop"></div>
-            <a onMouseOver="showdetails(this,'loginDetail')" onMouseOut="hidedetails('loginDetail')" href="http://internetrt.org:9000/clients/login"><u>Login</u></a>
+            <a onMouseOver="showdetails(this,'loginDetail')" onMouseOut="hidedetails('loginDetail')" href="http://localhost:9000/clients/login"><u>Login</u></a>
             <div id="loginDetail" class="pop"></div>
             </h3>
         </div>
@@ -128,7 +128,7 @@ body {
 	<tr>
 		<td  background = "../../../public/images/backgroud_06.gif">
         <h3 align="center">
-		  <a href="javascript:void(document.body.appendChild(document.createElement('script')).src='http://internetrt.org:9000/assets/client/installRootApp.js" onMouseOver="showdetails(this,'installMarket')" onMouseOut="hidedetails('installMarket')"><u>Install market</u></a>
+		  <a href="javascript:void(document.body.appendChild(document.createElement('script')).src='http://localhost:9000/assets/client/installRootApp.js');" onMouseOver="showdetails(this,'installMarket')" onMouseOut="hidedetails('installMarket')"><u>Install market</u></a>
           <div id="installMarket" class="pop"></div>
          </h3>
 		</td>
@@ -144,7 +144,7 @@ body {
 	<tr>
 		<td background = "../../../public/images/backgroud_08.gif">
 		  <div align="center">
-		    <h4><u><a href="http://internetrt.org:9001/appcontroller/listallapps" onMouseOver="showdetails(this,'listAllApps')" onMouseOut="hidedetails('listAllApps')">List all the apps</a>
+		    <h4><u><a href="http://localhost:9001/appcontroller/listallapps" onMouseOver="showdetails(this,'listAllApps')" onMouseOut="hidedetails('listAllApps')">List all the apps</a>
             <div id="listAllApps"class="pop"></div>
 	        </u></h4>
         </div></td>
@@ -162,7 +162,7 @@ body {
 			<img src="../../../public/images/backgroud_10.gif" width="35" height="430" alt=""></td>
 		<td background="../../../public/images/backgroud_11.gif">
         <div align="center">
-		    <h4><u><a href="http://market.internetrt.org:9001/appcontroller/listallapp" onMouseOver="showdetails(this,'listMyApps')" onMouseOut="hidedetails('listMyApps')">List all my apps</a>
+		    <h4><u><a href="http://localhost:9001/appcontroller/listallapp" onMouseOver="showdetails(this,'listMyApps')" onMouseOut="hidedetails('listMyApps')">List all my apps</a>
             <div id="listMyApps" class="pop"></div>
             </u></h4>
 	    </div>
@@ -173,7 +173,7 @@ body {
 		<td rowspan="7">
 			<img src="../../../public/images/backgroud_13.gif" width="35" height="430" alt=""></td>
 		<td background="../../../public/images/backgroud_14.gif" colspan="2" rowspan="2"><div align="center">
-		  <h5><a href="http://internetrt.org:9001/appcontroller/listallapps" onMouseOver="showdetails(this,'installApp')" onMouseOut="hidedetails('installApp')"><u>Install the selected one</u></a></h5>
+		  <h5><a href="http://localhost:9001/appcontroller/listallapps" onMouseOver="showdetails(this,'installApp')" onMouseOut="hidedetails('installApp')"><u>Install the selected one</u></a></h5>
           <div id="installApp" class="pop"></div>
 		</div></td>
 		<td rowspan="7">

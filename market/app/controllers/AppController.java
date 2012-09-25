@@ -19,6 +19,9 @@ import org.internetrt.sdk.util.*;
 
 import config.properties;
 
+import cn.edu.act.internetos.appmarket.service.RoutingRecommender;
+
+
 public class AppController extends Controller {
 
 	public static String getAccessToken() {
@@ -66,20 +69,14 @@ public class AppController extends Controller {
 		for (App app:applist){
 			AppXmlParser parser = new AppXmlParser(app.getInformation());
 			List<Signal> signals = parser.getSignals();
-			app.setDecription("Outgoing Signal:");
-			for (Signal signal:signals){
-				app.setDecription(app.getDecription()+signal.name()+" ");
-			}
-			app.setDecription(app.getDecription()+"Receving Signal:");
-			List<DescribedListenerConfig> listeners = parser.getListeners();
-			
-			for (DescribedListenerConfig listen:listeners){
-				app.setDecription(app.getDecription()+listen.description()+" ");
-			}
+			app.setDecription(parser.getDescription());
 		}
+		RoutingRecommender routingRecommender = new RoutingRecommender();
+		List<scala.Tuple3<String,Signal,DescribedListenerConfig>> result = routingRecommender.getUserRoutings(token);
+		List<RoutingChoice> choices = generateChoieces(result);
 		// List<AppConfig> configlist = AppService.getAllConfig(user);
 		// TODO:nick name
-		render("AppService/listAllApp.html", applist, token);
+		render("AppService/listAllApp.html", applist, token, choices);
 	}
 	
 	public static void listAllAppRoutingMap() {
@@ -101,9 +98,31 @@ public class AppController extends Controller {
 				app.setDecription(app.getDecription()+listen.description()+" ");
 			}
 		}
+		RoutingRecommender routingRecommender = new RoutingRecommender();
+		List<scala.Tuple3<String,Signal,DescribedListenerConfig>> result = routingRecommender.getUserRoutings(token);
+		List<RoutingChoice> choices = generateChoieces(result);
 		// List<AppConfig> configlist = AppService.getAllConfig(user);
 		// TODO:nick name
-		render("AppService/listAllAppRoutingMap.html", applist, token);
+		render("AppService/listAllAppRoutingMap.html", applist, token, choices);
+	}
+	
+	private static List<RoutingChoice> generateChoieces(List<scala.Tuple3<String,Signal,DescribedListenerConfig>> possibleRoutings){
+		List<RoutingChoice> res = new ArrayList<RoutingChoice>();
+		for(scala.Tuple3<String,Signal,DescribedListenerConfig> data:possibleRoutings){
+			String routing = FreeRoutingGenerator.generateRouting(data._2().name(),data._2().from(),data._3());
+			String signalName = data._2().name();
+			String signaldes = data._2().description();
+			String signalApp = data._1();
+			String listenerApp = data._3().appName();
+			String listenerDes = data._3().description();
+			res.add(new RoutingChoice(signalName,signalApp,signaldes,listenerApp,listenerDes,routing));
+		}
+		return dedup(res);
+	}
+	
+	private static List<RoutingChoice> dedup(List<RoutingChoice> origin){
+		Set<RoutingChoice> set = new HashSet<RoutingChoice>(origin);
+		return new ArrayList<RoutingChoice>(set);
 	}
 	
 

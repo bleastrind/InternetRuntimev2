@@ -135,6 +135,10 @@ window.InternetRuntime.Explorer = new function()
 		{
 			MenuOpen = mo;
 		}
+		this.getMenuOpen = function()
+		{
+			return MenuOpen;
+		}
 		var Obj = Create('div')
 		.Style('item')
 		.Size(size)
@@ -142,15 +146,15 @@ window.InternetRuntime.Explorer = new function()
 			Obj
 			.Time(150)
 			.CallBack(done)
-			.Color('ff0000')
-			.TextColor('066099');
+			.Color('066099')
+			.TextColor('ff0000');
 		})
 		.HoverOut(function(done){
 			Obj
 			.Time(150)
 			.CallBack(done)
-			.Color('066099')
-			.TextColor('ff0000');
+			.Color('ff0000')
+			.TextColor('066099');
 		});		
 		this.getChoice = function()
 		{
@@ -189,13 +193,17 @@ window.InternetRuntime.Explorer = new function()
 			var MenuXY = new XY(106, -GRID-2);
 			SubMemu.show(Obj, MenuXY);
 		}
+		this.hideSubMenu = function()
+		{
+			SubMemu.hide();
+		}
 	}
 	function Menu()
 	{	
 		
 		var MenuSize = new DXY(1, GRID);
 		var Obj = Create('div')
-		.Style('first')
+		.Style('menu')
 		.SizeOne(MenuSize);
 		var items = [];
 		this.Obj = Obj;
@@ -230,12 +238,25 @@ window.InternetRuntime.Explorer = new function()
 			.Move();
 			
 		}
+		this.hide = function(fromObj, toxy)
+		{
+			Obj
+			.Time(0)
+			.Opacity(1)
+			.Time(150)
+			.CallBack(function(){
+				Obj.Style('hidden');
+			})
+			.Opacity(0);
+			
+		}
+		
 	}
 	
 	
 	var floaticon = new function FloatIcon()
 	{
-		var ICON_SIZE = new DXY(45, 46);
+		var ICON_SIZE = new DXY(32, 32);
 		var Img = Create('img')
 		.Size(ICON_SIZE)
 		.Src(CONST.EXPLORER_BASE_URL + CONST.ICON_SRC);
@@ -250,7 +271,7 @@ window.InternetRuntime.Explorer = new function()
 			{
 				floaticon.MenuOpen = true;
 				MouseState = 1;
-				var MenuXY = new XY(50, 0);
+				var MenuXY = new XY(35, 0);
 				ExplorerMainMenu.show(Obj, MenuXY);
 			}
 		})
@@ -298,6 +319,11 @@ window.InternetRuntime.Explorer = new function()
 		ShareItem.Obj.Text('Share');
 		ExplorerMainMenu.pushItem(ShareItem);
 		ShareItem.setClick(function(){
+			if (OpenItem.getMenuOpen())
+			{
+				OpenItem.setMenuOpen(false);
+				OpenItem.hideSubMenu();
+			}
 			window.InternetRuntime.Client.initOption(CONST.SHARE_SIGNAL_NAME,
 													function(option){
 														OptionHandler(option, ShareItem, CONST.SHARE_SIGNAL_NAME)
@@ -307,11 +333,16 @@ window.InternetRuntime.Explorer = new function()
 		OpenItem.Obj.Text('Open');
 		ExplorerMainMenu.pushItem(OpenItem);
 		OpenItem.setClick(function(){
+			if (ShareItem.getMenuOpen())
+			{
+				ShareItem.setMenuOpen(false);
+				ShareItem.hideSubMenu();
+			}
 			window.InternetRuntime.Client.initOption(CONST.OPEN_SIGNAL_NAME,
 													function(option){
 														OptionHandler(option, OpenItem, CONST.OPEN_SIGNAL_NAME)
 													});
-		});s
+		});
 	}
 	resetMainMenu();
 	
@@ -345,7 +376,7 @@ window.InternetRuntime.Explorer = new function()
 																var AppObj = null;
 																eval("AppObj=" + appdetail);
 																var AppName = AppObj['Application']['Name'];
-																callbackparams.item.Obj.Text(AppName);
+																callbackparams.item.Obj.Text(AppName);																
 															},
 															CallBackParams);
 					
@@ -361,6 +392,7 @@ window.InternetRuntime.Explorer = new function()
 																		function(url){
 																			close();
 																			window.open(url);
+																			
 																			//document.location.href = url;
 																		});
 								});

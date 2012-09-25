@@ -164,6 +164,32 @@ move /Y ..\market\app\views\appservice\listAllApp.html1  ..\market\app\views\app
 sed s/internetrt.org:9000/localhost:9000/ ../market/app/views/AdminService/addsignal.html > ../market/app/views/AdminService/addsignal.html1
 move /Y ..\market\app\views\AdminService\addsignal.html1  ..\market\app\views\AdminService\addsignal.html
 
+sed s/market.internetrt.org:8080/localhost:8080/ ../market/app/views/Application/index.html > ../market/app/views/Application/index.html1
+move /Y ..\market\app\views\Application\index.html1  ..\market\app\views\Application\index.html
+
+sed s/internetrt.org:9000/localhost:9000/ ../market/app/views/Application/index.html > ../market/app/views/Application/index.html1
+move /Y ..\market\app\views\Application\index.html1  ..\market\app\views\Application\index.html
+
+sed s/market.internetrt.org:9001/localhost:9001/ ../market/app/views/Application/index.html > ../market/app/views/Application/index.html1
+move /Y ..\market\app\views\Application\index.html1  ..\market\app\views\Application\index.html
+
+
+sed s/internetrt.org:9000/localhost:9000/ ../InternetRT/public/client/Client.html > ../InternetRT/public/client/Client.html1
+move /Y ..\InternetRT\public\client\Client.html1  ..\InternetRT\public\client\Client.html
+
+sed s/internetrt.org:9000/localhost:9000/ ../InternetRT/public/client/client.js > ../InternetRT/public/client/client.js1
+move /Y ..\InternetRT\public\client\client.js1  ..\InternetRT\public\client\client.js
+
+sed s/internetrt.org:9000/localhost:9000/ ../InternetRT/public/client/confirmRootButton.js > ../InternetRT/public/client/confirmRootButton.js1
+move /Y ..\InternetRT\public\client\confirmRootButton.js1  ..\InternetRT\public\client\confirmRootButton.js
+
+sed s/internetrt.org:9000/localhost:9000/ ../InternetRT/public/client/installRootApp.js > ../InternetRT/public/client/installRootApp.js1
+move /Y ..\InternetRT\public\client\installRootApp.js1  ..\InternetRT\public\client\installRootApp.js
+
+sed s/internetrt.org:9000/localhost:9000/ ../InternetRT/public/client/startClient.js > ../InternetRT/public/client/startClient.js1
+move /Y ..\InternetRT\public\client\startClient.js1  ..\InternetRT\public\client\startClient.js
+
+
 
 
 

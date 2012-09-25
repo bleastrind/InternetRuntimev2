@@ -15,6 +15,8 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.internetrt.sdk.exceptions.NoDataException;
+import org.internetrt.sdk.exceptions.ServerSideException;
 
 public class HttpHelper {
 	public static String generatorParamString(Pair[] parameters) {
@@ -78,7 +80,17 @@ public class HttpHelper {
 		} finally {
 			getMethod.releaseConnection();
 		}
-		String result = new String(responseBody);
+		String result = null;
+		try {
+			result = new String(responseBody, "utf-8");
+			
+			System.out.println("[HttpHelper: httpClientGet] returns result: "+ result);
+			
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			assert(false);
+			System.out.println("HttpGet returns result is false");
+		}
 		return result;
 	}
 
