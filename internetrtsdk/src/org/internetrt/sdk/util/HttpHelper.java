@@ -15,7 +15,6 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.internetrt.sdk.exceptions.NoDataException;
 import org.internetrt.sdk.exceptions.ServerSideException;
 
 public class HttpHelper {
@@ -54,6 +53,18 @@ public class HttpHelper {
 			return generatorParamString(pairs);
 		}
 		else
+			return "";
+	}
+	public static String generatorAnchorString(Map<String, String> parameters){
+		String key = RoutingXmlParser.HASHKEY();
+		if(parameters.containsKey(key)){
+//			try {
+				return "#" + parameters.get(key);
+//				//return "#"+URLEncoder.encode(parameters.get(key), "UTF-8");
+//			} catch (UnsupportedEncodingException e) {
+//				throw new RuntimeException(e.getMessage(), e);
+//			}
+		}else
 			return "";
 	}
 

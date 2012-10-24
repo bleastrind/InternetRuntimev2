@@ -7,6 +7,7 @@ import org.internetrt.sdk.exceptions.FormatErrorException
 object RoutingXmlParser{
   
 	def ROUTING_INSTANCE_ID_KEY = "r_ID"
+	def HASHKEY = "hashdata"
 
 	 def throwFormatException(term: String, description: String){
      if (term == null || term == "")
@@ -58,6 +59,19 @@ object RoutingXmlParser{
 	   }
 	   Map(params:_*);
 	} 
+	
+	def getAnchorAdapter(listener:ListenerConfig): java.util.Map[String,DataAdapter] = {
+	  anchorAdapter(listener)
+	}
+	def anchorAdapter(listener:ListenerConfig): Map[String,DataAdapter] = {
+	   val signalListener = listener.node;
+	   System.out.println(signalListener)
+	   val params = signalListener \ "Adapter" \"anchor" map{(header)=>
+	     ( HASHKEY )-> DataAdapter(header \ "value" head)
+	   }
+	   Map(params:_*);
+	} 
+	
 	def getBodyAdapter(listener:ListenerConfig): java.util.Map[String,DataAdapter] = {
 	   bodyAdapter(listener)
 	}	     
@@ -73,7 +87,8 @@ object RoutingXmlParser{
 	def getRequiredFormats(listener:ListenerConfig):java.util.List[ListenerDataFormat] = {
 	  Seq(("params",paramsAdapter(listener)) , 
 	      ("headers",headersAdapter(listener)) ,
-	      ("body",bodyAdapter(listener))) map {
+	      ("body",bodyAdapter(listener)),
+	      ("anchor",anchorAdapter(listener))) map {
 	    p => ListenerDataFormat(p._1,p._2)
 	  }
 	}

@@ -93,6 +93,9 @@ object SignalAPI extends Controller {
       throw new NotImplementedException("It's only possible when all event listeners are handled and requestListener is httpget")
     else {
       val baseurl = RoutingXmlParser.getListenerUrl(config);
+      val urlanchor = RoutingXmlParser.getRequiredFormats(config)
+        .filter(f => f.kind == "anchor")
+        .headOption 
       val params = RoutingXmlParser.getRequiredFormats(config)
         .filter(f => f.kind == "params")
         .headOption 
@@ -104,8 +107,15 @@ object SignalAPI extends Controller {
             null))
           case None => ""
         }
+	  val anchorstr = urlanchor match {
+          case Some(format) => HttpHelper.generatorAnchorString(ListenerRequestGenerator.generateDataByFormat(
+            request.queryString,
+            format,
+            null))
+          case None => ""
+        }
       //TODO the data should be Map[String,Map[String]]
-      baseurl + paramstr
+      baseurl + paramstr + anchorstr
     };
   }
 }

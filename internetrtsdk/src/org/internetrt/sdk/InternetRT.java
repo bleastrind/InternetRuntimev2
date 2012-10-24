@@ -151,12 +151,16 @@ public class InternetRT {
 		}
 		if(type.equals("httpget")){
 			if(resultdata.containsKey("params"))
-				url += "?" + HttpHelper.generatorParamString(resultdata.get("params"));
+				url += "?" 
+					+ HttpHelper.generatorParamString(resultdata.get("params")) 
+					+ HttpHelper.generatorAnchorString(resultdata.get("anchor"));
 			return HttpHelper.httpClientGet(url);
 		}else if(type.equals("httppost")){
 			Map<String,String> bodydata = new HashMap<String,String>();
 			if(resultdata.containsKey("params"))
-				url += "?" + HttpHelper.generatorParamString(resultdata.get("params"));
+				url += "?" 
+					+ HttpHelper.generatorParamString(resultdata.get("params"))
+					+ HttpHelper.generatorAnchorString(resultdata.get("anchor"));
 			if(resultdata.containsKey("body"))
 				bodydata = resultdata.get("body");
 			return HttpHelper.httpClientPost(url, bodydata);

@@ -32,6 +32,9 @@ abstract class UserInterface {
     authCenter.login(username, password)
   }
 
+  def sendEvent(uid: String, msg: String,allowedStatus:Seq[String]) = {
+    clientManager.sendevent(uid,msg,allowedStatus);
+  }
   def response(uid: String, msg: String, msgID: String) = {
     clientManager.response(uid, msg, msgID)
   }

@@ -16,6 +16,7 @@ import org.internetrt.core.model.Routing
 import org.internetrt.core.security.AccessControlSystem
 import org.internetrt.exceptions.AccessRequestNotGrantedException
 import org.internetrt.exceptions.ApplicationNotInstalledException
+import userinterface.ClientsManager
 
 /**
  * The Facade of the logical system
@@ -151,7 +152,21 @@ abstract class InternetRuntime {
       case _ => throw new ApplicationNotInstalledException()
     }
   }
-  
+    /**
+   * ***********************************************************************
+   * ---------------------------- client communication---------------------*
+   * ***********************************************************************
+   */
+  def sendEvent(accessToken: String, msg: String,allowedStatus:Seq[String]) = {
+    val (userID, appID) = authCenter.getUserIDAppIDPair(accessToken)
+    aclSystem.checkAccess(userID, appID, "communicateUser")
+    ClientsManager.sendevent(userID,msg,allowedStatus);
+  }
+  def sendEventToActive(accessToken: String, msg: String) = {
+    val (userID, appID) = authCenter.getUserIDAppIDPair(accessToken)
+    aclSystem.checkAccess(userID, appID, "communicateUser")
+    ClientsManager.sendevent(userID,msg,Seq(ClientStatus.Active.toString()));
+  }
 }
 
 trait StubSignalSystem extends SignalSystem {
