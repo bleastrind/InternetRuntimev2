@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import com.renren.api.client.RenrenApiClient;
+import com.renren.api.client.param.impl.AccessToken;
 import com.renren.api.client.param.impl.SessionKey;
 
 public class ThreadPublish implements Runnable{
@@ -30,7 +31,7 @@ public class ThreadPublish implements Runnable{
 		
 		try {
 			
-			apiClient.getFeedService().publicFeed("人人stub", "人人stub发送", "http://apps.renren.com/irtshare/welcome", "", "", "", "", message, new SessionKey(sessionkey));
+			apiClient.getFeedService().publicFeed("人人stub", "人人stub发送", "http://apps.renren.com/irtshare/welcome", "", "", "", "", message, new AccessToken(sessionkey));
 		} catch(Exception err){
 			err.printStackTrace();
 			return false;

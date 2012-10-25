@@ -27,8 +27,10 @@ public class MessageReciver extends HttpServlet {
 			try {
 				String userid = irt.getUserIdByToken(irt.setAccessTokenWithCode(irt.getAuthCodeByRoutingInstanceID(rid)));
 				UserSpace us = Initer.User.get(userid);
-				us.msg.add(Message);
-				Initer.feedstub.publish(Message,us.getSessionKey());
+				if (us!=null){
+					us.msg.add(Message);
+					Initer.feedstub.publish(Message,us.getSessionKey());
+				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				System.out.println("can't publish");

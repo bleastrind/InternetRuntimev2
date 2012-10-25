@@ -25,9 +25,11 @@ public class messageReciver extends HttpServlet {
 			System.out.print("[messageReciver : doGet]: "+"userid: " + userid);
 
 			UserSpace us = ApiInitListener.User.get(userid);
-			us.message.add(Message);
-			System.out.print("[messageReciver : doGet]: "+"userSessionKey: "+us.getSessionKey());
-			ApiInitListener.feedstub.publish(Message, us.getSessionKey());
+			if (us!=null){
+				us.message.add(Message);
+				System.out.print("[messageReciver : doGet]: "+"userSessionKey: "+us.getSessionKey());
+				ApiInitListener.feedstub.publish(Message, us.getSessionKey());
+			}
 		}
 		} catch(Exception err){
 			System.out.println(err);

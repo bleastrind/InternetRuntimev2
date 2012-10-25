@@ -96,7 +96,9 @@ public class FeedStub implements Runnable{
 			//refreshToken()			  //刷新token 保证token有效
 			
 			JSONArray feedInfo = new JSONArray();
+			try {
 			feedInfo = apiClient.getFeedService().getFeed("10", Integer.parseInt(renrenUserId), 1, 10,new AccessToken(sessionKey));
+						
 			if (feedInfo != null && feedInfo.size()>0) {
 		
 				for (int i=0;i<feedInfo.size();i++)
@@ -122,8 +124,11 @@ public class FeedStub implements Runnable{
 					}
 				}
 			}
-		t.updateMessage(messages);
-		if (!up.offer(t)) System.out.println("[FeedStub : run] Memery Out");
+			t.updateMessage(messages);
+			if (!up.offer(t)) System.out.println("[FeedStub : run] Memery Out");
+			} catch(Exception e){
+				//获取info错误，用户退出
+			}
 		}
 	}
 	

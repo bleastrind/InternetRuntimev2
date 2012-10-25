@@ -35,7 +35,7 @@
  </servlet-mapping>
  <servlet-mapping>
   <servlet-name>messageReciver</servlet-name>
-  <url-pattern>/reciver</url-pattern>
+  <url-pattern>/renrenapp/reciver</url-pattern>
  </servlet-mapping>
  <servlet-mapping>
   <servlet-name>ActiveServlet</servlet-name>

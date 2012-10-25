@@ -7,6 +7,7 @@
         table {border:1px solid blue; width:800px;padding-left: 1cm;align:center;margin: auto;}
         th,td {border:1px solid blue }
         #signals {font-size:0.5em}
+        .listenerdiv {border:1px solid; margin:10px; padding:10px} 
     </style>
 </head>
 #{extends 'main.html' /}
@@ -26,9 +27,9 @@
                     obj.val( "input new key");
                 }
 
-                else if (value=="const") {
+                else if (value=="expression") {
                     obj.show();
-                    obj.val( "input const value");
+                    obj.val( "input expression");
                 }
                 else {
                     obj.val(value);
@@ -38,10 +39,10 @@
             }
             function addpara(obj){
 
-                var params = $('<div><label>key</label><input type="text" name="key"></br><label>value</label></div>');
+                var params = $('<div class="params"><label>key</label><input type="text" name="key"></br><label>value</label></div>');
 
 
-                var select = $('<select><option value ="<var></var>">the var in the signal</option><option value ="key">new key</option><option value ="<var><ID></ID></var>">RoutingInstanceID</option><option value ="const" >Const value</option></select>');
+                var select = $('<select><option value ="<var></var>">the var in the signal</option><option value ="key">new key</option><option value ="<var><ID></ID></var>">RoutingInstanceID</option><option value ="expression" >Expression</option></select>');
                 var input = $('<input name="value" type="text"/>');
 
 
@@ -55,6 +56,15 @@
 
                 return obj;
             }
+			
+			function addanchor(obj){
+				var anchor = $('<div class="anchor"><label>Expression</label><input type="text" name="expression"/></div>');
+				
+				$(obj).append(anchor);
+				
+				return obj;
+			}
+			
             $(function() {
 
 
@@ -101,10 +111,14 @@
 
                 $("#addlistener").button();
                 $("#addlistener").click(function() {
-                    var obj = $('<div name="listener"><select name="listener"><option value ="RequestListener">RequestListener</option><option value ="EventListener">EventListener</option><option value ="RequestListener">PipeListener</option></select></br><label>Description</label><input type="text" name="description"></br><label>Url</label><input type="text" name="url"></br><label>Signalname</label><input type="text" name="signalname"></br>' +
-                            '<a class="button">AddPara</a></div></br>');
-                    $(obj).find(".button").button();
-                    $(obj).find(".button").click(function(){addpara(obj);});
+                    var obj = $('<div name="listener" class="listenerdiv"><select name="listener"><option value ="RequestListener">RequestListener</option><option value ="EventListener">EventListener</option><option value ="RequestListener">PipeListener</option></select></br><label>Description</label><input type="text" name="description"></br><label>Url</label><input type="text" name="url"></br><label>Signalname</label><input type="text" name="signalname"></br>' +
+                            '<a class="button">AddPara</a></br>' +
+							'<a class="button">AddAnchor</a></div></br>');
+                    $(obj).find("a:eq(0)").button();
+                    $(obj).find("a:eq(0)").click(function(){addpara(obj);});
+					$(obj).find("a:eq(1)").button();
+					$(obj).find("a:eq(1)").click(function(){addanchor(obj);});
+					$(obj).find("a:eq(1)").Enable="disable";
                     $("#signalhandler") .append(obj);
 
                     var availableTags = ${signaldefs}
@@ -155,7 +169,7 @@
                                 '<Adapter>'+
                                 '<Signalname id="1">'+$(ele).find("input[name='signalname']").val()+'</Signalname>'+
                                 '<params>';
-                        $(ele).find("div").each(function(index,ele){
+                        $(ele).find("div.params").each(function(index,ele){
                             var value = $(ele).find("select").val()
                             var key = $(ele).find("input[name='key']").val()
                             var inputvalue = $(ele).find("input[name='value']").val()
@@ -166,6 +180,8 @@
                         })
 
                         xml+='</params> '+
+								'<anchor><value>'+$(ele).find("div.anchor").find("input[name='expression']").val()
+								+'</value></anchor>'+
                                 '</Adapter>'+
                                 '</'+$(ele).find("select[name='listener']").val()+'>';
                         ;
@@ -174,6 +190,7 @@
 
                     xml+= '</SignalHanlders>'+
                             '</Application>';
+							
 
                     $.post(marketurl+"/admincontroller/addappsavexml",{information:xml,id:"${id}",secret:"${secret}",email:$("input[name='email']").val()
                         ,installUrl:$("input[name='installurl']").val(),updateurl:$("input[name='updateurl']").val(),
