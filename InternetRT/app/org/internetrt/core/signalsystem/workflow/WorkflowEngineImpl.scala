@@ -16,6 +16,7 @@ import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import org.internetrt.sdk.util.HttpHelper
 import org.internetrt.exceptions.InputFormatErrorException
+import org.internetrt.sdk.util.RoutingInstanceXmlParser
 
 
 abstract class WorkflowEngineImpl extends WorkflowEngine {
@@ -91,7 +92,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
       
       val paramdata = formats.map(format =>{
         if(format.kind == "params" || format.map.size == 0)
-        	ListenerRequestGenerator.generateDataByFormat(vars,format,GlobalData(Map(RoutingXmlParser.ROUTING_INSTANCE_ID_KEY -> workflowID)))
+        	ListenerRequestGenerator.generateDataByFormat(vars,format,GlobalData(Map(RoutingInstanceXmlParser.ROUTING_INSTANCE_ID_KEY -> workflowID)))
         else
           return Some(config)
       }).headOption.getOrElse(Map.empty[String,String]);

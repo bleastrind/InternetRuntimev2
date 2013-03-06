@@ -29,7 +29,7 @@ object ListenerRequestGenerator{
     adapter  match {
       case DataAdapter(<value><var/></value>) => (key,data.get(key).head.head)
       case DataAdapter(<value><var><newkey>{newkey}</newkey></var></value>)=>(newkey.text,data.get(key).head.head)
-      case DataAdapter(<value><var><ID/></var></value>) => (key,extData.map.get(RoutingXmlParser.ROUTING_INSTANCE_ID_KEY).get)
+      case DataAdapter(<value><var><ID/></var></value>) => (key,extData.map.get(RoutingInstanceXmlParser.ROUTING_INSTANCE_ID_KEY).get)
       case DataAdapter(<value>{text}</value>) => {
         val m = Pattern.compile("\\{(\\w+)\\}").matcher(text.text)
         val finaltext = new StringBuffer(text.text.length()+30) 
