@@ -1,15 +1,14 @@
 package weibo4j;
 
-import weibo4j.http.HttpClient;
 import weibo4j.model.PostParameter;
 import weibo4j.model.User;
 import weibo4j.model.WeiboException;
 import weibo4j.org.json.JSONArray;
 import weibo4j.util.WeiboConfig;
 
-public class Users {
-	
-	public static HttpClient client = new HttpClient();
+public class Users extends Weibo{
+
+	private static final long serialVersionUID = 4742830953302255953L;
 
 
 	/*----------------------------用户接口----------------------------------------*/
@@ -26,7 +25,7 @@ public class Users {
 	 * @since JDK 1.5
 	 */
 	public User showUserById(String uid) throws WeiboException {
-		return new User(Weibo.client.get(
+		return new User(client.get(
 				WeiboConfig.getValue("baseURL") + "users/show.json",
 				new PostParameter[] { new PostParameter("uid", uid) })
 				.asJSONObject());
@@ -45,7 +44,7 @@ public class Users {
 	 * @since JDK 1.5
 	 */
 	public User showUserByScreenName(String screen_name) throws WeiboException {
-		return new User(Weibo.client.get(
+		return new User(client.get(
 				WeiboConfig.getValue("baseURL") + "users/show.json",
 				new PostParameter[] { new PostParameter("screen_name",
 						screen_name) }).asJSONObject());
@@ -65,7 +64,7 @@ public class Users {
 	 * @since JDK 1.5
 	 */
 	public User showUserByDomain(String domain) throws WeiboException {
-		return new User(Weibo.client.get(
+		return new User(client.get(
 				WeiboConfig.getValue("baseURL") + "users/domain_show.json",
 				new PostParameter[] { new PostParameter("domain", domain) })
 				.asJSONObject());
@@ -84,7 +83,7 @@ public class Users {
 	 * @since JDK 1.5
 	 */
 	public JSONArray getUserCount(String uids) throws WeiboException{
-		return  Weibo.client.get(WeiboConfig.getValue("baseURL") + "users/counts.json",
+		return  client.get(WeiboConfig.getValue("baseURL") + "users/counts.json",
 				new PostParameter[] { new PostParameter("uids", uids)}).asJSONArray();
 	}
 }

@@ -4,6 +4,7 @@ import org.internetrt.core.signalsystem.Signal
 case class Application(xml:scala.xml.Elem){
   def id = (xml \\ "AppID").text
   def appOwner = (xml \\ "AppOwner").text
+  def isRoot = (xml \\ "IsRoot").text == "true"
   def accessRequests = (xml \\ "AccessRequest" map (node => node match {
     case <AccessRequest>{text}</AccessRequest> => Some(text.text)
     case _ => None 

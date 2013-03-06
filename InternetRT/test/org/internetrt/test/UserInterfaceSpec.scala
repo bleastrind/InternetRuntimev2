@@ -75,7 +75,6 @@ class UserInterfaceSpec extends Specification with Mockito {
     var Userid:String=""
     object stubclientdriver extends ClientDriver {
       def response(data: String, msgID: Option[String] = None) {
-    	  //System.out.println("called")
         // The stub client will response the ask directly
         TestUserInterface.response(Userid, "received", msgID.get)
       }

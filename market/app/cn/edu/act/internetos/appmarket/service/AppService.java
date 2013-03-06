@@ -12,6 +12,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.internetrt.sdk.InternetRT;
+import org.internetrt.sdk.util.AppXmlParser;
 
 
 public class AppService{
@@ -34,8 +35,8 @@ public class AppService{
 		InternetRT irt = properties.irt;
 		try {
 			System.out.print("market");
-		irt.getAppDetail(config.properties.appID, token);
-		System.out.println("market");
+			irt.getAppDetail(config.properties.appID, token);
+			System.out.println("market");
 		return true;
 		} catch(Exception err){
 			System.out.println("no market");
@@ -50,7 +51,21 @@ public class AppService{
 		return null;
 	}
 	
-	
+	public static List<App> getAppsBySignal(String signalname){
+		AppDao appdao = new AppDao();
+
+        List<App> applist = appdao.getAllApps(); 
+
+        List<App> result = new ArrayList<App>();
+        
+        for(App app:applist){
+        	String xml =(app.getInformation());
+        	AppXmlParser parser = new AppXmlParser(xml);
+        	if(parser.getMatchedListeners(signalname).size() > 0)
+        		result.add(app);
+        }
+        return result;
+	}
     public static List<App> getAllApps()  
 	{
         AppDao appdao = new AppDao();	

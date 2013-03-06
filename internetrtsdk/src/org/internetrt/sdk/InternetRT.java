@@ -10,8 +10,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.NotImplementedException;
+import org.internetrt.sdk.exceptions.ServerSideException;
 import org.internetrt.sdk.util.*;
 
 /**
@@ -33,14 +36,22 @@ public class InternetRT {
 		if(!config.containsAllProperties(Arrays.asList(values.split(","))))
 			throw new Exception("The configuration don't have all the properties of:"+values);
 		InternetRT rt = new InternetRT();
-		rt.internetRTConfig = config;
+		rt.setInternetRTConfig(config);
 		return rt;
 	}
+
+	// Forbidden new a InternetRT with not well prepared config
+	public InternetRT(){}	
 	
 	private InternetRTConfig internetRTConfig ; 
 	
-	// Forbidden new a InternetRT with not well prepared config
-	private InternetRT(){}	
+	public void setInternetRTConfig(InternetRTConfig internetRTConfig) {
+		this.internetRTConfig = internetRTConfig;
+	}
+
+	public InternetRTConfig getInternetRTConfig() {
+		return internetRTConfig;
+	}
 	
 	private List<String> parserXmlsIDString (String str)
 	{
@@ -66,33 +77,37 @@ public class InternetRT {
 
 
 	public String getAuthCodeUrl(){
-		return internetRTConfig.getValue(Props.AUTHURL)
-		+ "?appID=" + internetRTConfig.getValue(Props.APPID)
-		+"&redirect_uri="+ internetRTConfig.getValue(Props.REDIRECTURL);
+		return getInternetRTConfig().getValue(Props.AUTHURL)
+		+ "?appID=" + getInternetRTConfig().getValue(Props.APPID)
+		+"&redirect_uri="+ getInternetRTConfig().getValue(Props.REDIRECTURL);
 	}
 
-	public String setAccessTokenWithCode(String code){
+	public String setAccessTokenWithCode(String code) throws ServerSideException{
 
-		String response  = HttpHelper.httpClientGet(internetRTConfig.getValue("accessTokenURL")
+		String response  = HttpHelper.httpClientGet(getInternetRTConfig().getValue("accessTokenURL")
 				+ "?"
 				+ HttpHelper.generatorParamString(new Pair[] {
 						new Pair("appID",
-								internetRTConfig.getValue("appID")),
+								getInternetRTConfig().getValue("appID")),
 						new Pair("appSecret",
-								internetRTConfig.getValue("appSecret")),
+								getInternetRTConfig().getValue("appSecret")),
 						new Pair("authtoken", code) }));
 		System.out.print(response);
-		JSONObject json = JSONObject.fromObject(response);
-		String accesstoken = (String) json.get("access_token");
-		return accesstoken;
+		try{
+			JSONObject json = JSONObject.fromObject(response);
+			String accesstoken = (String) json.get("access_token");
+			return accesstoken;
+		}catch(JSONException e){
+			throw new ServerSideException(response);
+		}
 	}
 
 	public String getAuthCodeByRoutingInstanceID(String rid){
-		String response =  HttpHelper.httpClientGet((internetRTConfig
+		String response =  HttpHelper.httpClientGet((getInternetRTConfig()
 				.getValue("routingInstanceURl") + "?" + HttpHelper.generatorParamString(new Pair[] {
-				new Pair("appID", internetRTConfig.getValue("appID")),
+				new Pair("appID", getInternetRTConfig().getValue("appID")),
 				new Pair("appSecret",
-						internetRTConfig.getValue("appSecret")),
+						getInternetRTConfig().getValue("appSecret")),
 				new Pair("rid", rid) })));
 		System.out.print(response);
 		JSONObject json = JSONObject.fromObject(response);
@@ -100,10 +115,10 @@ public class InternetRT {
 	}
 
 	public String authorize(String response_type) {
-		return internetRTConfig.getValue("authorizeURL").trim() + "?client_id="
-				+ internetRTConfig.getValue("client_ID").trim()
+		return getInternetRTConfig().getValue("authorizeURL").trim() + "?client_id="
+				+ getInternetRTConfig().getValue("client_ID").trim()
 				+ "&redirect_uri="
-				+ internetRTConfig.getValue("redirect_URI").trim()
+				+ getInternetRTConfig().getValue("redirect_URI").trim()
 				+ "&response_type=" + response_type;
 	}
 
@@ -116,17 +131,42 @@ public class InternetRT {
 
 		//Event signals
 		for(ListenerConfig config: parser.getEventListeners()){
-			String eventUrl = ListenerRequestGenerator.generateSignalListenerUrl(adapter(sourceMap), config , parser.getExtData());
-			HttpHelper.httpClientGet(eventUrl);
+			System.out.println(config);
+			sendToListener(adapter(sourceMap), config , parser.getExtData());
 		}
 		if(parser.getRequestListener() != null){
 			//Request signal
-			String urlstr = ListenerRequestGenerator.generateSignalListenerUrl(adapter(sourceMap), parser.getRequestListener(), parser.getExtData());	
-			return HttpHelper.httpClientGet(urlstr);
+			return sendToListener(adapter(sourceMap), parser.getRequestListener(), parser.getExtData());	
 		}else
 			return null;
 	}
 	
+	public String sendToListener(Map<String,String> data, ListenerConfig config,GlobalData extData){
+		String url = RoutingXmlParser.getListenerUrl(config);
+		String type = RoutingXmlParser.getListenerType(config);
+		Map<String,Map<String,String>> resultdata = new HashMap<String,Map<String,String>>();
+		
+		for(ListenerDataFormat format: RoutingXmlParser.getRequiredFormats(config)){
+			resultdata.put(format.kind(), ListenerRequestGenerator.generateDataByFormat(data, format, extData));
+		}
+		if(type.equals("httpget")){
+			if(resultdata.containsKey("params"))
+				url += "?" 
+					+ HttpHelper.generatorParamString(resultdata.get("params")) 
+					+ HttpHelper.generatorAnchorString(resultdata.get("anchor"));
+			return HttpHelper.httpClientGet(url);
+		}else if(type.equals("httppost")){
+			Map<String,String> bodydata = new HashMap<String,String>();
+			if(resultdata.containsKey("params"))
+				url += "?" 
+					+ HttpHelper.generatorParamString(resultdata.get("params"))
+					+ HttpHelper.generatorAnchorString(resultdata.get("anchor"));
+			if(resultdata.containsKey("body"))
+				bodydata = resultdata.get("body");
+			return HttpHelper.httpClientPost(url, bodydata);
+		}else
+			throw new NotImplementedException("Not supported type:"+type);
+	}
 
 	private Map<String, String> adapter(Map<String, String> sourceMap) {
 		return sourceMap;
@@ -137,7 +177,7 @@ public class InternetRT {
 			throws IOException {
 
 		System.out.println(HttpHelper.generatorParamString(parameters));
-		String url = internetRTConfig.getValue("baseURL")
+		String url = getInternetRTConfig().getValue("baseURL")
 				+ "/signal/init/thirdpart/" + signalname + "?"
 				+ "access_token=" + AccessToken + "&"
 				+ HttpHelper.generatorParamString(parameters);
@@ -151,7 +191,7 @@ public class InternetRT {
 		String param = "accessToken=" + accessToken;
 		List<String> applicationsIDList = new ArrayList<String>();
 
-		String requestUrl = internetRTConfig.getValue("baseURL")+"/config/apps" + "?" + param;
+		String requestUrl = getInternetRTConfig().getValue("baseURL")+"/config/apps" + "?" + param;
 		String xmlsID = HttpHelper.httpClientGet(requestUrl);
 		applicationsIDList = parserXmlsIDString(xmlsID);
 		return applicationsIDList;
@@ -160,7 +200,7 @@ public class InternetRT {
 	public String getAppDetail(String appID, String accessToken) {
 		String param = "accessToken=" + accessToken;
 
-		String requestUrl = internetRTConfig.getValue("baseURL")+"/config/apps/" + appID + "?"
+		String requestUrl = getInternetRTConfig().getValue("baseURL")+"/config/apps/" + appID + "?"
 				+ param;
 		System.out.println("getAppDetail"+requestUrl);
 		String result = HttpHelper.httpClientGet(requestUrl);
@@ -170,7 +210,7 @@ public class InternetRT {
 	}
 
 	public String getAccessToken(String code, String appID, String appSecret) {
-		String requestUrl = internetRTConfig.getValue("baseURL")+"/oauth/accesstoken?authtoken="
+		String requestUrl = getInternetRTConfig().getValue("baseURL")+"/oauth/accesstoken?authtoken="
 				+ code + "&appID=" + appID + "&appSecret=" + appSecret;
 		String result = HttpHelper.httpClientGet(requestUrl);
 		String[] aa = result.split(",");
@@ -180,7 +220,7 @@ public class InternetRT {
 	}
 
 	public String getSignalDefination(String signalName) {
-		String requestUrl = internetRTConfig.getValue("baseURL")+"/signal/querydef/"
+		String requestUrl = getInternetRTConfig().getValue("baseURL")+"/signal/querydef/"
 				+ signalName;
 		String result = HttpHelper.httpClientGet(requestUrl);
 		return result;
@@ -194,7 +234,7 @@ public class InternetRT {
 
 		System.out.println("AFTER " + routing);
 
-		String requestHost = internetRTConfig.getValue("baseURL")+"/config/confirmrouting?"
+		String requestHost = getInternetRTConfig().getValue("baseURL")+"/config/confirmrouting?"
 				+ "accessToken=" + accessToken + "&" + "xml=";
 		String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ routing;
@@ -217,12 +257,12 @@ public class InternetRT {
 		Map<String,String> parameters = new HashMap<String,String>();
 		parameters.put("accessToken", token);
 		parameters.put("xml", xml);
-		System.out.println("******************"+internetRTConfig.getValue("baseURL")+
+		System.out.println("******************"+getInternetRTConfig().getValue("baseURL")+
 				"/config/installapp?"+
 				HttpHelper.generatorParamString(parameters));
 		return Boolean.parseBoolean(
 				HttpHelper.httpClientGet(
-						internetRTConfig.getValue("baseURL")+
+						getInternetRTConfig().getValue("baseURL")+
 						"/config/installapp?"+
 						HttpHelper.generatorParamString(parameters)
 						)
@@ -231,7 +271,7 @@ public class InternetRT {
 	
 	public Map<String,String> appregister(String email){
 		Map<String,String> map = new HashMap<String,String>();
-		String result = HttpHelper.httpClientGet(internetRTConfig.getValue("baseURL")+"/auth/appregister?email="+email);
+		String result = HttpHelper.httpClientGet(getInternetRTConfig().getValue("baseURL")+"/auth/appregister?email="+email);
 		System.out.println(result);
 		JSONObject json = JSONObject.fromObject(result);
 		map.put("id",(String) json.get("id"));
@@ -240,40 +280,19 @@ public class InternetRT {
 	}
 	
 	public  String getUserIdByToken(String Token){		
-		String result = HttpHelper.httpClientGet(internetRTConfig.getValue("baseURL")+"/oauth/getuserid/"+Token);
+		String result = HttpHelper.httpClientGet(getInternetRTConfig().getValue("baseURL")+"/oauth/getuserid/"+Token);
 		JSONObject json = JSONObject.fromObject(result);
 		System.out.println(json.get("user_id"));
 		return (String) json.get("user_id");
 	}
 	
-	public static void main(String args[]) throws IOException{
-		InternetRT irt = new InternetRT();
-	    String appID = "494c22aa-9dc9-41c8-8602-cedf64d793c1";
-		String appSecret ="99c0e983-41bb-436d-b2ab-5f8ffa77986a";
-			try {
-				InternetRTConfig config = new InternetRTConfig();
-
-				config.updatePropertiy("appID", appID);
-				config.updatePropertiy("appSecret",
-						appSecret);
-				config.updatePropertiy("redirect_URI",
-						"http://127.0.0.1:9001/Application/loginUser"); //Play 1.0 and Play 2.0 will conflict on session, if domain is same & port is different
-				config.updatePropertiy("baseURL", "http://localhost:9000");
-				config.updatePropertiy("accessTokenURL",
-						"http://localhost:9000/oauth/accesstoken");
-				config.updatePropertiy("routingInstanceURl",
-						"http://localhost:9000/oauth/workflow");
-				config.updatePropertiy("authorizeURL",
-						"http://localhost:9000/oauth/authorize");
-			
-				irt = InternetRT.create(config);
-			} catch (Exception e) {
-				System.out.println("Internet Runtime Creation Failure!");
-				e.printStackTrace();
+	public String getAccessTokenByRoutingInstanceID(String rid){
+		try{
+			return setAccessTokenWithCode(getAuthCodeByRoutingInstanceID(rid));
+		} catch(Exception e){
+			return "Routing Instance ID Err";
 		}
-		Map<String,String> map = new HashMap();
-		map.put("message", "value");
-		String token = irt.setAccessTokenWithCode("066486c6-b6fc-4d60-9015-ad9a3052fcbb");
-		irt.send(token, "updateStatus", map);
 	}
+
+
 }

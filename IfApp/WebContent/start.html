@@ -7,7 +7,7 @@
     <meta http-equiv="description" content="this is my page">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
-    
+    <link type="text/css" rel="stylesheet" media="screen" href="ScriptEditor.css">
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
     
 <script>
@@ -15,13 +15,13 @@ var result;
 var apps;
 var triggerChannel;
 var actionChannel; 
+var actionChannels;
 var trigger;
 var signals = new Array();
 var appsByTri = [];
 
 function accessToken()
 {
-	alert("START");
 	$.ajax({
 		url:'GetAppsServlet',
 		type: 'GET',
@@ -68,13 +68,14 @@ function choose_trigger()
 {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 	var html = "";
 	for(var i = 0; i< signals.length; i++)
-	{
-		html +='<div>'+'<a href="#" onclick="choose_trigger_id('+i+')">'
+	{						
+		html +='<h2>'+'<a href="#" onclick="choose_trigger_id('+i+')">'
 						+signals[i].signalName
-					+'</a>'+'</div>';
-		html +='<div>'+signals[i].signalDescription+'<div>';
+					+'</a>'+'<br/>'
+					+signals[i].signalDescription+'</h2>';
 	}
-		$("#choose_trigger").html(html);
+		$("#trigger_select_gen").html(html);
+		$("#trigger_select").show();
 }
 
 function choose_trigger_id(id)
@@ -82,6 +83,28 @@ function choose_trigger_id(id)
 	trigger = signals[id].signalName;
 	getTriggerChannels(trigger);
 	render_triggerChannels();
+	triggerChannelMoreApps();
+	getActionChannels();
+}
+
+function getActionChannels()
+{
+	var params={
+			'trigger':trigger,
+	}
+	$.ajax({
+		url:'GetActionServlet',
+		type: 'POST',
+		data: params,
+		dataType: 'json',
+		success : function(data)
+		{
+			result = eval(data);
+			actionChannels = result.applications;
+		}
+	
+	}
+			)
 }
 
 function getTriggerChannels(trigger){
@@ -109,46 +132,46 @@ function render_triggerChannels()
 	
 	for(var i = 0; i< appsByTri.length; i++)
 	{
-	
-		html += '<a onclick="choose_triggerChannel_id('+i+')">'
-						+'<img src="'+ "images/"+appsByTri[i].appName+"_logo.jpg" +'">'
+		html += '<a class="channel-list_icon" onclick="choose_triggerChannel_id('+i+')">'
+						+'<img class="channel-list_icon_img" src="'+ "images/"+appsByTri[i].appName+"_logo.jpg" +'">'
+						+appsByTri[i].appName
 					+'</a>';
 	}
-		$("#choose_triggerChannel").html(html);
+		$("#trigger_channel_gen").html(html);
+		$("#trigger_channel_select").show();
 }
 
 function choose_triggerChannel_id(id)
 {
 	triggerChannel = appsByTri[id].appID;
-	alert(triggerChannel);
 	render_actionChannels();
+	actionChannelMoreApps();
 }
 
 function render_actionChannels()
 {
 	var html = "";
 	
-	for(var i = 0; i< apps.length; i++)
+	for(var i = 0; i< actionChannels.length; i++)
 	{
-		html += '<a onclick="choose_actionChannel_id('+i+')">'
-						+'<img src="'+ "images/"+apps[i].appName+"_logo.jpg" +'">'
+		html += '<a class="channel-list_icon" onclick="choose_actionChannel_id('+i+')">'
+						+'<img class="channel-list_icon_img"  src="'+ "images/"+actionChannels[i].appName+"_logo.jpg" +'">'
+						+actionChannels[i].appName
 					+'</a>';
 	}
-		$("#choose_actionChannel").html(html);
-	
+		$("#action_channel_gen").html(html);
+		$("#action_channel_select").show();
 }
 
 function choose_actionChannel_id(id)
 {
-	actionChannel = apps[id].appID;
-	alert(actionChannel);
+	actionChannel = actionChannels[id].appID;
 	genRouting();
 }
 
 
 function genRouting() 
 {	
-	alert("SUBMIT")
 	var params={
 			'trigger':trigger,
 			'triggerChannel':triggerChannel,
@@ -161,7 +184,6 @@ function genRouting()
 		dataType: 'json',
 		success : function(data)
 		{
-			alert("SUCCESS");
 			result = eval(data);
 			routing = result.routingXml;
 			var r = confirm(routing);
@@ -187,25 +209,104 @@ function restoreRouting(data)
 		dataType: 'json',
 		success : function()
 		{
-			alert("SUCCESS");
+			window.location.href="http://localhost:8080/IfApp/start.html";
 		}
 	
 	}
 			)
 }
+
+function triggerChannelMoreApps()
+{
+	var html = "";
+	html += '<a target="_blank" href="http://localhost:9000/signal/client/extendSignal?signalname='
+			+trigger+'&format=browserredirect">Install more apps</a><br/>';
+	$("#triggerChannelMoreApps").html(html);
+}
+
+function actionChannelMoreApps()
+{
+	var html = "";
+	html += '<a target="_blank" href="http://localhost:9000/signal/client/extendSignal?signalname='
+			+trigger+'&format=browserredirect">Install more apps</a><br/>';
+	$("#actionChannelMoreApps").html(html);
+}
 </script>
 
 </head>
-<body onload = accessToken()>
-	
-	<div id = "choose_trigger">	
-	</div>
-	
-	<div id = "choose_triggerChannel">
-	</div>
+<body>
+<div class="l-all-but-footer">
+	<header class = "l-header">
+		<div class = "l-page-header">
+			<div class="l-page-header-inner">
+				<h1 class="homepage-title">
+				Cusomize the connnection of the internet just for youself.
+				<br>
+				</h1>
+			</div>
+		</div>
+	</header>
+	<div class = "l-page-content">
+		<div id="start" class="build_size">
+			<div class="is-dimmable">
+			<a onclick="accessToken(); return false;" href="#">start</a>
+			</div>
+		</div>
+		<div id="statement_create" style="height: 1935px;">
+			<div id="new_statement" class="form">
+				<div id="trigger_select" style="display: none">
+					<div class="is-dimmable">
+						<h2 class="composer_section_header">
+							Choose Trigger 
+							<span class="composer_section_step">step 1 of 3</span>
+						</h2>
+						
+						<p class="composer_section_description">
+							Showing all signals.
+						</p>
+						<div id = "trigger_select_gen" class="channel-list">
+						</div>
+					</div>
+				</div>
+				
+				<div id="trigger_channel_select" style="display: none">
+					<div class="is-dimmable">
+						<h2 class="composer_section_header">
+							Choose Trigger Channel
+							<span class="composer_section_step">step 2 of 3</span>
+						</h2>
+						<div id = "triggerChannelMoreApps">
+						</div>
+						<p class="composer_section_description">
+							Showing Applications that can send this signal.
+						</p>
+						<div id = "trigger_channel_gen" class="channel-list">
+							
+						</div>
+					</div>
+				</div>
+				
+				<div id="action_channel_select" style="display: none">
+					<div class="is-dimmable">
+						<h2 class="composer_section_header">
+							Choose Action Channel
+							
+							<span class="composer_section_step">step 3 of 3</span>
+						</h2>
+						<div id = "actionChannelMoreApps">
+						</div>
+						<a class="btn-back" href="#"> back </a>	
+						<p class="composer_section_description">
+							Showing Applications that can receive this signal.
+						</p>
+						<div id = "action_channel_gen" class="channel-list">
 		
-	<div id = "choose_actionChannel">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
-	
+</div>
 </body>
 </html>

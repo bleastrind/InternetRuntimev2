@@ -5,7 +5,7 @@ import org.internetrt.core.signalsystem.Signal
 import org.internetrt.core.InternetRuntime
 trait CheckedStatus{}
 case class NoRequestListener(signal:scala.xml.Node) extends CheckedStatus{}
-case class OkState(requestRouting:Routing, requestListenerID:String) extends CheckedStatus{}
+case class OkState(requestRouting:Routing, requestListener:scala.xml.Node) extends CheckedStatus{}
 case class OptionMissingState(options:Map[String,Seq[scala.xml.Node]]) extends CheckedStatus{}
 
 	trait WorkflowEngine {

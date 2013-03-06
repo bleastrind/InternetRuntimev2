@@ -11,7 +11,12 @@ import weibo4j.org.json.JSONException;
 import weibo4j.org.json.JSONObject;
 import weibo4j.util.WeiboConfig;
 
-public class Trend {
+public class Trend extends Weibo{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 903299515334415487L;
 
 	/*----------------------------话题接口----------------------------------------*/
 	/**
@@ -28,7 +33,7 @@ public class Trend {
 	 */
 	public List<UserTrend> getTrends(String uid) throws WeiboException {
 		return UserTrend
-				.constructTrendList(Weibo.client.get(
+				.constructTrendList(client.get(
 						WeiboConfig.getValue("baseURL") + "trends.json",
 						new PostParameter[] { new PostParameter("uid", uid) }));
 	}
@@ -50,7 +55,7 @@ public class Trend {
 	public List<UserTrend> getTrends(String uid, Paging page)
 			throws WeiboException {
 		return UserTrend
-				.constructTrendList(Weibo.client.get(
+				.constructTrendList(client.get(
 						WeiboConfig.getValue("baseURL") + "trends.json",
 						new PostParameter[] { new PostParameter("uid", uid) }, page));
 	}
@@ -70,7 +75,7 @@ public class Trend {
 	 * @since JDK 1.5
 	 */
 	public JSONObject isFollow(String trend_name) throws WeiboException {
-			return Weibo.client.get(WeiboConfig.getValue("baseURL")+ "trends/is_follow.json",
+			return client.get(WeiboConfig.getValue("baseURL")+ "trends/is_follow.json",
 							new PostParameter[] { 
 				new PostParameter("trend_name", trend_name) }).asJSONObject();
 	}
@@ -90,12 +95,12 @@ public class Trend {
 	 * @since JDK 1.5
 	 */
 	public List<Trends> getTrendsHourly() throws WeiboException {
-		return Trends.constructTrendsList(Weibo.client.get(
+		return Trends.constructTrendsList(client.get(
 				WeiboConfig.getValue("baseURL") + "trends/hourly.json"));
 	}
 	
 	public List<Trends> getTrendsHourly(Integer base_app) throws WeiboException {
-		return Trends.constructTrendsList(Weibo.client.get(
+		return Trends.constructTrendsList(client.get(
 				WeiboConfig.getValue("baseURL") + "trends/hourly.json",
 				new PostParameter[] { new PostParameter("base_app", base_app.toString()) }));
 	}
@@ -114,12 +119,12 @@ public class Trend {
 	 * @since JDK 1.5
 	 */
 	public List<Trends> getTrendsDaily() throws WeiboException {
-		return Trends.constructTrendsList(Weibo.client.get(
+		return Trends.constructTrendsList(client.get(
 				WeiboConfig.getValue("baseURL") + "trends/daily.json"));
 	}
 	
 	public List<Trends> getTrendsDaily(Integer base_app) throws WeiboException {
-		return Trends.constructTrendsList(Weibo.client.get(
+		return Trends.constructTrendsList(client.get(
 				WeiboConfig.getValue("baseURL") + "trends/daily.json",
 				new PostParameter[] { new PostParameter("base_app", base_app
 						.toString()) }));
@@ -140,12 +145,12 @@ public class Trend {
 	 * @since JDK 1.5
 	 */
 	public List<Trends> getTrendsWeekly() throws WeiboException {
-		return Trends.constructTrendsList(Weibo.client.get(
+		return Trends.constructTrendsList(client.get(
 				WeiboConfig.getValue("baseURL") + "trends/weekly.json"));
 	}
 	
 	public List<Trends> getTrendsWeekly(Integer base_app) throws WeiboException {
-		return Trends.constructTrendsList(Weibo.client.get(
+		return Trends.constructTrendsList(client.get(
 				WeiboConfig.getValue("baseURL") + "trends/weekly.json",
 				new PostParameter[] { new PostParameter("base_app", base_app.toString()) }));
 	}
@@ -165,7 +170,7 @@ public class Trend {
 	 * @since JDK 1.5
 	 */
 	public UserTrend trendsFollow(String trend_name) throws WeiboException {
-		return new UserTrend(Weibo.client.post(WeiboConfig.getValue("baseURL")
+		return new UserTrend(client.post(WeiboConfig.getValue("baseURL")
 				+ "trends/follow.json",
 				new PostParameter[] { new PostParameter("trend_name",
 						trend_name) }));
@@ -186,7 +191,7 @@ public class Trend {
 	 * @since JDK 1.5
 	 */
 	public JSONObject trendsDestroy(Integer trend_id) throws WeiboException {
-			return Weibo.client.post(WeiboConfig.getValue("baseURL")
+			return client.post(WeiboConfig.getValue("baseURL")
 							+ "trends/destroy.json",
 							new PostParameter[] { new PostParameter("trend_id",trend_id.toString()) }).asJSONObject();
 	}

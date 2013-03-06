@@ -1,6 +1,7 @@
 package com.yourdomain.webcanvas;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,14 +14,25 @@ public class messageReciver extends HttpServlet {
 	// private Map<String,UserSpace> map = ApiInitListener.feedstub.map;
 	protected void doGet(HttpServletRequest request,
 		HttpServletResponse response) {
-		String Message = request.getParameter("message");
+		try{
+		String Message = URLDecoder.decode(request.getParameter("message"));
 		String rid = request.getParameter("rid");
-		System.out.println(rid);
-		InternetRT irt = config.properties.irt;
-		String userid = irt.getUserIdByToken(irt.setAccessTokenWithCode(irt.getAuthCodeByRoutingInstanceID(rid)));
-		System.out.print("userid" + userid);
-		UserSpace us = ApiInitListener.User.get(userid);
-		System.out.print(us.getSessionKey());
-		ApiInitListener.feedstub.publish(Message, us.getSessionKey());
+		String from = URLDecoder.decode(request.getParameter("from"));
+		if (!from.equals("renren")){
+			System.out.println("[messageReciver : doGet]: "+"rid: "+rid);
+			InternetRT irt = config.properties.irt;
+			String userid = irt.getUserIdByToken(irt.setAccessTokenWithCode(irt.getAuthCodeByRoutingInstanceID(rid)));
+			System.out.print("[messageReciver : doGet]: "+"userid: " + userid);
+
+			UserSpace us = ApiInitListener.User.get(userid);
+			if (us!=null){
+				us.message.add(Message);
+				System.out.print("[messageReciver : doGet]: "+"userSessionKey: "+us.getSessionKey());
+				ApiInitListener.feedstub.publish(Message, us.getSessionKey());
+			}
+		}
+		} catch(Exception err){
+			System.out.println(err);
+		}
 	}
 }

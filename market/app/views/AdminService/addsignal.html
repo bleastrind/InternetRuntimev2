@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+#{extends 'main.html' /}
+<html>
+<head>
+    <title>Add Signal</title>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="../../../public/javascripts/jquery-ui-1.8.22.custom.min.js"></script>
+    <script>
+        $(function(){
+            $("#send").click(function(){
+                alert(123);
+                 var irturl = "http://localhost:9000";
+                 var xml ='<?xml version=\"1.0\" encoding=\"UTF-8\"?><Signal>'+"<name>"+$("input[name='signalname']").val()+"</name>"+"<vars>"
+                 var vars = $("input[name='vars']").val();
+                 var t = ""
+                 for (var i = 0 ;i<= vars.length;i++){
+                 var tmp  =  vars.charAt(i);
+                 if(tmp!=','){
+                 t += tmp;
+                 }else{
+                 xml+='<var><key>'+t+'</key></var>';
+                 t = '';
+                 }
+                 }
+                 xml+='<var><key>'+t+'</key></var>';
+                 xml+= '</vars>	<description>'+$("input[name='description']").val()+'</description></Signal>';
+
+                  alert(xml);
+                 $.post(irturl+"/signal/register/"+$("input[name='signalname']").val(),{ xml :xml},function(data){
+                    if (data=="true") {
+                        window.location.href="addapp";
+                    } else{
+                        alert("err");
+                    }
+                 })
+            });
+        })
+
+    </script>
+</head>
+<body>
+    <label>Signal Name</label><input name="signalname"><br/>
+    <label>Vars</label><input name="vars"><br/>
+    <label>Description</label><input name="description"><br/>
+
+    <button id="send">submit</button>
+</body>
+</html>

@@ -1,35 +1,80 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
-
 <html>
+<head>
+<link type="text/css" rel="stylesheet" href="/public/css/map.css">
+<link type="text/css" rel="stylesheet" href="/public/css/market.css">
+<style type="text/css">
+body.test1 {margin:20px auto;text-align:center;}
+table {border:1px solid blue; width:800px;padding-left: 1cm;align=center;margin: auto;}
+th,td {border:1px solid blue }
+</style>
+</head>
+<body class="test1">
+<div id="map" style="height: 550px; width: 792px; position:relative ;left:5%; margin: 3px">
+	<img class="background" src = "/public/sky.jpg" style = "opacity: 0.55">
+	<img>
+	<div id="you" class = 'you' style="height: 40px; width: 70px; position:absolute ;left:370px;top:390px;">
+		YOU
+	</div>
+	<div id = "routings">
+	#{list items:choices, as: 'choice'}	
+	<div signalname=${choice.signalName} signalAppName=${choice.signalAppName}  listenerAppName=${choice.listenerAppName}>
+		
+	</div>
+	#{/list}
+	</div>
+	
+ 	#{list items:applist, as:'app'}
+	<div class="appitem" id=${app.name} style="height: 70px; width: 70px; position:absolute ;overflow: hidden;display: none">
+		<img class = "apptitle" src = ${app.logourl} style="position:absolute ;left:10px;top:10px;width:50px;height:50px;">
+		</img>
+		<div class = "apptitle" style="position:absolute ;left:70px;top:14px;">
+			<a style="position:absolute ;left:8px;top:7px" href="${app.installUrl}">${app.name}</a>
+		</div>
+		<div class = "appscore" style="position:absolute ;left:10px;top:80px; width:350px">
+			Decription : ${app.decription}
+		</div>
+	</div>
+    #{/list}
+	</div>
 #{if applist.size()}
 	<h1>Your apps are:</h1>
-	<table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>information</th>
-				<th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            #{list items:applist, as:'app'}
-                <tr>
-                    <td>${app.name}</td>
-                    <td>${app.information}</td>
-                    <td>
-                        <a href="@{AppController.deleteUserApp(app)}">Delete The App</a>
-                    </td>
-                </tr>
-            #{/list}
-        </tbody>
-    </table>
+	<a href="http://localhost:8080/IfApp/accessTokenServlet">config your apps</a>
+     <div id="applist">
+ 	#{list items:applist, as:'app'}
+		
+	<div class="appitem" style="height: 70px; width: 792px; position:relative ;left:5%; margin: 3px; overflow: hidden ">
+		<img class = "apptitle" src = ${app.logourl} style="position:absolute ;left:10px;top:10px;width:50px;height:50px">
+		</img>
+		<div class = "apptitle" style="position:absolute ;left:70px;top:21px;">
+			<a style="position:absolute ;left:8px;top:7px" href="${app.installUrl}">${app.name}</a>
+		</div>
+		<div class = "appowner" style="position:absolute ;left:633px;top:49px;">
+			Owner : somebody
+		</div>
+		<div class = "appscore" style="position:absolute ;left:633px;top:21px;">
+			Score : 10.0
+		</div>
+		<div class = "appscore" style="position:absolute ;left:70px;top:80px; width:600px">
+			Decription : ${app.decription}
+		</div>
+		<div class = "appitem" style="position:absolute ;left:633px;top:120px; width:100px;height:30px">
+			<a style="position:absolute ;left:8px;top:7px" href="@{AppController.listApp(app)}">Install Now!</a>
+		</div>
+	</div>
+    #{/list}
+	</div>
 #{/if}
 #{else}
     <h3>You have got no app!<h3>
 #{/else}
 
-<div>
+<div style="margin:20px;">
 	<a href="@{AppController.listAllApps()}">Add More!</a>
 </div>
+<script>
+	document.body.appendChild(document.createElement('script')).src='/public/javascripts/map.js';
+</script>
+</body>
 </html>

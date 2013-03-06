@@ -7,6 +7,8 @@ import play.mvc.*;
 import java.util.*;
 
 import org.internetrt.sdk.util.AppXmlParser;
+import org.internetrt.sdk.util.DescribedListenerConfig;
+import org.internetrt.sdk.util.Signal;
 
 import models.*;
 
@@ -18,6 +20,13 @@ public class AdminController extends Controller {
 	
     public static void welcome() {   
 		List<App> applist = AppService.getAllApps();
+		List<App> apps = new ArrayList();
+		//Boolean flag = AppService.market(getAccessToken());
+		for (App app:applist){
+			AppXmlParser parser = new AppXmlParser(app.getInformation());
+			List<Signal> signals = parser.getSignals();
+			app.setDecription(parser.getDescription());
+		}
         render("AdminService/welcome.html", applist);
 		//return ok(AdminService.welcome.render(applist));
     }
@@ -44,12 +53,21 @@ public class AdminController extends Controller {
     	Map<String,String> map = AdminService.appregister();
     	String id = map.get("id");
     	String secret = map.get("secret");
-        render("AdminService/addApp.html",id,secret);
+    	StringBuffer signalsbuf = new StringBuffer();
+    	for(String signal:SignalDefService.getSignalDefs()){
+    		signalsbuf.append("'"+signal+"',");
+    	}
+    	String signaldefs = "[" + signalsbuf + "]";
+        render("AdminService/addApp.html",id,secret,signaldefs);
+    }
+    
+    public static void addsignal(){
+    	render("AdminService/addsignal.html");
     }
     
     public static void addAppSave(String id,String name, String AccessRequest, String installUrl,String email,String updated,String updateUrl,String secret)
     {
-    	System.out.println("listener"+Controller.request.params.get("ListenerSignalname0"));
+    	System.out.println("listener"+Controller.request.params.getAll("ListenerSignalname0"));
     	String information = "<Application><Name>"+name+"</Name><AppID>"+id +
     			"</AppID><AccessRequests><AccessRequest>"+AccessRequest+"</AccessRequest></AccessRequests></Application>";
     	System.out.println("id:"+id+"secret:"+secret+"information:"+information);
@@ -66,10 +84,13 @@ public class AdminController extends Controller {
         render("AdminService/addAppXml.html",id,secret);
     }
     
-    public static void addAppSaveXml(String id, String information,String secret)
+    public static void addAppSaveXml(String id, String information,String secret,String email,String installUrl,String updateurl, String logourl)
     {
     	AppXmlParser parser = new AppXmlParser(information);
-    	AdminService.addAppSave(id,parser.getAppName(), information, "123","123","123","123",secret);
-        welcome();
+    	if (!"".equals(updateurl)&&updateurl!=null) 
+    		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"true",updateurl,secret, logourl);
+    	else 
+    		AdminService.addAppSave(id,parser.getAppName(), information, installUrl,email,"false","",secret, logourl);
+    	welcome();
     }
 }

@@ -110,6 +110,7 @@
   	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/renren/lib"/>
   	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/weibo/WebRoot/WEB-INF/lib"/>
   	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/weibo/lib"/>
+  	  <copy file="${dist.root}/${project}-${version}.jar" todir="${build.dir}/IfApp/WebContent/WEB-INF/lib"/>
   </target>
 	
   <target name="jar" depends="compile">

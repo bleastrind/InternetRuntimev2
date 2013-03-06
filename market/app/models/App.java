@@ -14,9 +14,10 @@ public class App {
 	private String updated;
 	private String updateUrl;
 	private String secret;
- 
+	private String decription;
+	private String logourl;
 	//Construcors	
-	public App(String id, String name, String information, String installUrl,String updated,String updateUrl,String secret)
+	public App(String id, String name, String information, String installUrl,String updated,String updateUrl,String secret, String logourl)
 	{
 		this.id = id;
 		this.name = name;
@@ -25,10 +26,15 @@ public class App {
 		this.updated = updated;
 		this.updateUrl = updateUrl;
 		this.secret = secret;
+		this.logourl = logourl;
 	}
 	
 	
 	//Property accessors	
+	public String getLogourl()
+	{
+		return this.logourl;
+	}	
 	public String getId()
 	{
 		return this.id;
@@ -90,5 +96,13 @@ public class App {
 	public String getSecret()
 	{
 		return this.secret;
+	}
+	
+	public String getDecription(){
+		return this.decription;
+	}
+	
+	public void setDecription(String decription){
+		this.decription = decription;
 	}
 }

@@ -3,6 +3,7 @@ import org.internetrt.persistent._
 import org.internetrt.core.signalsystem.workflow._
 import org.internetrt.core.I18n
 import org.internetrt.core.model.RoutingInstance
+import org.internetrt.exceptions.ConfigNotPreparedException
 
 abstract class SignalSystemImpl extends SignalSystem {
 
@@ -28,7 +29,14 @@ abstract class SignalSystemImpl extends SignalSystem {
   def initActionOptions(s: Signal, options: Map[String, String]): Map[String, Seq[scala.xml.Node]] = {
     workflowEngine.checkStatus(getRouting(s), options) match {
       case OptionMissingState(s) => s
-      case _ => Map.empty
+      case OkState(_,node) =>{
+        System.out.println("[SignalSystemImpl:initActionOptions]:"+"already OK")
+        Map("uniqueListener" -> node)
+      }
+      case NoRequestListener(_) => {
+        System.out.println("[SignalSystemImpl:initActionOptions]:"+"No requestListener,no need")
+        Map.empty
+      }
     }
   }
 
@@ -38,9 +46,9 @@ abstract class SignalSystemImpl extends SignalSystem {
     		 System.out.println("xml"+ins.toString())
       return new ObjectResponse(ins.xml)
     } catch {
-      case e:Exception => {
-        e.printStackTrace()
-        new RejectResponse(I18n.REJECT)
+      case e:ConfigNotPreparedException => {
+        //e.printStackTrace()
+        new RejectResponse(I18n.REJECT+":" + e + " " + e.getMessage())
       }
     }
   }
@@ -52,7 +60,13 @@ abstract class SignalSystemImpl extends SignalSystem {
   }
 
   private def getRouting(s: Signal) = {
-    confSystem.getRoutingsBySignal(s)
+    assert(s != null)
+    val routings = confSystem.getRoutingsBySignal(s)
+    System.out.println("[SignalSystemImpl:getRouting]:"+routings)
+    System.out.println("[SignalSystemImpl:getRouting]:"+s)
+    if(routings == null || routings.size < 1)
+      throw new ConfigNotPreparedException("Signal:" + s);
+    routings
   }
 
 } 

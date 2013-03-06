@@ -40,9 +40,11 @@ GET		/clients/login			org.internetrt.driver.userinterface.BrowserBaseClientInput
 GET		/clients/register		org.internetrt.driver.userinterface.BrowserBaseClientInputs.register
 #installApp
 GET		/clients/installapp		org.internetrt.driver.userinterface.BrowserBaseClientInputs.installRootApp
+
+
+
 #confirm routing
 POST		/clients/confirmrouting	   org.internetrt.driver.userinterface.BrowserBaseClientInputs.confirmRouting
-
 #Configurition API 
 GET		/config/apps                           org.internetrt.driver.ConfigController.appsList
 GET		/config/apps/:id                       org.internetrt.driver.ConfigController.appDetail(id: String)
@@ -55,7 +57,10 @@ GET		/oauth/authorize						org.internetrt.driver.userinterface.OAuthAPI.authoriz
 GET		/oauth/accesstoken						org.internetrt.driver.OAuthAPI.token
 GET		/oauth/workflow							org.internetrt.driver.OAuthAPI.authorizebyworkflow
 GET		/oauth/getuserid/:accessToken			org.internetrt.driver.OAuthAPI.getUserIdByToken(accessToken :String)
+#install when authorize
+POST	/clients/install						org.internetrt.driver.userinterface.OAuthAPI.install
 
 #Auth
 GET		/auth/appregister		org.internetrt.driver.AppRegister.register
-
+#queryApp
+GET		/public/queryapp		org.internetrt.driver.AppRegister.queryApp

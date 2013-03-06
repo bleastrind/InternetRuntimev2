@@ -2,6 +2,7 @@ package org.internetrt.sdk.util
 import scala.xml.XML
 import scala.xml.Node
 import scala.xml.NodeSeq
+import org.internetrt.sdk.exceptions.FormatErrorException
  
 class RoutingGenerator (signalXmlString:String, appXmlString:String){
   
@@ -12,7 +13,7 @@ class RoutingGenerator (signalXmlString:String, appXmlString:String){
 	  val signalNode =  generateSignalNode(signal, from, to, userID)
 	  val RequestListenerNodes  =  generateRequestListenerNodes()
 	  val EventListenerNodes = appXml \ "SignalHanlders" \ "EventListener"
-	  (<Routing id = "{routingID}">
+	  (<Routing id = {"\""+routingID+"\""}>
 	      {signalNode}{RequestListenerNodes}{EventListenerNodes}
 	     </Routing>).toString()
 	}
@@ -20,18 +21,27 @@ class RoutingGenerator (signalXmlString:String, appXmlString:String){
 	private def generateSignalNode(signalName:String, from:String, to:String, userID:String): NodeSeq = 
 	{
 	  val signalNode = 
-	    <signal>
+	    <Signal>
 		  	<from>{from}</from>
-	  		<user>{userID}</user>
 	  		<name>{signalName}</name>
 	  		{  (signalXml \ "vars" )}
-	  		</signal>
+	  		</Signal>
 	 scala.xml.NodeSeq.fromSeq(signalNode)
 	}
 	
 	def generateRequestListenerNodes() = {
 		scala.xml.NodeSeq.fromSeq( (appXml \ "SignalHanlders" \ "RequestListener" map{  (RequestListener) =>
-		   RequestListener filter(RequestListener => ( RequestListener \ "Adapter" \ "Signalname").text == (signalXml \ "name").text) 
+		  val signalName = ( RequestListener \ "Adapter" \ "Signalname").text
+		    if (signalName == null || signalName == "")
+		  {
+			  throw new FormatErrorException("Error in App Xml: RequestListener.Adapter.Signalname not set!");
+		  }
+		  val signal = (signalXml \ "name").text
+		  if (signal == null || signal == "")
+		  {
+			  throw new FormatErrorException("Error in Signal Xml: signal Xml signalName not set!");
+		  }
+		   RequestListener filter(RequestListener => signalName == signal) 
 	    }).flatten)
 	}
 	
@@ -39,6 +49,6 @@ class RoutingGenerator (signalXmlString:String, appXmlString:String){
 
 object FreeRoutingGenerator{
   	def generateRouting(signalname:String,appid:String,listener: ListenerConfig):String = {
-	  <Routing><signal><from>{appid}</from><name>{signalname}</name></signal>{listener.node}</Routing> toString
+	  <Routing><Signal><from>{appid}</from><name>{signalname}</name></Signal>{listener.node}</Routing> toString
 	}
 }

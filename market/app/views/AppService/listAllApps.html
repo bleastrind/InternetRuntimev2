@@ -1,38 +1,78 @@
 #{extends 'main.html' /}
 <html>
+<head>
+<link type="text/css" rel="stylesheet" href="/public/css/market.css">
+<style type="text/css">
+body.test1 {margin:20px auto;text-align:center;}
+table {border:1px solid blue; width:800px;padding-left: 1cm;align=center;margin: auto;}
+th,td {border:1px solid blue }
+</style>
+</head>
+<body class="test1">
 
-#{if !flag}
-	<a href="javascript:void(document.body.appendChild(document.createElement('script')).src='http://localhost:9000/assets/client/installRootApp.js');">Install Market</a>
-	#{/if}
 #{if applist.size()}
 	<h1>There are the apps:</h1>
-	<table>
-        <thead>
-            <tr>
+	<div id="applist">
+ 	#{list items:applist, as:'app'}
+		
+	<div class="appitem" style="height: 70px; width: 792px; position:relative ;left:5%; margin: 3px; overflow: hidden ">
+		<img class = "apptitle" src = ${app.logourl} style="position:absolute ;left:10px;top:10px;width:50px;height:50px">
+		</img>
+		<div class = "apptitle" style="position:absolute ;left:70px;top:21px;">
+			<a style="position:absolute ;left:8px;top:7px" href="${app.installUrl}">${app.name}</a>
+		</div>
+		<div class = "appowner" style="position:absolute ;left:633px;top:49px;">
+			Owner : somebody
+		</div>
+		<div class = "appscore" style="position:absolute ;left:633px;top:21px;">
+			Score : 10.0
+		</div>
+		<div class = "appscore" style="position:absolute ;left:70px;top:80px; width:600px">
+			Decription : ${app.decription}
+		</div>
+		<div class = "appitem" style="position:absolute ;left:633px;top:120px; width:100px;height:30px">
+			<a style="position:absolute ;left:8px;top:7px" href="@{AppController.listApp(app)}">Install Now!</a>
+		</div>
+		<div style="position:absolute;left:663px;top:25px;">
+			<span class="ui-icon ui-icon-circle-triangle-s"></span>
+		</div>
+	</div>
+    #{/list}
+	</div>
+
+<!--
+	<table border:1px solid blue>
+		<tr>
                 <th>Name</th>
-                <th>information</th>
-				<th>Action</th>								
-            </tr>
-        </thead>
-        <tbody>
+                <th>decription</th>
+		<th>Action</th>	
+		</tr>							
             #{list items:applist, as:'app'}
+		
                 <tr>
-                    <td>${app.name}</td>
-                    <td>${app.information}</td>
-                    <td>
+                    <td width:100px; height:100px;overflow:hidden>${app.name}</td>
+                    <td border:1px solid blue; width:200px; height:100px;overflow:hidden>${app.decription}</td>
+		    <input type="hidden" name="information" value="${app.information}">
+                    <td width:200px; height:100px;overflow:hidden>
                         <a href="@{AppController.listApp(app)}">Details View</a>
                     </td>
-					
                 </tr>
+				
             #{/list}
-        </tbody>
-    </table>	
+    </table>
+-->
 #{/if}
 #{else}
-    <h3>There are no app!<h3>
+    <h3>There are no app!</h3>
 #{/else}
 
 <div>
+	<p>
 	<a href="@{AppController.listAllApp()}">My Apps</a>
+	</p>
 </div>
+<script>
+	document.body.appendChild(document.createElement('script')).src='/public/javascripts/market.js';
+</script>
+</body>
 </html>

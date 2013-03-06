@@ -1,3 +1,4 @@
+
 if (!window.InternetRuntime)
 	window.InternetRuntime = {};
 window.InternetRuntime.UI = new function(){
@@ -17,6 +18,24 @@ window.InternetRuntime.UI = new function(){
 		div: function()
 		{
 			return document.createElement('div');
+		},
+		img: function()
+		{
+			return document.createElement('img');
+		},
+		iframe: function()
+		{
+			var obj = document.createElement('iframe');
+			obj.frameBorder = 0;
+			return obj;
+		},
+		h3: function()
+		{
+			return document.createElement('h3');
+		},
+		a: function()
+		{
+			return document.createElement('a');
 		}
 	}
 		
@@ -28,20 +47,41 @@ window.InternetRuntime.UI = new function(){
 		{},
 		first: function(obj)
 		{
-			obj.style.backgroundColor = '#DCE9F9';
-			obj.style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
-			obj.style.boxShadow = '0 1px 0 rgba(255, 255, 255, 0.8) inset';
-			obj.style.border = '1px solid #CCCCCC';
-			obj.style.borderRadius = '6px 6px 6px 6px';
+			
+			obj.Color('DCE9F9');
+			obj.DOMObject.style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
+			obj.DOMObject.style.boxShadow = '0 1px 0 rgba(255, 255, 255, 0.8) inset';
+			obj.DOMObject.style.border = '1px solid #CCCCCC';
+			obj.DOMObject.style.borderRadius = '6px 6px 6px 6px';
+		},
+		tag: function(obj)
+		{
+			
+			obj.Color('DCE9F9');
+			obj.DOMObject.style.backgroundImage = '-moz-linear-gradient(center top , #EBF3FC, #DCE9F9)';
+			obj.DOMObject.style.boxShadow = '0 1px 0 rgba(255, 255, 255, 0.8) inset';
+			obj.DOMObject.style.border = '1px solid #CCCCCC';
+			obj.DOMObject.style.borderRightStyle = 'none';
+			obj.DOMObject.style.borderRadius = '6px 0px 0px 6px';
 		},
 		item: function(obj)
 		{
-			obj.style.borderColor =  '#0879C0';
-			obj.style.borderStyle = 'solid';
-			obj.style.borderWidth = '1px';
-			obj.style.padding = '0 4px';
-			obj.style.backgroundColor = '#066099';
-			obj.style.borderRadius = '6px 6px 6px 6px';
+			obj.DOMObject.style.borderColor =  '#0879C0';
+			obj.DOMObject.style.borderStyle = 'solid';
+			obj.DOMObject.style.borderWidth = '1px';
+			//obj.DOMObject.style.padding = '0 4px';
+			
+			obj.Color('066099');
+			obj.DOMObject.style.borderRadius = '6px 6px 6px 6px';
+		},
+		wraper: function(obj)
+		{
+			obj.DOMObject.style.overflow = 'hidden';
+		},
+		hidden: function(obj)
+		{
+			obj.DOMObject.style.visibility = 'hidden';
+			obj.DOMObject.style.display = 'none';
 		}
 	};
 
@@ -89,13 +129,22 @@ window.InternetRuntime.UI = new function(){
 		this.y = y;
 		this.plus = function(d)
 		{
-			this.x = this.x + d.dx;
-			this.y = this.y + d.dy;
-			return this;
+			return new XY(this.x + d.dx, this.y + d.dy);
+		}
+		this.minus = function(d)
+		{
+			return new XY(this.x - d.dx, this.y - d.dy);
 		}
 		this.getDst = function(xy)
 		{
 			return new DXY(this.x - xy.x, this.y - xy.y)
+		}
+		this.scale = function(xs, ys)
+		{
+			if (isNotNullOrUndefined(ys))
+				return new XY(this.x * xs, this.y * ys);
+			else
+				return new XY(this.x * xs, this.y * xs);
 		}
 	}
 	//Distance between two position.
@@ -104,9 +153,12 @@ window.InternetRuntime.UI = new function(){
 	{
 		this.dx = dx;
 		this.dy = dy;
-		this.scale = function(s)
+		this.scale = function(xs, ys)
 		{
-			return new DXY(this.dx * s, this.dy * s);
+			if (isNotNullOrUndefined(ys))
+				return new DXY(this.dx * xs, this.dy * ys);
+			else
+				return new DXY(this.dx * xs, this.dy * xs);
 		}
 	}
 	
@@ -146,6 +198,61 @@ window.InternetRuntime.UI = new function(){
 				return PosXY;
 		}
 		
+		this.RightTopXY = function(xy)
+		{
+			if (isNotNullOrUndefined(xy))
+			{
+				PosXY.x = xy.x - SizeDXY.dx;
+				PosXY.y = xy.y;
+				Obj.style.left = PosXY.x + 'px';
+				Obj.style.top = PosXY.y + 'px';
+				return this;
+			}
+			else
+				return new XY(PosXY.x + SizeDXY.dx, PosXY.y);
+		}
+		this.LeftBottomXY = function(xy)
+		{
+			if (isNotNullOrUndefined(xy))
+			{
+				PosXY.x = xy.x;
+				PosXY.y = xy.y - SizeDXY.dy;
+				Obj.style.left = PosXY.x + 'px';
+				Obj.style.top = PosXY.y + 'px';
+				return this;
+			}
+			else
+				return new XY(PosXY.x, PosXY.y + SizeDXY.dy);
+		}
+		
+		this.RightBottomXY = function(xy)
+		{
+			if (isNotNullOrUndefined(xy))
+			{
+				PosXY.x = xy.x - SizeDXY.dx;
+				PosXY.y = xy.y - SizeDXY.dy;
+				Obj.style.left = PosXY.x + 'px';
+				Obj.style.top = PosXY.y + 'px';
+				return this;
+			}
+			else
+				return new XY(PosXY.x + SizeDXY.dx, PosXY.y + SizeDXY.dy);
+		}
+
+
+		
+		this.CenterXY =function(xy)
+		{
+			if (isNotNullOrUndefined(xy))
+			{
+				PosXY = xy.minus(SizeDXY.scale(0.5));
+				Obj.style.left = PosXY.x + 'px';
+				Obj.style.top = PosXY.y + 'px';
+				return this;
+			}
+			else
+				return PosXY.plus(SizeDXY.scale(0.5));
+		}
 		
 		
 		var Id = Obj.id;
@@ -180,7 +287,7 @@ window.InternetRuntime.UI = new function(){
 			if (isNotNullOrUndefined(stl))
 			{
 				Style = stl;
-				Lib_Style[Style](Obj);
+				Lib_Style[Style](this);
 				return this;
 			}
 			else
@@ -193,7 +300,7 @@ window.InternetRuntime.UI = new function(){
 			if (isNotNullOrUndefined(src))
 			{
 				Src = src;
-				Class.src = Src;
+				Obj.src = Src;
 				return this;
 			}
 			else
@@ -223,7 +330,7 @@ window.InternetRuntime.UI = new function(){
 		this.Child = function(chld)
 		{
 			Childs.push(chld);
-			Obj.appendChild(chld.DOMObject);
+			Obj.appendChild(chld.DOMObject);		
 			return this;
 		}
 		this.Childs = function(chlds)
@@ -312,6 +419,7 @@ window.InternetRuntime.UI = new function(){
 				return CallBack;
 		}
 		
+		//why this. ???
 		this.Anime = function(tween, time, func, callback)
 		{
 			var AnimeObject = this;
@@ -319,7 +427,6 @@ window.InternetRuntime.UI = new function(){
 			{					
 				func(AnimeObject, 1);
 				callback(AnimeObject);	
-				CallBack = function(){};
 				return;
 			}
 			var StartTime = new Date().getTime();
@@ -337,7 +444,6 @@ window.InternetRuntime.UI = new function(){
 				{
 					func(AnimeObject, 1);
 					callback(AnimeObject);	
-					CallBack = function(){};
 				}
 			}
 			Run();
@@ -352,6 +458,7 @@ window.InternetRuntime.UI = new function(){
 			var Move_Tween = Tween;
 			var Move_Route = Route;
 			var Move_CallBack = CallBack;
+			CallBack = function(){};
 			
 			this.Anime(Move_Tween, Move_Time, 
 				function(obj, d)
@@ -370,6 +477,7 @@ window.InternetRuntime.UI = new function(){
 			var Opacity_Time = Time;;
 			var Opacity_Tween = Tween;
 			var Opacity_CallBack = CallBack;
+			CallBack = function(){};
 			
 			this.Anime(Opacity_Tween, Opacity_Time, 
 				function(obj, d)
@@ -381,19 +489,8 @@ window.InternetRuntime.UI = new function(){
 			return this;
 		}
 		
-		var SizeDXY = new DXY(parseInt(Obj.style.width), parseInt(Obj.style.height));	
-		this.Size = function(dxy)
-		{
-			if (isNotNullOrUndefined(dxy))
-			{
-				SizeDXY = dxy;
-				Obj.style.width = SizeDXY.dx + 'px';
-				Obj.style.height = SizeDXY.dy + 'px';
-				return this;
-			}
-			else
-				return SizeDXY;
-		}
+		//var SizeDXY = new DXY(parseInt(Obj.style.width), parseInt(Obj.style.height));	
+		var SizeDXY = new DXY(1, 1);	
 		
 		function ComponentSearcher(obj)
 		{
@@ -405,43 +502,89 @@ window.InternetRuntime.UI = new function(){
 			return ans;		
 		};
 		
-		function ResizeAll(objs, dxy, d)
+		function ResizeAll(objs, dxscale, dyscale, d)
 		{
-			for (var i = 0; i < objs.length; i++)		
-				Resize(objs[i], dxy, d);
+			for (var i = 0; i < objs.length; i++)
+				if (objs[i].DOMObject != Obj)
+					objs[i].Resize(dxscale, dyscale, d, true);
+				else
+					objs[i].Resize(dxscale, dyscale, d, false);
 		}
 		
-		function Resize(Obj, dxy, d)
+		this.Resize = function(dxscale, dyscale, d, posflag)
 		{
 			if (d == 1)
 			{
-				Obj.SizeDXY = dxy;
-				Obj.DOMObject.style.width = Obj.SizeDXY.dx + 'px';
-				Obj.DOMObject.style.height = Obj.SizeDXY.dy + 'px';
+				SizeDXY = SizeDXY.scale(dxscale, dyscale);
+				Obj.style.width = SizeDXY.dx + 'px';
+				Obj.style.height = SizeDXY.dy + 'px';
+				if (posflag)
+				{
+					PosXY = PosXY.scale(dxscale, dyscale);
+					Obj.style.left = PosXY.x + 'px';
+					Obj.style.top = PosXY.y + 'px';
+				}
 			}
 			else
 			{
-				Obj.DOMObject.style.width = Obj.SizeDXY.dx + (dxy.dx -  Obj.SizeDXY.dx) * d + 'px';
-				Obj.DOMObject.style.height = Obj.SizeDXY.dy + (dxy.dy -  Obj.SizeDXY.dy) * d + 'px';
+				Obj.style.width = SizeDXY.dx * (1 + (dxscale - 1) * d) + 'px';
+				Obj.style.height = SizeDXY.dy * (1 + (dyscale - 1) * d) + 'px';
+				if (posflag)
+				{
+					Obj.style.left = PosXY.x * (1 + (dxscale - 1) * d) + 'px';
+					Obj.style.top = PosXY.y * (1 + (dyscale - 1) * d) + 'px';
+				}
 			}
+		}
+				
+		
+		this.SizeOne = function(dxy)
+		{
+			if (isNotNullOrUndefined(dxy))
+			{
+				var tmp = [];
+				tmp.push(this);
+				var Resize_Objects = tmp;
+				var Resize_Time = Time;
+				var Resize_Tween = Tween;
+				var Resize_CallBack = CallBack;
+				CallBack = function(){};
+				
+				this.Anime(Resize_Tween, Resize_Time, 
+					function(obj, d)
+					{
+						ResizeAll(Resize_Objects, dxy.dx / parseFloat(SizeDXY.dx), dxy.dy / parseFloat(SizeDXY.dy), d);
+					},
+					Resize_CallBack);
+				
+				return this;
+			}
+			else
+				return SizeDXY;
 		}
 		
 		
 		this.Size = function(dxy)
 		{			
-			
-			var Resize_Objects = ComponentSearcher(this);
-			var Resize_Time = Time;
-			var Resize_Tween = Tween;
-			var Resize_CallBack = CallBack;
-			
-			this.Anime(Resize_Tween, Resize_Time, 
-				function(obj, d)
-				{
-					ResizeAll(Resize_Objects, dxy, d);
-				},
-				Resize_CallBack);
-			return this;
+			if (isNotNullOrUndefined(dxy))
+			{
+				var Resize_Objects = ComponentSearcher(this);
+				var Resize_Time = Time;
+				var Resize_Tween = Tween;
+				var Resize_CallBack = CallBack;
+				CallBack = function(){};
+				
+				this.Anime(Resize_Tween, Resize_Time, 
+					function(obj, d)
+					{
+						ResizeAll(Resize_Objects, dxy.dx / parseFloat(SizeDXY.dx), dxy.dy / parseFloat(SizeDXY.dy), d);
+					},
+					Resize_CallBack);
+				
+				return this;
+			}
+			else
+				return SizeDXY;
 		}
 		
 		var InFunc = function(){};
@@ -455,8 +598,15 @@ window.InternetRuntime.UI = new function(){
 		this.HoverIn = function(inf)
 		{
 			InFunc = inf;
-			Obj.onmouseover = function()
-			{			
+			Obj.onmouseover = function(e)
+			{		
+				testbox.value += e.target;
+				if (e.relatedTarget && checkContain(Obj, e.relatedTarget))				
+					return;				
+				if (e.target != Obj)
+					return;
+		
+		
 				MouseState = IN;
 				if (AnimeState == REST)
 				{
@@ -470,8 +620,14 @@ window.InternetRuntime.UI = new function(){
 		this.HoverOut = function(outf)
 		{
 			OutFunc = outf;
-			Obj.onmouseout = function()
-			{
+			Obj.onmouseout = function(e)
+			{	
+				
+				if (e.relatedTarget &&  checkContain(Obj, e.relatedTarget))				
+					return;			
+				if (e.target != Obj)
+					return;
+					
 				MouseState = OUT;
 				if (AnimeState == REST)
 				{
@@ -483,6 +639,7 @@ window.InternetRuntime.UI = new function(){
 		}								
 		function InFuncDone()
 		{			
+			testbox.value+= MouseState;
 			if (MouseState == OUT)
 				OutFunc(OutFuncDone);
 			else
@@ -496,24 +653,119 @@ window.InternetRuntime.UI = new function(){
 				AnimeState = REST;				
 		};	
 		
-		var DoFunc = function(){};
+		var ClickFunc = function(){};
 		this.Click = function(dof)
 		{
-			DoFunc = dof;
+			ClickFunc = dof;
 			Obj.onclick = function()
 			{			
 				if (AnimeState == REST)
 				{
-					AnimeState = RUN;
-					DoFunc(DoFuncDone);
+					if (Time != 0)
+						AnimeState = RUN;
+					ClickFunc(ClickFuncDone);
 				}
 			}		
 			return this;
 		}
-		function DoFuncDone()
+		function ClickFuncDone()
 		{				
 			AnimeState = REST;			
 		}
+		
+		var LoadFunc = function(){};
+		this.LoadFunc = function(ldfunc)
+		{
+			LoadFunc = ldfunc;
+			Obj.onload = function()
+			{							
+				LoadFunc();
+				Obj.onload = function(){};
+			}		
+			return this;
+		}
+		
+		
+		this.isContained = function(simpleobj)
+		{
+			return checkContain(simpleobj);
+		}
+		function checkContain(Obj, simpleobj)
+		{
+			var childs = Obj.childNodes;
+			if (Obj == simpleobj)
+				return true;
+			if (childs)	
+				for (var i = 0; i < childs.length; i++)
+				{
+					if (checkContain(childs[i], simpleobj))
+						return true;
+				}
+			return false;
+		}
+		
+		var BackGroundColor = "";
+		this.Color = function(clr)
+		{	
+			if (isNotNullOrUndefined(clr))
+			{
+				if (BackGroundColor == "")
+				{
+					
+					BackGroundColor = clr;
+					Obj.style.backgroundColor = '#' + BackGroundColor;
+					return this;
+				}
+				var Color_Start = BackGroundColor;
+				var Color_Time = Time;;
+				var Color_Tween = Tween;
+				var Color_CallBack = CallBack;
+				CallBack = function(){};
+				
+				this.Anime(Color_Tween, Color_Time, 
+					function(obj, d)
+					{
+						var clrH = '0x' + clr;
+						var Color_StartH = '0x' + Color_Start;
+						var B = clrH % 0x100 - Color_StartH % 0x100;
+						var G = Math.floor(clrH % 0x10000 / 0x100) - Math.floor(Color_StartH % 0x10000 / 0x100);
+						var R = Math.floor(clrH % 0x1000000 / 0x10000) - Math.floor(Color_StartH % 0x1000000 / 0x10000);
+						
+						BackGroundColor = parseInt(Color_StartH) + parseInt(d * B) 
+													  + parseInt(d * G) * 0x100
+													  + parseInt(d * R) * 0x10000;
+						BackGroundColor = BackGroundColor.toString(16);					
+						Obj.style.backgroundColor = '#' + BackGroundColor;				
+					},
+					Color_CallBack);
+				return this;
+			}
+			else
+				return BackGroundColor;
+		}
+		
+		this.Text = function(text)
+		{
+			var textnode = document.createTextNode(text);
+			Obj.appendChild(textnode);
+			return this;
+		}
+		
+		var Href = ""
+		this.Href = function(href)
+		{
+			if (isNotNullOrUndefined(href))
+			{	
+				Href = href;
+				Obj.href = href;
+				return this;
+			}
+			else
+				return Hrefl
+		}
+		this.
+		
+		
 	
 		
 	}
@@ -523,3 +775,42 @@ window.InternetRuntime.UI = new function(){
 		return new DOM_Object(Lib_SimpleObject[type]());
 	}
 };
+
+/*
+	Pos: InternetRuntime.UI.DXY(x, y)
+			plus(XY): XY
+			minus(XY): XY
+			getDst(XY): DXY		
+	Distance: InternetRuntime.UI.DXY(Int x, Int y)
+			scale(Int): DXY
+	Create: InternetRuntime.UI.Create(Lib_SimpleObject)
+	Object:	InternetRuntime.UI.DOM_Object()
+			DOMObject
+			XY(XY)
+			RightTopXY(XY)
+			LeftBottomXY(XY)
+			RightBottomXY(XY)
+			CenterXY(XY)
+			Id(String)
+			Class(String)
+			Style(Lib_Style)
+			Sec(String)
+			Father(DOM_Object)
+			WindowFather()
+			Child(DOM_Object)
+			Childs(DOM_Object[])
+			Time(Int)
+			Tween(Lib_Tween)
+			To(XY)
+			Route(Lib_Route)
+			CallBack(Function)
+			Move()
+			Opacity(Float)
+			Size(DXY)
+			HoverIn(Function(done))
+			HoverOut(Function(done))
+			Click(Function(done))
+			LoadFunc(Function())
+			Color('RRGGBB')
+			Text(String)
+*/

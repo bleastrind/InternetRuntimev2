@@ -11,6 +11,7 @@ create keyspace InternetRT_Global;
 use InternetRT_Global;
 create column family SignalDefination;
 create column family AppOwner;
+create column family GlobalApp;
 
 create keyspace InternetRuntime;
 use InternetRuntime;

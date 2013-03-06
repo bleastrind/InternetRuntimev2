@@ -1,26 +1,87 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+#{extends 'main.html' /}
+<style type="text/css">
+body{margin:auto;text-align:left;}
+</style>
 <html>
+
   <head>
     <title>recomRoutingBaseFrom.html</title>
-	
+	<link type="text/css" rel="stylesheet" href="/public/css/map.css">
     <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
     <meta http-equiv="description" content="this is my page">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
     
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
   </head>
   
-  <body onload>
- #{form @RoutingRecomController.ConfirmRecomRouting()}
+  <body>
+	<div id="map" style="height: 550px; width: 792px; position:relative ;left:5%; margin: 3px">
+	<img class="background" src = "/public/sky.jpg" style = "opacity: 0.85">
+	<img>
+	<div id="you" class = 'you' style="height: 40px; width: 70px; position:absolute ;left:370px;top:390px;">
+		YOU
+	</div>
+	<div id = "routings">
+	#{list items:choices, as: 'choice'}	
+	<div signalname=${choice.signalName} signalAppName=${choice.signalAppName}  listenerAppName=${choice.listenerAppName}>
+		
+	</div>
+	#{/list}
+	</div>
+	
+	<div id = "confirmroutings">
+	#{list items:allchoices, as: 'choice'}	
+	<div signalname=${choice.signalName} signalAppName=${choice.signalAppName}  listenerAppName=${choice.listenerAppName}>
+		
+	</div>
+	#{/list}
+	</div>
+	
+	
+ 	#{list items:applist, as:'app'}
+	<div class="appitem" id=${app.name} style="height: 70px; width: 70px; position:absolute ;overflow: hidden;display: none">
+		<img class = "apptitle" src = ${app.logourl} style="position:absolute ;left:10px;top:10px;width:50px;height:50px;">
+		</img>
+		<div class = "apptitle" style="position:absolute ;left:70px;top:14px;">
+			<a style="position:absolute ;left:8px;top:7px" href="${app.installUrl}">${app.name}</a>
+		</div>
+		<div class = "appscore" style="position:absolute ;left:10px;top:80px; width:350px">
+			Decription : ${app.decription}
+		</div>
+	</div>
+	#{/list}
+	</div>
+	
+	
+	<script>
+		document.body.appendChild(document.createElement('script')).src='/public/javascripts/map.js';
+	</script>
+	
+  <div style="padding:30px;">
+  <h1>Which connection would you like to establish.</h1>
+  #{form @RoutingRecomController.ConfirmRecomRouting()}
+  <table style="text-align:center;">
 
+   <input type="hidden" name="redirect_uri" value="${redirect_uri}"/>
+	  <tr>
+		<th>check</th>
+		<th>from</th>
+		<th>to</th>
+	  </tr>
  	#{list items:choices, as:'choice'}
-               <input type="checkbox" name="choices" value="${choice.routing}" checked/> 
-               <span alt="${choice.signalDescription}">${choice.signalName}@${choice.signalAppName}</span>:
-               <span alt="${choice.listenerDescription}">${choice.listenerAppName}<br/>
+	  <tr>
+              <td> <input type="checkbox" name="choices" value="${choice.routing}" checked/> </td>
+              <td> <span alt="${choice.signalDescription}">${choice.signalName}@${choice.signalAppName}</span></td>
+              <td> <span alt="${choice.listenerDescription}">${choice.listenerAppName}<br/> </td>
+	  </tr>
     #{/list}
+	</table>
     <input type = "submit" value = "confirm">
- #{/form}
-    
+  #{/form}
+  </div>
+ 
   </body>
 </html>

@@ -54,10 +54,10 @@ abstract class AuthCenterImpl extends AnyRef
 
   def checkApp(appID: String, appSecret: String): Unit = {
     val realEncryptedAppsecret = appOwnerPool.get(appID).getOrElse("");
-    System.out.println(realEncryptedAppsecret)
-    System.out.println(appSecret)
+    System.out.println("[AuthCenterImpl:checkApp] realEncrypted pass:"+realEncryptedAppsecret)
+    System.out.println("[AuthCenterImpl:checkApp] inputEncrypted pass:"+appSecret)
     if (realEncryptedAppsecret != Encrypt.encrypt(appSecret))
-      throw new AuthDelayException()
+      throw new AuthDelayException("App Secret don't Match!")
   }
 
   def genAuthCode(appID: String, userID: String): String = {
@@ -80,7 +80,7 @@ abstract class AuthCenterImpl extends AnyRef
    * code can be auth token
    */
   def genAccessTokenByAuthToken(authtoken: String, appID: String, appSecret: String): AccessToken = {
-
+	System.out.println("[AuthCenterImpl:genAccessTokenByAuthToken]authtoken:"+authtoken+" appID:"+appID+" appSecret:"+appSecret)
     authCodePool.get(authtoken) match {
       case Some((appID, userID)) => {
 
@@ -94,7 +94,7 @@ abstract class AuthCenterImpl extends AnyRef
         accessTokenPool.put(accessToken.value, (accessToken, appID, userID))
         accessToken
       }
-      case None => null
+      case None => throw new AccessTokenNotValiedException("Auth code not valid")
     }
   }
 
@@ -103,7 +103,7 @@ abstract class AuthCenterImpl extends AnyRef
       case Some((token, appID, userID)) => {
         userID
       }
-      case None => null
+      case None => throw new AccessTokenNotValiedException()
     }
   }
 
@@ -116,7 +116,7 @@ abstract class AuthCenterImpl extends AnyRef
       case Some((token, appID, userID)) => {
         (userID, appID)
       }
-      case None => null
+      case None => throw new AccessTokenNotValiedException()
     }
   }
 }

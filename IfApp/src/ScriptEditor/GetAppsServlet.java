@@ -31,7 +31,7 @@ public class GetAppsServlet extends HttpServlet {
      */
     public GetAppsServlet() {
         super();
-        // TODO Auto-generated constructor stub
+        // TODO Auto-generated constructor stub 
     }
 
 	/**
@@ -39,14 +39,11 @@ public class GetAppsServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		System.out.println("/GetAppsServlet+BBBBBBBBBBBBBBBBBBBB");
 		
 		InternetRT rt = config.properties.irt;
 		HttpSession session = request.getSession();
 		String accessToken = session.getAttribute("accessToken").toString();
 		List<String> appIDList  = rt.getApps(accessToken);
-		System.out.println("appsIDLIist"+appIDList);
-		
 		JSONArray applications= new JSONArray();
 		JSONObject appsObject = new JSONObject();
 		
@@ -54,7 +51,7 @@ public class GetAppsServlet extends HttpServlet {
 		{
 			String xmlString = rt.getAppDetail(str, accessToken);
 			
-			System.out.println(xmlString);
+			System.out.println("[GetAppsServlet : doGet]: "+"appXmlString"+xmlString);
 			
 			AppXmlParser appXmlParser = new AppXmlParser(xmlString);
 			
@@ -74,7 +71,6 @@ public class GetAppsServlet extends HttpServlet {
 		}
 		
 		String result = appsObject.toString();
-		System.out.println(result);
 		PrintWriter out = response.getWriter();
 		out.write(result);
 		out.flush();

@@ -40,7 +40,7 @@ public class RestoreRoutingServlet extends HttpServlet {
 		String routing = request.getParameter("routing");
 		InternetRT rt = config.properties.irt;
 		
-		System.out.println(routing);
+		System.out.println("[RestoreRoutingServlet : doPost]: "+"routingXmlString: "+routing);
 		
 		HttpSession session = request.getSession();
 		String accessToken = session.getAttribute("accessToken").toString();

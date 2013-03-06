@@ -45,9 +45,9 @@ public class GenRoutingServlet extends HttpServlet {
 		String triggerChannel = request.getParameter("triggerChannel");
 		String actionChannel = request.getParameter("actionChannel");
 		
-		System.out.println("TRIGGER: "+trigger);
-		System.out.println("TRIGGERCHANNEL: "+triggerChannel);
-		System.out.println("ACTIONCHANNEL: "+actionChannel);
+		System.out.println("[GenRoutingServlet : doPost]: "+"TRIGGER: "+trigger);
+		System.out.println("[GenRoutingServlet : doPost]: "+"TRIGGERCHANNEL: "+triggerChannel);
+		System.out.println("[GenRoutingServlet : doPost]: "+"ACTIONCHANNEL: "+actionChannel);
 		
 		InternetRT rt = config.properties.irt;
 		
@@ -57,8 +57,8 @@ public class GenRoutingServlet extends HttpServlet {
 		String signalXml = rt.getSignalDefination(trigger);
 		String appXml = rt.getAppDetail(actionChannel, accessToken);
 		
-		System.out.println("SIGNALXMLSTRING"+signalXml);
-		System.out.println("APPXML"+appXml);
+		System.out.println("[GenRoutingServlet : doPost]: "+"SIGNALXMLSTRING"+signalXml);
+		System.out.println("[GenRoutingServlet : doPost]: "+"APPXML"+appXml);
 		
 		String routingID = UUID.randomUUID().toString();
 		String userID = rt.getUserIdByToken(accessToken);

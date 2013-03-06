@@ -1,0 +1,56 @@
+#map {
+	*color : #DCE9F9;
+	*background-image : -moz-linear-gradient(center top , #0000FF, #DCE9F9);
+	*background-image : -webkit-gradient(linear,0% 0%, 0% 100%, from(#0000FF), to(#DCE9F9));
+	box-shadow : 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+	*border : 1px solid #CCCCCC;
+	border-radius : 6px 6px 6px 6px;
+	padding : 0px;
+	margin : 0px;
+	
+}
+._jsPlumb_connector{
+	z-index: 1;
+	display: none;
+}
+._jsPlumb_connector{
+	display: none;
+}
+._jsPlumb_overlay{
+	display: none;
+}
+.line{
+	color: #FF0000;
+}
+.lineHover{
+
+}
+.appitem{
+	z-index: 9;
+}
+.background{
+	border-radius : 6px 6px 6px 6px;
+}
+.you {
+	font : 40px arial;
+	text-shadow: 0px 0px 7px #FFFFFF;
+	z-index: 2;
+}
+.apptitle{
+	font : 24px arial;
+}
+.appowner{
+	font : 12px arial;
+	opacity: 0.7;
+}
+
+.appscore{
+	font : 18px arial;
+}
+.signal{
+	font : 24px arial;
+	color: #006400;
+	text-shadow: 0px 0px 5px #FFFFFF;
+	z-index: 5;
+	
+}

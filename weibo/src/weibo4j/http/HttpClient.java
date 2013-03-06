@@ -132,8 +132,7 @@ public class HttpClient implements java.io.Serializable {
 	private int maxSize;
 
 	public HttpClient() {
-		// change timeout to 2s avoid block thread-pool (Tim)
-		this(150, 2000, 2000, 1024 * 1024);
+		this(150, 30000, 30000, 1024 * 1024);
 	}
 
 	public HttpClient(int maxConPerHost, int conTimeOutMs, int soTimeOutMs,
@@ -509,4 +508,9 @@ public class HttpClient implements java.io.Serializable {
 		}
 		return statusCode + ":" + cause;
 	}
+
+	public String getToken() {
+		return token;
+	}
+	
 }

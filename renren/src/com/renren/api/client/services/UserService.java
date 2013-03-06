@@ -12,7 +12,7 @@ public class UserService extends BaseService {
 
     public UserService(RenrenApiInvoker invoker) {
         super(invoker);
-        System.out.print("My package!!!");
+        System.out.print("[UserService : UserService]: "+"My package!!!");
         // TODO Auto-generated constructor stub
     }
 

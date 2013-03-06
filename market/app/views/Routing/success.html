@@ -1,2 +1,16 @@
+#{extends 'main.html' /}
+<style type="text/css">
+body{text-align:center;}
+h1{text-align:center;}
+</style>
 <h1>Success!</h1><br/>
-<a href="@AppController.listAllApps()">Back</a>
+%{ if (redirect_uri == null || redirect_uri == ""){ }%
+
+#{form @AppController.listAllApps()}
+	<input type = "submit" value = "back">
+#{/form}
+
+%{  }else{  }%
+	<a href="${redirect_uri}" target="_blank" onclick="window.location.href='@{AppController.listAllApp()}'">next step</a>
+
+%{ } }%

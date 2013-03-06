@@ -16,7 +16,11 @@ import weibo4j.org.json.JSONException;
 import weibo4j.org.json.JSONObject;
 import weibo4j.util.WeiboConfig;
 
-public class Oauth {
+public class Oauth extends Weibo{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7003420545330439247L;
 	// ----------------------------针对站内应用处理SignedRequest获取accesstoken----------------------------------------
 	public String access_token;
 	public String user_id;
@@ -73,7 +77,7 @@ public class Oauth {
 	/*----------------------------Oauth接口--------------------------------------*/
 
 	public AccessToken getAccessTokenByCode(String code) throws WeiboException {
-		return new AccessToken(Weibo.client.post(
+		return new AccessToken(client.post(
 				WeiboConfig.getValue("accessTokenURL"),
 				new PostParameter[] {
 						new PostParameter("client_id", WeiboConfig

@@ -9,6 +9,7 @@ import java.util.*;
 
 import org.apache.commons.httpclient.HttpException;
 import org.internetrt.sdk.InternetRT;
+import org.internetrt.sdk.exceptions.ServerSideException;
 
 import config.properties;
 
@@ -17,9 +18,13 @@ import models.*;
 public class Application extends Controller {
 
     public static void index() {
-       Controller.redirect("AppController.listAllApps");
+       render();
     }
 
+    public static void logout(){
+    	session.remove("token", null);
+        AppController.listAllApp();
+    }
     public static void login() {
         render();
     }
@@ -30,11 +35,14 @@ public class Application extends Controller {
         else login();
     }
     
-    public static void loginUser(String code) throws HttpException, IOException{
-		InternetRT irt = properties.irt;
+    public static void loginUser(String code,String msg) throws HttpException, IOException,ServerSideException{
+		if (msg.equals("RootAppMustInstallFirst")) {
+			AppController.index();
+		}
+    	InternetRT irt = properties.irt;
 		String accessToken = irt.setAccessTokenWithCode(code);
 		session.put("token", accessToken);
-		System.out.println("Access Token:" + accessToken);
+		System.out.println("[Application : loginUser]: "+"Access Token:" + accessToken);
 		index();
     }
     

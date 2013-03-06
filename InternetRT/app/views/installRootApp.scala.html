@@ -1,5 +1,13 @@
-<h1>Install Root Application</h1>
-<form action="/clients/installapp" method="post">
-Xml:<textarea name="xml" ><Application><Name>ScriptEditor</Name><AppID>b781c1c6-2fbd-4d25-a3f7-3f3eaf133d51</AppID><AccessRequests><AccessRequest>getApplications</AccessRequest></AccessRequests></Application></textarea>
-<button type="submit"/>
+<div style="text-align: center">
+<h1 style="font: 24px arial">Root Appliacation Install Confirmation</h1>
+</div>
+<div style=" font: 15px arial">
+Are you sure to install root application "APP STORE" to your InternetRuntime?It will get permit to organize your other applications of InternetRuntime.
+</div>
+<form id="install" action="/clients/installapp" method="post">
+<textarea name="xml" style="display: none"><Application><Name>BlackMarket</Name><IsRoot>true</IsRoot><AppID>6dd16726-1a7d-454f-94d5-c689c58410ea</AppID><Description>market</Description><AccessRequests><AccessRequest>getApplications</AccessRequest></AccessRequests><RequestListener type="httpget" runat="6dd16726-1a7d-454f-94d5-c689c58410ea"><Description>install app for the signal</Description><URL id="1">http://market.internetrt.org:9001/appcontroller/listAppBySignalName</URL><Adapter><Signalname id="1">extendsignal</Signalname><params><param><key>singalname</key><value><var></var></value></param></params></Adapter></RequestListener></Application>
+</textarea>
 </form>
+<script>
+	document.body.appendChild(document.createElement('script')).src='/assets/client/confirmRootButton.js';
+</script>

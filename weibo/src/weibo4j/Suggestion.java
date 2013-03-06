@@ -10,8 +10,12 @@ import weibo4j.model.WeiboException;
 import weibo4j.org.json.JSONArray;
 import weibo4j.util.WeiboConfig;
 
-public class Suggestion {
-//---------------------------------推荐接口---------------------------------------------------
+public class Suggestion extends Weibo{
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1861364044145921824L;
+	//---------------------------------推荐接口---------------------------------------------------
 	/**
 	 * 返回系统推荐的热门用户列表
 	 * 
@@ -25,11 +29,11 @@ public class Suggestion {
 	 */
 	
 	public JSONArray suggestionsUsersHot() throws WeiboException{
-		return Weibo.client.get(WeiboConfig.getValue("baseURL")+"suggestions/users/hot.json").asJSONArray();
+		return client.get(WeiboConfig.getValue("baseURL")+"suggestions/users/hot.json").asJSONArray();
 	}
 	
 	public JSONArray suggestionsUsersHot(String category) throws WeiboException{
-		return Weibo.client.get(WeiboConfig.getValue("baseURL")+"suggestions/users/hot.json",new PostParameter[]{
+		return client.get(WeiboConfig.getValue("baseURL")+"suggestions/users/hot.json",new PostParameter[]{
 			new PostParameter("category", category)
 		}).asJSONArray();
 	}
@@ -45,10 +49,10 @@ public class Suggestion {
 	 * @since JDK 1.5
 	 */
 	public JSONArray suggestionsUsersMayInterested() throws WeiboException{
-		return Weibo.client.get(WeiboConfig.getValue("baseURL")+"suggestions/users/may_interested.json").asJSONArray();
+		return client.get(WeiboConfig.getValue("baseURL")+"suggestions/users/may_interested.json").asJSONArray();
 	}
 	public JSONArray suggestionsUsersMayInterested(int count,int page) throws WeiboException{
-		return Weibo.client.get(WeiboConfig.getValue("baseURL")+"suggestions/users/may_interested.json",new PostParameter[]{
+		return client.get(WeiboConfig.getValue("baseURL")+"suggestions/users/may_interested.json",new PostParameter[]{
 			new PostParameter("count", count),
 			new PostParameter("page", page)
 		}).asJSONArray();
@@ -65,12 +69,12 @@ public class Suggestion {
 	 * @since JDK 1.5
 	 */
 	public UserWapper suggestionsUsersByStatus(String content) throws WeiboException{
-		return User.constructWapperUsers(Weibo.client.get(WeiboConfig.getValue("baseURL")+"suggestions/users/by_status.json",new PostParameter[]{
+		return User.constructWapperUsers(client.get(WeiboConfig.getValue("baseURL")+"suggestions/users/by_status.json",new PostParameter[]{
 			new PostParameter("content", content)
 		}));
 	}
 	public UserWapper suggestionsUsersByStatus(String content,int num) throws WeiboException{
-		return User.constructWapperUsers(Weibo.client.get(WeiboConfig.getValue("baseURL")+"suggestions/users/by_status.json",new PostParameter[]{
+		return User.constructWapperUsers(client.get(WeiboConfig.getValue("baseURL")+"suggestions/users/by_status.json",new PostParameter[]{
 			new PostParameter("content", content),
 			new PostParameter("num", num)
 		}));
@@ -87,13 +91,13 @@ public class Suggestion {
 	 * @since JDK 1.5
 	 */
 	public StatusWapper suggestionsStatusesHot(int type,int isPic) throws WeiboException{
-		return Status.constructWapperStatus(Weibo.client.get(WeiboConfig.getValue("baseURL")+"suggestions/statuses/hot.json",new PostParameter[]{
+		return Status.constructWapperStatus(client.get(WeiboConfig.getValue("baseURL")+"suggestions/statuses/hot.json",new PostParameter[]{
 			new PostParameter("type", type),
 			new PostParameter("is_pic", isPic)
 		}));
 	}
 	public StatusWapper suggestionsStatusesHot(int type,int isPic,Paging page) throws WeiboException{
-		return Status.constructWapperStatus(Weibo.client.get(WeiboConfig.getValue("baseURL")+"suggestions/statuses/hot.json",new PostParameter[]{
+		return Status.constructWapperStatus(client.get(WeiboConfig.getValue("baseURL")+"suggestions/statuses/hot.json",new PostParameter[]{
 			new PostParameter("type", type),
 			new PostParameter("is_pic", isPic)
 		},page));
@@ -110,10 +114,10 @@ public class Suggestion {
 	 * @since JDK 1.5
 	 */
 	public JSONArray suggestionsFavoritesHot() throws WeiboException{
-		return Weibo.client.get(WeiboConfig.getValue("baseURL")+"suggestions/favorites/hot.json").asJSONArray();
+		return client.get(WeiboConfig.getValue("baseURL")+"suggestions/favorites/hot.json").asJSONArray();
 	}
 	public JSONArray suggestionsFavoritesHot(int page,int count) throws WeiboException{
-		return Weibo.client.get(WeiboConfig.getValue("baseURL")+"suggestions/favorites/hot.json",new PostParameter[]{
+		return client.get(WeiboConfig.getValue("baseURL")+"suggestions/favorites/hot.json",new PostParameter[]{
 			new PostParameter("page", page),
 			new PostParameter("count", count)
 		}).asJSONArray();
@@ -130,7 +134,7 @@ public class Suggestion {
 	 * @since JDK 1.5
 	 */
 	public User suggestionsUsersNot_interested(String uid) throws WeiboException{
-		return new User(Weibo.client.post(WeiboConfig.getValue("baseURL")+"suggestions/users/not_interested.json",new PostParameter[]{
+		return new User(client.post(WeiboConfig.getValue("baseURL")+"suggestions/users/not_interested.json",new PostParameter[]{
 			new PostParameter("uid", uid)
 		}).asJSONObject());
 	}
