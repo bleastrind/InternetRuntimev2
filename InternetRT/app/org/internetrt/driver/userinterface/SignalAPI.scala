@@ -90,7 +90,7 @@ object SignalAPI extends Controller {
     val parser = new RoutingInstanceXmlParser(response.getResponse)
     val config = parser.getRequestListener()
 
-    if (parser.getEventListeners().size > 0 || parser.getReqType() != "httpget")
+    if (parser.getEventListeners().size > 0 || parser.getRequestType() != "httpget")
       throw new NotImplementedException("It's only possible when all event listeners are handled and requestListener is httpget")
     else {
       val baseurl = RoutingInstanceXmlParser.getListenerUrl(config);
