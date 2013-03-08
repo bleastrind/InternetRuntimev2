@@ -43,6 +43,7 @@ object SiteInternetRuntime extends InternetRuntime {
 
 }
 trait MemoryConfigurationSystem extends ConfigurationSystemImpl {
+  object globalAppPool extends StubGlobalAppPool
   object appPool extends StubAppPool
   object routingResourcePool extends MemoryRoutingResourcePool
 }

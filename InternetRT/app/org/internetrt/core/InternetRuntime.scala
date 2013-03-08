@@ -16,7 +16,7 @@ import org.internetrt.core.model.Routing
 import org.internetrt.core.security.AccessControlSystem
 import org.internetrt.exceptions.AccessRequestNotGrantedException
 import org.internetrt.exceptions.ApplicationNotInstalledException
-import userinterface.ClientsManager
+import org.internetrt.core.io.userinterface._
 
 /**
  * The Facade of the logical system
@@ -79,7 +79,7 @@ abstract class InternetRuntime {
     try {
       signalSystem.registerSignal(name, scala.xml.XML.loadString(xml))
     } catch {
-      case _ => false
+      case _:Throwable => false
     }
   }
   

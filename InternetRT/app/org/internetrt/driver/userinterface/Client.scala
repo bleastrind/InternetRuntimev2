@@ -8,7 +8,7 @@ import akka.actor._
 import akka.actor.Actor._
 import play.api.libs.iteratee._
 import play.api.libs.concurrent._
-import akka.util.duration._
+import scala.concurrent.duration._
 import play.api._
 import play.api.mvc._
 import play.api.libs._
@@ -17,7 +17,7 @@ import play.api.libs.concurrent._
 import akka.util.Timeout
 import akka.pattern.ask
 import ClientMessageActor._
-import akka.dispatch.Await
+import scala.concurrent.Await
 import java.util.concurrent.TimeoutException
 import akka.pattern.AskTimeoutException
 import java.util.UUID
@@ -27,6 +27,7 @@ import org.internetrt.CONSTS
 import org.internetrt.core.io.userinterface.ClientsManager
 import org.internetrt.core.io.userinterface.ClientStatus
 import org.internetrt.core.io.userinterface.ClientDriver
+
 
 object Client extends Controller {
   var clients = Map.empty[String, PushEnumerator[String]]
@@ -77,8 +78,8 @@ object Client extends Controller {
       
       implicit val timeout = Timeout(5.seconds)
 
-      import play.api.Play.current;
-
+      //import play.api.Play.current;
+      import scala.concurrent.ExecutionContext.Implicits.global
       val result = ClientMessageActor.ref ? Join(uid, cid ,status) recover{
         case e:AskTimeoutException => {
 
@@ -89,7 +90,7 @@ object Client extends Controller {
       Async {
         ClientMessageActor.ref ! Quit()
         
-        result.mapTo[String].asPromise
+        result.mapTo[String]
           .map(i => wrapper(i))
       }   
   }

@@ -30,69 +30,77 @@ import org.internetrt.CassandraConfigurationSystem
 import org.internetrt.CassandraAccessControlSystem
 
 @RunWith(classOf[JUnitRunner])
-class ConfigurationSpec extends Specification with Mockito {override def is =
-  """This spec normalized the behaviours about application installation"""  ^
-  																			p^
-  "A root application market should be installed through userInterface"    !installmarket^
-  "The market can install another app for the user"							! installApp ^
-  "The others can query the application been installed"					!query
- object TestEnvironment extends InternetRuntime {
-  object authCenter extends {
-    val global = TestEnvironment.this
-  } with CassandraAuthCenter
+class ConfigurationSpec extends Specification with Mockito {
+  override def is =
+    """This spec normalized the behaviours about application installation""" ^
+      p ^
+      "A root application market should be installed through userInterface" ^ installmarket ^
+      "The market can install another app for the user" ^ installApp ^
+      "The others can query the application been installed" ^ query ^
+      end
+  object TestEnvironment extends InternetRuntime {
+    object authCenter extends {
+      val global = TestEnvironment.this
+    } with MemoryAuthCenter
 
-  object signalSystem extends {
-    val global = TestEnvironment.this
-  } with CassandraSignalSystem
+    object signalSystem extends {
+      val global = TestEnvironment.this
+    } with MemorySignalSystem
 
-  object ioManager extends {
-    val global = TestEnvironment.this
-  } with IOManagerImpl
+    object ioManager extends {
+      val global = TestEnvironment.this
+    } with IOManagerImpl
 
-  object confSystem extends {
-    val global = TestEnvironment.this
-  } with CassandraConfigurationSystem
-  
-  object aclSystem extends {
-    val global = TestEnvironment.this
-  } with CassandraAccessControlSystem
+    object confSystem extends {
+      val global = TestEnvironment.this
+    } with MemoryConfigurationSystem
+
+    object aclSystem extends {
+      val global = TestEnvironment.this
+    } with MemoryAccessControlSystem
 
   }
   object TestUserInterface extends UserInterface {
     val global = TestEnvironment
   }
-  
 
-  var appmarketid:String = null
-  var appmarketsecret:String = null
-  def installmarket={
-    val (id,secret) = TestEnvironment.registerApp("a@market.com");
-    appmarketid = id
-    appmarketsecret = secret
-    TestUserInterface.installRootApp("uid","""<Application><Name>ScriptEditor</Name><AppID>"""+appmarketid+"""</AppID><AccessRequests><AccessRequest>getApplications</AccessRequest></AccessRequests></Application>""");
-    
+  var appmarketid: String = null
+  var appmarketsecret: String = null
+
+  object installmarket extends Given[Unit] {
+    def extract(text: String): Unit = {
+      val (id, secret) = TestEnvironment.registerApp("a@market.com");
+      appmarketid = id
+      appmarketsecret = secret
+      TestUserInterface.installRootApp("uid", """<Application><Name>ScriptEditor</Name><AppID>""" + appmarketid + """</AppID><AccessRequests><AccessRequest>getApplications</AccessRequest></AccessRequests></Application>""");
+
+    }
   }
-  
-  var normalid:String = null
-  var normalsec:String = null
-  def installApp = {
-    //Before install to market, From app
-    val (id,secret) = TestEnvironment.registerApp("aa@market.com")
-        normalid = id
-    normalsec = secret
-    //From market
-    val code = TestUserInterface.getAuthcodeForServerFlow(appmarketid,"uid","http")
-    val accessToken = TestEnvironment.getAccessTokenByAuthtoken(appmarketid,code,appmarketsecret)
-		 
-    TestEnvironment.installApplication(accessToken.value,"""<?xml version="1.0" encoding="UTF-8" ?><App><AccessRequest>getApplications</AccessRequest><AppID>"""+normalid+"""</AppID><AppOwner>app</AppOwner></App>""")
+
+  var normalid: String = null
+  var normalsec: String = null
+  object installApp extends When[Unit, Unit] {
+    def extract(p: Unit, text: String): Unit = {
+      //Before install to market, From app
+      val (id, secret) = TestEnvironment.registerApp("aa@market.com")
+      normalid = id
+      normalsec = secret
+      //From market
+      val code = TestUserInterface.getAuthcodeForServerFlow(appmarketid, "uid", "http")
+      val accessToken = TestEnvironment.getAccessTokenByAuthtoken(appmarketid, code, appmarketsecret)
+
+      TestEnvironment.installApplication(accessToken.value, """<?xml version="1.0" encoding="UTF-8" ?><App><AccessRequest>getApplications</AccessRequest><AppID>""" + normalid + """</AppID><AppOwner>app</AppOwner></App>""")
+    }
   }
-  
-  def query = {
-    val code = TestUserInterface.getAuthcodeForServerFlow(normalid,"uid","http")
-    val accessToken = TestEnvironment.getAccessTokenByAuthtoken(normalid,code,normalsec)
-	
-    val apps = TestEnvironment.getApplications(accessToken.value)
-    apps.contains(normalid) and apps.contains(appmarketid)
+
+  object query extends Then[Unit] {
+    def extract(p: Unit, text: String) = {
+      val code = TestUserInterface.getAuthcodeForServerFlow(normalid, "uid", "http")
+      val accessToken = TestEnvironment.getAccessTokenByAuthtoken(normalid, code, normalsec)
+
+      val apps = TestEnvironment.getApplications(accessToken.value)
+      apps.contains(normalid) and apps.contains(appmarketid)
+    }
   }
-  
+
 }

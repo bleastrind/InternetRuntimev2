@@ -3,14 +3,14 @@ import java.util.UUID
 import akka.actor.ActorRef
 import akka.actor.Actor
 import akka.actor.ActorSystem
-import akka.dispatch.Future
+import scala.concurrent.Future
 import akka.actor.Props
 import ClientStubActor._
-import akka.pattern._
 import akka.util.Timeout
-import akka.util.duration._
-import akka.dispatch.Await
+import scala.concurrent.duration._
+import scala.concurrent.Await
 import org.internetrt.exceptions.InvalidStatusException
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * TODO use enum
@@ -41,7 +41,7 @@ object ClientsManager {
       case None => {
         val c = new UserConnector(uid)
         clients += (uid -> c)
-        c
+        c 
       }
     };
 
@@ -54,7 +54,7 @@ object ClientsManager {
       val connector = clients.get(uid).get;
       connector.response(msg, msgID);
     } catch {
-      case e => {
+      case e:Throwable => {
         System.out.println("[ClientsManager:response] Error on response!:" + uid);
       }
     }
@@ -91,18 +91,19 @@ class UserConnector(uid: String) {
     clients -= client;
   }
   def response(msg: String, msgid: String): Boolean = {
-    implicit val timeout = Timeout(2.seconds) //It's almost sync request to give response
-    val result = (ClientStubActor.ref ? Response(msg, msgid)).recover {
+    implicit val timeout = Timeout(2 seconds) //It's almost sync request to give response
+
+    val result = (akka.pattern.ask(ClientStubActor.ref) ? Response(msg, msgid)).recover {
       case e => false
     }
     Await.result(result.mapTo[Boolean], timeout.duration);
   }
   def ask(msg: String, allowedStatus: Seq[String]): Future[String] = {
-    implicit val timeout = Timeout(10.seconds)
+    implicit val timeout = Timeout(10 seconds)
 
     val msgID = Counter.count();
 
-    val result = (ClientStubActor.ref ? Request(msgID)).mapTo[String]; //Record the callback actorref
+    val result = (akka.pattern.ask(ClientStubActor.ref) ? Request(msgID)).mapTo[String]; //Record the callback actorref
 
     output(msg, allowedStatus, Some(msgID)); // Send message to clients
 

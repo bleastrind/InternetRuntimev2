@@ -1,5 +1,5 @@
 package org.internetrt.core.io
-import akka.dispatch.Future
+import scala.concurrent.Future
 import org.internetrt.core.io.userinterface.ClientsManager
 import org.internetrt.core.io.userinterface.ClientStatus
 import java.net.URL
