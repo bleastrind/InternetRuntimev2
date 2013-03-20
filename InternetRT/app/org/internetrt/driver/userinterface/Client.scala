@@ -27,9 +27,8 @@ import org.internetrt.CONSTS
 import org.internetrt.core.io.userinterface.ClientsManager
 import org.internetrt.core.io.userinterface.ClientStatus
 import org.internetrt.core.io.userinterface.ClientDriver
-
-
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.internetrt.SiteUserInterface
 
 object Client extends Controller {
   var clients = Map.empty[String, PushEnumerator[String]]
@@ -181,5 +180,5 @@ object ClientMessageActor {
   lazy val system = ActorSystem("clientsmessagepusher")
   lazy val ref = system.actorOf(Props[ClientMessageActor])
   
-  val clientsManager = ClientsManager /**TODO direct ref: 1/3  */
+  val clientsManager = SiteUserInterface.clientsManager 
 }

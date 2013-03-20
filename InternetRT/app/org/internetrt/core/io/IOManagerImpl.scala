@@ -6,11 +6,13 @@ import java.net.URL
 import org.apache.commons.lang.NotImplementedException
 import org.internetrt.util.URI
 import org.internetrt.sdk.util.HttpHelper
+import org.internetrt.core.io.userinterface.ClientsManagerImpl
 
 	
 	abstract class IOManagerImpl extends IOManager{
-		 val clientsdriver = ClientsManager /**TODO direct ref: 3/3  */
-		 
+
+    	val clientsManager:ClientsManager
+    
 		 val defaultAllowedStatus = Seq(ClientStatus.Active.toString())
 //		 
 //		 object broswerClientManager extends BroswerClientManager{
@@ -18,12 +20,12 @@ import org.internetrt.sdk.util.HttpHelper
 //		 }
 		 
 	     def sendToClient(uid:String,msg:String,allowedStatus:Seq[String])={
-	       clientsdriver.sendevent(uid,msg,allowedStatus)
+	       clientsManager.sendevent(uid,msg,allowedStatus)
 	     }
 		 
 		 /**TODO if timeout ,do it in database*/
 	     def readFromClient(uid:String,msg:String,allowedStatus:Seq[String]=defaultAllowedStatus):Future[String]={
-	        clientsdriver.ask(uid,msg,allowedStatus)
+	        clientsManager.ask(uid,msg,allowedStatus)
 	     }
 	     
 	     def sendToUrl(uid:String,url:String,msg:String){

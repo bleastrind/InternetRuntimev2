@@ -15,6 +15,7 @@ import org.internetrt.core.io.userinterface.UserInterface
 import me.prettyprint.hector.api.Cluster
 import me.prettyprint.hector.api.factory.HFactory
 import org.internetrt.persistent.cassandra._
+import org.internetrt.core.io.userinterface.ClientsManagerImpl
 
 /**
  * This object control all the connections in the website
@@ -31,7 +32,7 @@ object SiteInternetRuntime extends InternetRuntime {
 
   object ioManager extends {
     val global = SiteInternetRuntime.this
-  } with IOManagerImpl
+  } with StandardManager
 
   object confSystem extends {
     val global = SiteInternetRuntime.this
@@ -42,6 +43,11 @@ object SiteInternetRuntime extends InternetRuntime {
   } with CassandraAccessControlSystem
 
 }
+
+trait StandardManager extends IOManagerImpl{
+  object clientsManager extends ClientsManagerImpl
+}
+
 trait MemoryConfigurationSystem extends ConfigurationSystemImpl {
   object globalAppPool extends StubGlobalAppPool
   object appPool extends StubAppPool
@@ -107,6 +113,7 @@ object Cassandra{
 
 object SiteUserInterface extends UserInterface {
   val global = SiteInternetRuntime
+  val clientsManager = SiteInternetRuntime.ioManager.clientsManager
 }
 
 object CONSTS {

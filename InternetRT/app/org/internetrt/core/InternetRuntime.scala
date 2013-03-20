@@ -37,7 +37,6 @@ abstract class InternetRuntime {
   val aclSystem: AccessControlSystem
   val ioManager: IOManager
   val confSystem: ConfigurationSystem
-
   /**
    * ***********************************************************************
    * ---------------------------- security management-----------------------*
@@ -160,12 +159,12 @@ abstract class InternetRuntime {
   def sendEvent(accessToken: String, msg: String,allowedStatus:Seq[String]) = {
     val (userID, appID) = authCenter.getUserIDAppIDPair(accessToken)
     aclSystem.checkAccess(userID, appID, "communicateUser")
-    ClientsManager.sendevent(userID,msg,allowedStatus);
+    ioManager.sendToClient(userID,msg,allowedStatus);
   }
   def sendEventToActive(accessToken: String, msg: String) = {
     val (userID, appID) = authCenter.getUserIDAppIDPair(accessToken)
     aclSystem.checkAccess(userID, appID, "communicateUser")
-    ClientsManager.sendevent(userID,msg,Seq(ClientStatus.Active.toString()));
+    ioManager.sendToClient(userID,msg,Seq(ClientStatus.Active.toString()));
   }
 }
 
