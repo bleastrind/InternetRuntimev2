@@ -113,6 +113,7 @@ object CONSTS {
   val SESSIONUID = "UID";
   val CLIENTID = "CID";
   val MSGID = "msgID";
+  val MSG = "msg";
 
   val CLIENTSTATUS = "CLIENTSTATUS";
   val ANONYMOUS = "Anonymous";

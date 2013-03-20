@@ -31,6 +31,7 @@ trait ClientDriver {
 
 }
 
+
 object ClientsManager {
   import scala.collection.mutable.Map
   val clients: Map[String, UserConnector] = Map.empty
@@ -120,7 +121,7 @@ class UserConnector(uid: String) {
 class ClientStubActor extends Actor {
   /**TODO check whether multi thread sync &  confliction work well here*/
   import collection.JavaConversions._
-  val waitingMessages: scala.collection.mutable.ConcurrentMap[String, ActorRef] = new java.util.concurrent.ConcurrentHashMap[String, ActorRef]()
+  val waitingMessages: scala.collection.concurrent.Map[String, ActorRef] = new java.util.concurrent.ConcurrentHashMap[String, ActorRef]()
 
   def receive = {
     case Request(msgID) => {

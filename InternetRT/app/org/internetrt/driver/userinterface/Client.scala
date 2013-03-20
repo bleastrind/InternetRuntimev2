@@ -29,6 +29,8 @@ import org.internetrt.core.io.userinterface.ClientStatus
 import org.internetrt.core.io.userinterface.ClientDriver
 
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 object Client extends Controller {
   var clients = Map.empty[String, PushEnumerator[String]]
 
@@ -47,25 +49,25 @@ object Client extends Controller {
       
       Ok(success.toString())      
   }
-  def test = Action {
-    request=>
-    val uid = request.session.get(CONSTS.SESSIONUID).getOrElse(CONSTS.ANONYMOUS);
-    
-    implicit val timeout = Timeout(5.seconds)
-    ClientMessageActor.ref ! Message(uid, "test");
-    import play.api.templates.Html
-    Ok(Html("""<a href="http://www.baidu.com">"""+uid+"""</a>"""))
-  }
-  def tt() = {
-    Thread.sleep(10000)
-    "sfd"
-  }
   
-  def send = Action{
-    Ok
+
+  def getLongPoolingResult(uid:String, cid:String, status:String) = {
+          
+      implicit val timeout = Timeout(5.seconds)
+
+      val result = ClientMessageActor.ref ? Join(uid, cid ,status) recover{
+        case e:AskTimeoutException => {
+
+           "{cid:\""+cid + "\"}" // The client script can request with the cid next time s.t. it can set the status of the channel
+        }
+      }     
+
+      ClientMessageActor.ref ! Quit()
+        
+      result.mapTo[String]
+      
   }
-  
-  def getLongPollingResult(request:Request[AnyContent],wrapper:(String=>Result))={
+  def getWrapperdLongPollingResult(request:Request[AnyContent],wrapper:(String=>Result))={
       val uid = request.session.get(CONSTS.SESSIONUID).getOrElse(CONSTS.ANONYMOUS);
       val cid = request.queryString.get(CONSTS.CLIENTID) match {
         case Some(list)=>list.head //get the first client id
@@ -75,33 +77,23 @@ object Client extends Controller {
         case Some(list)=>list.head //get the first status
         case None=> ClientStatus.Active.toString()
       }
+      val result = getLongPoolingResult(uid,cid,status)
       
-      implicit val timeout = Timeout(5.seconds)
-
-      //import play.api.Play.current;
-      import scala.concurrent.ExecutionContext.Implicits.global
-      val result = ClientMessageActor.ref ? Join(uid, cid ,status) recover{
-        case e:AskTimeoutException => {
-
-           "{cid:\""+cid + "\"}" // The client script can request with the cid next time s.t. it can set the status of the channel
-        }
-      }
-
-      Async {
-        ClientMessageActor.ref ! Quit()
-        
-        result.mapTo[String]
-          .map(i => wrapper(i))
-      }   
+      result.map(wrapper(_))
+ 
   }
   def longpolling = Action{
     request =>
-      getLongPollingResult(request,i => Ok(i))
+      Async {
+        getWrapperdLongPollingResult(request,Ok(_))
+      }
   }
   def longpollingjsonp = Action {
     request =>
       val callback = request.queryString.get("callback").map(s => s.head).get
-      getLongPollingResult(request,i => Ok(callback + "(" + i + ")"))
+      Async {
+    	getWrapperdLongPollingResult(request,i => Ok(callback + "(" + i + ")"))
+      }
   }
 }
 class PageJavaScriptSlimClientDriver(cid:String) extends ClientDriver{

@@ -33,7 +33,7 @@ class UserInterfaceSpec extends Specification with Mockito {
       "Login with username and password" ^ login ^
       "Then keep the connection which will give answer to server directly" ^ connect ^ end ^
       "Somebody ask from internal system" ^ ask ^
-      "And it receive the answer"^	check ^end
+      "And it receive the answer" ^	check ^end
 
   object TestEnvironment extends InternetRuntime {
     val signalSystem = mock[SignalSystem]
