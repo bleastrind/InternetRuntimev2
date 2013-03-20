@@ -1,8 +1,11 @@
 package org.internetrt.core.io.userinterface
 
 import scala.concurrent.Future
+import org.internetrt.core.InternetRuntime
 
 trait ClientsManager {
+  val global:InternetRuntime
+  
   def join(uid: String, driver: ClientDriver);
 
   def response(uid: String, msg: String, msgID: String);

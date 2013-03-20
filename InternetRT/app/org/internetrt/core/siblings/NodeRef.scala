@@ -1,4 +1,4 @@
-package org.internetrt.core.io.siblings
+package org.internetrt.core.siblings
 import org.internetrt.sdk.util.HttpHelper
 import scala.concurrent.Future
 import scala.concurrent.future

@@ -1,4 +1,4 @@
-package org.internetrt.core.io.siblings
+package org.internetrt.core.siblings
 
 class ServerLocator {
 	def getNodeRef(uid:String):Option[NodeRef] = {

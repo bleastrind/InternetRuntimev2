@@ -45,7 +45,9 @@ object SiteInternetRuntime extends InternetRuntime {
 }
 
 trait StandardManager extends IOManagerImpl{
-  object clientsManager extends ClientsManagerImpl
+  object clientsManager extends ClientsManagerImpl {
+    val global = SiteInternetRuntime
+  }
 }
 
 trait MemoryConfigurationSystem extends ConfigurationSystemImpl {
@@ -113,7 +115,7 @@ object Cassandra{
 
 object SiteUserInterface extends UserInterface {
   val global = SiteInternetRuntime
-  val clientsManager = SiteInternetRuntime.ioManager.clientsManager
+  val clientsManager = global.ioManager.clientsManager
 }
 
 object CONSTS {
