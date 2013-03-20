@@ -16,6 +16,7 @@ import me.prettyprint.hector.api.Cluster
 import me.prettyprint.hector.api.factory.HFactory
 import org.internetrt.persistent.cassandra._
 import org.internetrt.core.io.userinterface.ClientsManagerImpl
+import org.internetrt.core.siblings.ClusterManagerImpl
 
 /**
  * This object control all the connections in the website
@@ -42,6 +43,9 @@ object SiteInternetRuntime extends InternetRuntime {
     val global = SiteInternetRuntime.this
   } with CassandraAccessControlSystem
 
+  object clusterManager extends ClusterManagerImpl{
+    val global = SiteInternetRuntime.this
+  } 
 }
 
 trait StandardManager extends IOManagerImpl{
@@ -123,10 +127,14 @@ object CONSTS {
   val CLIENTID = "CID";
   val MSGID = "msgID";
   val MSG = "msg";
+  val ALLOWEDSTATUS = "allowedStatus";
 
   val CLIENTSTATUS = "CLIENTSTATUS";
   val ANONYMOUS = "Anonymous";
 
   val ACCESSTOKEN = "access_token";
 
+  val FROMIP = "fromip";
+  
+  val ThisIP = "192.168.3.145";
 }

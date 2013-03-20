@@ -22,38 +22,37 @@ object ClientStatus extends Enumeration {
   val Sleep = Value("Sleep")
   val Dead = Value("Dead")
   val WaitingHeartBeat = Value("waiting")
+
+  val All = Seq(Active, Background, Sleep, Dead, WaitingHeartBeat)
 }
 
-
-class ClientsManagerImpl extends ClientsManager{
-  //import global.clusterControl
+abstract class ClientsManagerImpl extends ClientsManager {
+  import global.clusterManager
   import scala.collection.mutable.Map
   val clients: Map[String, UserConnector] = Map.empty
 
   def join(uid: String, driver: ClientDriver) {
+
     val connector = clients.get(uid) match {
       case Some(c) => c
       case None => {
         val c = new UserConnector(uid)
         clients += (uid -> c)
-        c 
+        c
       }
     };
 
     connector.register(driver);
     driver.onClientDistory = connector.unregister;
-  }
 
-  def response(uid: String, msg: String, msgID: String) = {
-    try {
-      val connector = clients.get(uid).get;
-      connector.userInputReader.response(msg, msgID);
-    } catch {
-      case e:Throwable => {
-        System.out.println("[ClientsManager:response] Error on response!:" + uid);
+    clusterManager.getNodeRef(uid) match {
+      case Some(node) => {
+        node.join(uid, driver.clientstatus)
       }
+      case None => None
     }
   }
+
   def sendevent(uid: String, msg: String, allowedStatus: Seq[String]) {
     try {
       val connector = clients.get(uid).get;
@@ -62,12 +61,23 @@ class ClientsManagerImpl extends ClientsManager{
       case e: NoSuchElementException => throw new InvalidStatusException("User " + uid + " don't have alive clients")
     }
   }
+
   def ask(uid: String, msg: String, allowedStatus: Seq[String]): Future[String] = {
     try {
       val connector = clients.get(uid).get;
       connector.userInputReader.ask(msg, allowedStatus);
     } catch {
       case e: NoSuchElementException => throw new InvalidStatusException("User " + uid + " don't have alive clients")
+    }
+  }
+  def response(uid: String, msg: String, msgID: String) = {
+    try {
+      val connector = clients.get(uid).get;
+      connector.userInputReader.response(msg, msgID);
+    } catch {
+      case e: Throwable => {
+        System.out.println("[ClientsManager:response] Error on response!:" + uid);
+      }
     }
   }
 }

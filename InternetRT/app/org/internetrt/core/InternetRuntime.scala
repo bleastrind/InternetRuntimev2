@@ -17,6 +17,7 @@ import org.internetrt.core.security.AccessControlSystem
 import org.internetrt.exceptions.AccessRequestNotGrantedException
 import org.internetrt.exceptions.ApplicationNotInstalledException
 import org.internetrt.core.io.userinterface._
+import org.internetrt.core.siblings.ClusterManager
 
 /**
  * The Facade of the logical system
@@ -37,6 +38,7 @@ abstract class InternetRuntime {
   val aclSystem: AccessControlSystem
   val ioManager: IOManager
   val confSystem: ConfigurationSystem
+  val clusterManager: ClusterManager
   /**
    * ***********************************************************************
    * ---------------------------- security management-----------------------*

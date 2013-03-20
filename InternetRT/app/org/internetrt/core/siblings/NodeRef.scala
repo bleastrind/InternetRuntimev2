@@ -3,34 +3,49 @@ import org.internetrt.sdk.util.HttpHelper
 import scala.concurrent.Future
 import scala.concurrent.future
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.internetrt.CONSTS
 
-class NodeRef(ip:String) {
-  def response(uid: String, msg: String, msgID: String) = {
-    future{
-	  HttpHelper.httpClientGet(construct("/siblings/response",List("uid" -> uid , "msg" -> msg , "msgID" -> msgID)))
+class NodeRef(ip: String) {
+//  def response(uid: String, msg: String, msgID: String) = {
+//    future {
+//      HttpHelper.httpClientGet(construct("/siblings/response", List("uid" -> uid, "msg" -> msg, "msgID" -> msgID)))
+//    }
+//  }
+
+  def join(uid: String,status: String) = {
+    future {
+      HttpHelper.httpClientGet(construct("/siblings/join", List(CONSTS.SESSIONUID -> uid, CONSTS.CLIENTSTATUS -> status)))
     }
   }
-  
-  def longpulling(uid:String,cid:String,status:String) = {
-    future{
-      HttpHelper.httpClientGet(construct("/siblings/longpulling", List("uid" -> uid , "cid" -> cid , "status" -> status)))
+
+  def sendevent(uid: String, msg: String, allowedStatus: Seq[String]): Future[String] = {
+    future {
+      HttpHelper.httpClientGet(
+        construct("/siblings/sendevent", List(CONSTS.SESSIONUID -> uid, CONSTS.MSG -> msg) ::: allowedStatus.map((CONSTS.ALLOWEDSTATUS, _)).toList))
     }
   }
-  
-  def sendevent(uid: String, msg: String, allowedStatus: Seq[String]):Future[String] = {
-	  future{
-	    HttpHelper.httpClientGet(
-	      construct("/siblings/sendevent",List("uid" -> uid , "msg" -> msg) ::: allowedStatus.map(("allowedStatus",_)).toList))
-	  }
-  }
-  def ask(uid: String, msg: String, allowedStatus: Seq[String]): Future[String] = {
-      future{
-	  	  HttpHelper.httpClientGet(construct("/siblings/ask",List("uid" -> uid , "msg" -> msg) ::: allowedStatus.map(("allowedStatus",_)).toList))
-      }
-  }
-  
-  private def construct(action:String,params: List[(String,String)]) = {
-    val parmstrs =  params.map( pair => pair._1 + "=" + pair._2)
+//  def ask(uid: String, msg: String, allowedStatus: Seq[String]): Future[String] = {
+//    future {
+//      HttpHelper.httpClientGet(construct("/siblings/ask", List(CONSTS.SESSIONUID -> uid, CONSTS.MSG -> msg) ::: allowedStatus.map((CONSTS.ALLOWEDSTATUS, _)).toList))
+//    }
+//  }
+
+  private def construct(action: String, params: List[(String, String)]) = {
+    val parmstrs = ((CONSTS.FROMIP, CONSTS.ThisIP) :: params).map(pair => pair._1 + "=" + pair._2)
     "http://" + ip + action + "?" + parmstrs.mkString("&")
+  }
+}
+
+object NodeRef {
+  var nodeCache: Map[String, NodeRef] = Map.empty
+  def getNode(ip: String): NodeRef = {
+    nodeCache.get(ip) match {
+      case Some(node) => node
+      case None => {
+        val node = new NodeRef(ip)
+        nodeCache += (ip -> node)
+        node
+      }
+    }
   }
 }

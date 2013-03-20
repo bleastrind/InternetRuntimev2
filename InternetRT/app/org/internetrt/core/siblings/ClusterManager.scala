@@ -1,5 +1,12 @@
 package org.internetrt.core.siblings
 
-trait ClusterManager {
+import org.internetrt.core.InternetRuntime
 
+trait ClusterManager {
+  val global: InternetRuntime
+  
+  /**
+   * Return None if uid below to the machine itself
+   */
+  def getNodeRef(uid: String): Option[NodeRef]
 }

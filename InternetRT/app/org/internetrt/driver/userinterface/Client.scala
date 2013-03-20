@@ -31,11 +31,11 @@ import org.internetrt.SiteUserInterface
 
 
 object Client extends Controller {
-  var clients = Map.empty[String, PushEnumerator[String]]
-
-  def sendMessage(user: String, data: String) {
-    clients(user).push(data);
-  }
+//  var clients = Map.empty[String, PushEnumerator[String]]
+//
+//  def sendMessage(user: String, data: String) {
+//    clients(user).push(data);
+//  }
 
   def response = Action{
     request=>
