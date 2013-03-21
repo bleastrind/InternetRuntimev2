@@ -6,29 +6,29 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import org.internetrt.CONSTS
 
 class NodeRef(ip: String) {
-//  def response(uid: String, msg: String, msgID: String) = {
-//    future {
-//      HttpHelper.httpClientGet(construct("/siblings/response", List("uid" -> uid, "msg" -> msg, "msgID" -> msgID)))
-//    }
-//  }
+  def response(uid: String, msg: String, msgID: String) {
 
-  def join(uid: String,status: String) = {
-    future {
-      HttpHelper.httpClientGet(construct("/siblings/join", List(CONSTS.SESSIONUID -> uid, CONSTS.CLIENTSTATUS -> status)))
-    }
+      HttpHelper.httpClientGet(construct("/siblings/response", List("uid" -> uid, "msg" -> msg, "msgID" -> msgID)))
+  
   }
 
-  def sendevent(uid: String, msg: String, allowedStatus: Seq[String]): Future[String] = {
-    future {
+  def join(uid: String,status: String) {
+  
+      HttpHelper.httpClientGet(construct("/siblings/join", List(CONSTS.SESSIONUID -> uid, CONSTS.CLIENTSTATUS -> status)))
+    
+  }
+
+  def sendevent(uid: String, msg: String, allowedStatus: Seq[String]) {
+
       HttpHelper.httpClientGet(
         construct("/siblings/sendevent", List(CONSTS.SESSIONUID -> uid, CONSTS.MSG -> msg) ::: allowedStatus.map((CONSTS.ALLOWEDSTATUS, _)).toList))
+    
+  }
+  def ask(uid: String, msg: String, allowedStatus: Seq[String]):Future[String] = {
+    future{
+      HttpHelper.httpClientGet(construct("/siblings/ask", List(CONSTS.SESSIONUID -> uid, CONSTS.MSG -> msg) ::: allowedStatus.map((CONSTS.ALLOWEDSTATUS, _)).toList))
     }
   }
-//  def ask(uid: String, msg: String, allowedStatus: Seq[String]): Future[String] = {
-//    future {
-//      HttpHelper.httpClientGet(construct("/siblings/ask", List(CONSTS.SESSIONUID -> uid, CONSTS.MSG -> msg) ::: allowedStatus.map((CONSTS.ALLOWEDSTATUS, _)).toList))
-//    }
-//  }
 
   private def construct(action: String, params: List[(String, String)]) = {
     val parmstrs = ((CONSTS.FROMIP, CONSTS.ThisIP) :: params).map(pair => pair._1 + "=" + pair._2)

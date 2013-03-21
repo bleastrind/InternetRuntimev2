@@ -6,6 +6,8 @@ abstract class ClusterManagerImpl extends ClusterManager {
 	  None
 	}
 	
-	
+	 def getNodeRefByIP(ip:String):NodeRef = {
+	   NodeRef.getNode(ip)
+	 }
 }
 

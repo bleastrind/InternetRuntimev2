@@ -9,4 +9,6 @@ trait ClusterManager {
    * Return None if uid below to the machine itself
    */
   def getNodeRef(uid: String): Option[NodeRef]
+  
+  def getNodeRefByIP(ip:String):NodeRef
 }

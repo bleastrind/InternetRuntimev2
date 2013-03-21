@@ -12,6 +12,7 @@ import scala.concurrent.Await
 import org.internetrt.exceptions.InvalidStatusException
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.mutable.Queue
+import org.internetrt.core.siblings.ClusterManager
 
 abstract class ClientsManagerImpl extends ClientsManager {
   import global.clusterManager
@@ -23,7 +24,7 @@ abstract class ClientsManagerImpl extends ClientsManager {
     val connector = clients.get(uid) match {
       case Some(c) => c
       case None => {
-        val c = new UserConnector(uid)
+        val c = new UserConnector(uid, clusterManager)
         clients += (uid -> c)
         c
       }
@@ -42,8 +43,17 @@ abstract class ClientsManagerImpl extends ClientsManager {
 
   def sendevent(uid: String, msg: String, allowedStatus: Seq[String]) {
     try {
-      val connector = clients.get(uid).get;
-      connector.output(msg, allowedStatus);
+      // Choice the right node
+      clusterManager.getNodeRef(uid) match {
+        case Some(node) => {
+          node.sendevent(uid, msg, allowedStatus)
+        }
+        case None => {
+          val connector = clients.get(uid).get;
+          connector.output(msg, allowedStatus);
+        }
+      }
+
     } catch {
       case e: NoSuchElementException => throw new InvalidStatusException("User " + uid + " don't have alive clients")
     }
@@ -51,16 +61,34 @@ abstract class ClientsManagerImpl extends ClientsManager {
 
   def ask(uid: String, msg: String, allowedStatus: Seq[String]): Future[String] = {
     try {
-      val connector = clients.get(uid).get;
-      connector.userInputReader.ask(msg, allowedStatus);
+      // Choice the right node
+      clusterManager.getNodeRef(uid) match {
+        case Some(node) => {
+          node.ask(uid, msg, allowedStatus)
+        }
+        case None => {
+          val connector = clients.get(uid).get;
+          connector.userInputReader.ask(msg, allowedStatus);
+        }
+      }
+      
     } catch {
       case e: NoSuchElementException => throw new InvalidStatusException("User " + uid + " don't have alive clients")
     }
   }
   def response(uid: String, msg: String, msgID: String) = {
     try {
-      val connector = clients.get(uid).get;
-      connector.userInputReader.response(msg, msgID);
+      // Choice the right node
+      clusterManager.getNodeRef(uid) match {
+        case Some(node) => {
+          node.response(uid, msg, msgID)
+        }
+        case None => {
+          val connector = clients.get(uid).get;
+          connector.userInputReader.response(msg, msgID);
+        }
+      }
+
     } catch {
       case e: Throwable => {
         System.out.println("[ClientsManager:response] Error on response!:" + uid);
@@ -69,28 +97,32 @@ abstract class ClientsManagerImpl extends ClientsManager {
   }
 }
 
-class UserConnector(uid: String) {
+class UserConnector(id: String, cluster: ClusterManager) {
+
   import scala.collection.mutable.ListBuffer;
   import scala.collection.mutable.Map;
   import scala.collection.Seq;
 
-  val clients = ListBuffer.empty[ClientDriver];
-  val delayedMessages = Queue.empty[(String,Seq[String],Option[String])]
+  def uid = id
+  def clusterManager = cluster
 
-//  object Tick {}
-//  val softStateUpdater = system.scheduler.schedule(ClientStatus.TimeOut, ClientStatus.TimeOut,
-//    system.actorOf(Props(new Actor {
-//      def receive = {
-//        case Tick => clients --= clients.filter(_.status == ClientStatus.Dead.toString())
-//      }
-//    })), Tick)
-//    
+  val clients = ListBuffer.empty[ClientDriver];
+  val delayedMessages = Queue.empty[(String, Seq[String], Option[String])]
+
+  //  object Tick {}
+  //  val softStateUpdater = system.scheduler.schedule(ClientStatus.TimeOut, ClientStatus.TimeOut,
+  //    system.actorOf(Props(new Actor {
+  //      def receive = {
+  //        case Tick => clients --= clients.filter(_.status == ClientStatus.Dead.toString())
+  //      }
+  //    })), Tick)
+  //    
   lazy val userInputReader = new UserInputReader(this)
 
   def register(client: ClientDriver) {
     clients += client;
-    delayedMessages.dequeueFirst(x=>true) match{
-      case Some((msg,allowedStatus,msgID)) => output(msg,allowedStatus,msgID)
+    delayedMessages.dequeueFirst(x => true) match {
+      case Some((msg, allowedStatus, msgID)) => output(msg, allowedStatus, msgID)
     }
 
   }
@@ -99,17 +131,17 @@ class UserConnector(uid: String) {
   //  }
 
   def output(msg: String, allowedStatus: Seq[String], msgID: Option[String] = None) {
-    
+
     for (c <- clients) {
       if (allowedStatus.contains(c.status))
         c.response(msg, msgID)
-    }    
-    
+    }
+
     // clear the dead clients here
     clients --= clients.filter(_.status == ClientStatus.Dead.toString())
-    if(clients.size == 0)
+    if (clients.size == 0)
       delayedMessages += ((msg, allowedStatus, msgID))
-    
+
   }
 }
 
