@@ -70,7 +70,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
         	OkState(selectedRouting, (selectedRouting.xml \ "RequestListener")(listenerIndex))
         }catch{
           case e:IndexOutOfBoundsException => throw new InputFormatErrorException("Index is not consistency with the request")
-          case _ => throw new InputFormatErrorException("requestListenerIndex Received:"+options("requestListenerIndex")+"\nBut Need format like:<Choice><RoutingId>1</RoutingId><RequestListenerId>0</RequestListenerId></Choice>")
+          case _:Throwable => throw new InputFormatErrorException("requestListenerIndex Received:"+options("requestListenerIndex")+"\nBut Need format like:<Choice><RoutingId>1</RoutingId><RequestListenerId>0</RequestListenerId></Choice>")
         }
       }
     }

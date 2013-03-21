@@ -89,8 +89,6 @@ object Client extends Controller {
       }
 
       Async {
-        ClientMessageActor.ref ! Quit()
-        
         result.mapTo[String]
           .map(i => wrapper(i))
       }   
@@ -147,30 +145,31 @@ class ClientMessageActor extends Actor {
       
     	/**TODO CHECK IF THIS IS CHANGED IN CLIENTSMANAGER's USERCONNECTOR*/
     	//reset the status of the channel
-    	clientDriver.clientstatus = clientStatus;
+    	clientDriver.touch();
+    	clientDriver.setStatus(clientStatus);
     	
       Logger.info("New member joined:"+sender)
       Logger.info("size:"+pagedrivers.size)
 
     }
 
-    case Quit() => {
-      Logger.info("Member has disconnected: "+sender)
-      
-      //TODO how to find the actually changed actor?
-      for(p <- pagedrivers){
-        if (p._2.channel.isTerminated){
-          if(p._2.clientstatus == ClientStatus.WaitingHeartBeat.toString()){
-            p._2.onClientDistory(p._2)
-            p._2.clientstatus = ClientStatus.Dead.toString()
-          }
-          else 
-        	p._2.clientstatus = ClientStatus.WaitingHeartBeat.toString()
-        }
-      }
-      val terminated = pagedrivers.filter(p=>p._2.clientstatus == ClientStatus.Dead.toString()).map(p=>p._1)
-      pagedrivers --= terminated;
-    }
+//    case Quit() => {
+//      Logger.info("Member has disconnected: "+sender)
+//      
+//      //TODO how to find the actually changed actor?
+//      for(p <- pagedrivers){
+//        if (p._2.channel.isTerminated){
+//          if(p._2.clientstatus == ClientStatus.WaitingHeartBeat.toString()){
+//            p._2.onClientDistory(p._2)
+//            p._2.clientstatus = ClientStatus.Dead.toString()
+//          }
+//          else 
+//        	p._2.clientstatus = ClientStatus.WaitingHeartBeat.toString()
+//        }
+//      }
+//      val terminated = pagedrivers.filter(p=>p._2.clientstatus == ClientStatus.Dead.toString()).map(p=>p._1)
+//      pagedrivers --= terminated;
+//    }
 
     case Message(uid, msg) => {
       Logger.info("Got message, send it to:" + uid)
@@ -185,7 +184,7 @@ object ClientMessageActor {
 
   trait Event
   case class Join(uid:String,cid:String,clientstatus:String) extends Event
-  case class Quit() extends Event
+//  case class Quit() extends Event
   case class Message(uid:String, msg: String) extends Event
   lazy val system = ActorSystem("clientsmessagepusher")
   lazy val ref = system.actorOf(Props[ClientMessageActor])

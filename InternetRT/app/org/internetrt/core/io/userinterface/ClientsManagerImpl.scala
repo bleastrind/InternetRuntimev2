@@ -11,20 +11,7 @@ import scala.concurrent.duration._
 import scala.concurrent.Await
 import org.internetrt.exceptions.InvalidStatusException
 import scala.concurrent.ExecutionContext.Implicits.global
-
-/**
- * TODO use enum
- */
-object ClientStatus extends Enumeration {
-  type Status = Value
-  val Active = Value("Active")
-  val Background = Value("Background")
-  val Sleep = Value("Sleep")
-  val Dead = Value("Dead")
-  val WaitingHeartBeat = Value("waiting")
-
-  val All = Seq(Active, Background, Sleep, Dead, WaitingHeartBeat)
-}
+import scala.collection.mutable.Queue
 
 abstract class ClientsManagerImpl extends ClientsManager {
   import global.clusterManager
@@ -43,11 +30,11 @@ abstract class ClientsManagerImpl extends ClientsManager {
     };
 
     connector.register(driver);
-    driver.onClientDistory = connector.unregister;
 
+    // Notify the main node
     clusterManager.getNodeRef(uid) match {
       case Some(node) => {
-        node.join(uid, driver.clientstatus)
+        node.join(uid, driver.status)
       }
       case None => None
     }
@@ -88,20 +75,41 @@ class UserConnector(uid: String) {
   import scala.collection.Seq;
 
   val clients = ListBuffer.empty[ClientDriver];
+  val delayedMessages = Queue.empty[(String,Seq[String],Option[String])]
+
+//  object Tick {}
+//  val softStateUpdater = system.scheduler.schedule(ClientStatus.TimeOut, ClientStatus.TimeOut,
+//    system.actorOf(Props(new Actor {
+//      def receive = {
+//        case Tick => clients --= clients.filter(_.status == ClientStatus.Dead.toString())
+//      }
+//    })), Tick)
+//    
   lazy val userInputReader = new UserInputReader(this)
 
   def register(client: ClientDriver) {
     clients += client;
+    delayedMessages.dequeueFirst(x=>true) match{
+      case Some((msg,allowedStatus,msgID)) => output(msg,allowedStatus,msgID)
+    }
+
   }
-  def unregister(client: ClientDriver) {
-    clients -= client;
-  }
+  //  def unregister(client: ClientDriver) {
+  //    clients -= client;
+  //  }
 
   def output(msg: String, allowedStatus: Seq[String], msgID: Option[String] = None) {
+    
     for (c <- clients) {
-      if (allowedStatus.contains(c.clientstatus))
+      if (allowedStatus.contains(c.status))
         c.response(msg, msgID)
-    }
+    }    
+    
+    // clear the dead clients here
+    clients --= clients.filter(_.status == ClientStatus.Dead.toString())
+    if(clients.size == 0)
+      delayedMessages += ((msg, allowedStatus, msgID))
+    
   }
 }
 
