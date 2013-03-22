@@ -6,6 +6,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import org.internetrt.CONSTS
 
 class NodeRef(ip: String) {
+  
+  def IP = ip
+  
   def response(uid: String, msg: String, msgID: String) {
 
       HttpHelper.httpClientGet(construct("/siblings/response", List("uid" -> uid, "msg" -> msg, "msgID" -> msgID)))
