@@ -2,9 +2,9 @@ package org.internetrt.core.io.userinterface
 
 import scala.concurrent.Future
 
-trait ClusterConsideredClientsManager extends ClientsManagerImpl{
+trait ClusterConsideredClientsManager extends ClientsManager{
   
-  override def join(uid: String, driver: ClientDriver) {
+  abstract override def join(uid: String, driver: ClientDriver) {
 	  super.join(uid, driver)    
 	  global.clusterManager.getNodeRef(uid) match {
 	      case Some(node) => {
@@ -14,7 +14,7 @@ trait ClusterConsideredClientsManager extends ClientsManagerImpl{
 	    }
   }
   
-  override def sendevent(uid: String, msg: String, allowedStatus: Seq[String]) {
+  abstract override def sendevent(uid: String, msg: String, allowedStatus: Seq[String]) {
      // Choice the right node
       global.clusterManager.getNodeRef(uid) match {
         case Some(node) => {
@@ -24,7 +24,7 @@ trait ClusterConsideredClientsManager extends ClientsManagerImpl{
       }
   }
   
-  override def ask(uid: String, msg: String, allowedStatus: Seq[String]): Future[String] = {
+  abstract override def ask(uid: String, msg: String, allowedStatus: Seq[String]): Future[String] = {
       global.clusterManager.getNodeRef(uid) match {
         case Some(node) => {
           node.ask(uid, msg, allowedStatus)
@@ -33,7 +33,7 @@ trait ClusterConsideredClientsManager extends ClientsManagerImpl{
       }    
   }
   
-  override def response(uid: String, msg: String, msgID: String) = {
+  abstract override def response(uid: String, msg: String, msgID: String) = {
        global.clusterManager.getNodeRef(uid) match {
         case Some(node) => {
           node.response(uid, msg, msgID)
