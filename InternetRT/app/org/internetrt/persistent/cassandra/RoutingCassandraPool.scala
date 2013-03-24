@@ -73,7 +73,7 @@ class RoutingCassandraPool(cluster: Cluster)
       true
     } catch {
       case e: HectorException => false //TODO handle exception ...
-      case _ => false
+      case _:Throwable => false
     }
   }
 
@@ -93,7 +93,7 @@ class RoutingCassandraPool(cluster: Cluster)
         val xmlstr = xml \ "Routing" toString;
         Routing(uid, scala.xml.XML.loadString(xmlstr))
       } catch {
-        case e => {
+        case e:Throwable => {
           e.printStackTrace()
           throw e
         }

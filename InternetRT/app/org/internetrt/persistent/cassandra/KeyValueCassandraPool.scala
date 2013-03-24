@@ -56,7 +56,7 @@ abstract class KeyValueCassandraPool[K, V](cluster: Cluster, keyspacename: Strin
       true
     } catch {
       case e: HectorException => false //TODO handle exception ...
-      case _ => false
+      case _:Throwable => false
     }
   }
   def get(k: K): Option[V] = {

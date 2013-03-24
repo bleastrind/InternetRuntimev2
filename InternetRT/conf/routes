@@ -32,18 +32,19 @@ POST		/clients/register		org.internetrt.driver.userinterface.BrowserBaseClientIn
 #installApp
 POST		/clients/installapp		org.internetrt.driver.userinterface.BrowserBaseClientInputs.installRootApp
 #get user name
-GET		/clients/getName		org.internetrt.driver.userinterface.BrowserBaseClientInputs.getName
+GET			/clients/getName		org.internetrt.driver.userinterface.BrowserBaseClientInputs.getName
 #login
-GET		/clients/login			org.internetrt.driver.userinterface.BrowserBaseClientInputs.login
+GET			/clients/login			org.internetrt.driver.userinterface.BrowserBaseClientInputs.login
 #register
-GET		/clients/register		org.internetrt.driver.userinterface.BrowserBaseClientInputs.register
+GET			/clients/register		org.internetrt.driver.userinterface.BrowserBaseClientInputs.register
 #installApp
-GET		/clients/installapp		org.internetrt.driver.userinterface.BrowserBaseClientInputs.installRootApp
+GET			/clients/installapp		org.internetrt.driver.userinterface.BrowserBaseClientInputs.installRootApp
 
 
 
 #confirm routing
 POST		/clients/confirmrouting	   org.internetrt.driver.userinterface.BrowserBaseClientInputs.confirmRouting
+
 #Configurition API 
 GET		/config/apps                           org.internetrt.driver.ConfigController.appsList
 GET		/config/apps/:id                       org.internetrt.driver.ConfigController.appDetail(id: String)
@@ -63,3 +64,4 @@ POST	/clients/install						org.internetrt.driver.userinterface.OAuthAPI.install
 GET		/auth/appregister		org.internetrt.driver.AppRegister.register
 #queryApp
 GET		/public/queryapp		org.internetrt.driver.AppRegister.queryApp
+

@@ -31,29 +31,12 @@ abstract class ClientsManagerImpl extends ClientsManager {
     };
 
     connector.register(driver);
-
-    // Notify the main node
-    clusterManager.getNodeRef(uid) match {
-      case Some(node) => {
-        node.join(uid, driver.status)
-      }
-      case None => None
-    }
   }
 
   def sendevent(uid: String, msg: String, allowedStatus: Seq[String]) {
     try {
-      // Choice the right node
-      clusterManager.getNodeRef(uid) match {
-        case Some(node) => {
-          node.sendevent(uid, msg, allowedStatus)
-        }
-        case None => {
-          val connector = clients.get(uid).get;
-          connector.output(msg, allowedStatus);
-        }
-      }
-
+      val connector = clients.get(uid).get;
+      connector.output(msg, allowedStatus);
     } catch {
       case e: NoSuchElementException => throw new InvalidStatusException("User " + uid + " don't have alive clients")
     }
@@ -61,33 +44,19 @@ abstract class ClientsManagerImpl extends ClientsManager {
 
   def ask(uid: String, msg: String, allowedStatus: Seq[String]): Future[String] = {
     try {
-      // Choice the right node
-      clusterManager.getNodeRef(uid) match {
-        case Some(node) => {
-          node.ask(uid, msg, allowedStatus)
-        }
-        case None => {
-          val connector = clients.get(uid).get;
-          connector.userInputReader.ask(msg, allowedStatus);
-        }
-      }
-      
+
+      val connector = clients.get(uid).get;
+      connector.userInputReader.ask(msg, allowedStatus);
+
     } catch {
       case e: NoSuchElementException => throw new InvalidStatusException("User " + uid + " don't have alive clients")
     }
   }
   def response(uid: String, msg: String, msgID: String) = {
     try {
-      // Choice the right node
-      clusterManager.getNodeRef(uid) match {
-        case Some(node) => {
-          node.response(uid, msg, msgID)
-        }
-        case None => {
-          val connector = clients.get(uid).get;
-          connector.userInputReader.response(msg, msgID);
-        }
-      }
+
+      val connector = clients.get(uid).get;
+      connector.userInputReader.response(msg, msgID);
 
     } catch {
       case e: Throwable => {
@@ -123,6 +92,7 @@ class UserConnector(id: String, cluster: ClusterManager) {
     clients += client;
     delayedMessages.dequeueFirst(x => true) match {
       case Some((msg, allowedStatus, msgID)) => output(msg, allowedStatus, msgID)
+      case None => Unit
     }
 
   }

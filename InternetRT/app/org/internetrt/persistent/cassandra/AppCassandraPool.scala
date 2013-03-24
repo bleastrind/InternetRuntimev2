@@ -62,7 +62,7 @@ class AppCassandraPool(cluster: Cluster) extends AppPool {
         e.printStackTrace()
         false //TODO handle exception ...
       }
-      case _ => false
+      case _:Throwable => false
     }
   }
   def getApp(userID: String, id: String): Option[Application] ={

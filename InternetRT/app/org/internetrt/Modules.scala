@@ -17,6 +17,7 @@ import me.prettyprint.hector.api.factory.HFactory
 import org.internetrt.persistent.cassandra._
 import org.internetrt.core.io.userinterface.ClientsManagerImpl
 import org.internetrt.core.siblings.ClusterManagerImpl
+import org.internetrt.core.io.userinterface.ClusterConsideredClientsManager
 
 /**
  * This object control all the connections in the website
@@ -49,7 +50,7 @@ object SiteInternetRuntime extends InternetRuntime {
 }
 
 trait StandardManager extends IOManagerImpl{
-  object clientsManager extends ClientsManagerImpl {
+  object clientsManager extends ClientsManagerImpl with ClusterConsideredClientsManager {
     val global = SiteInternetRuntime
   }
 }
