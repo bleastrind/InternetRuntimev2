@@ -9,6 +9,7 @@ import scala.collection.JavaConversions._
 import org.internetrt.sdk.util.RoutingXmlParser
 import org.apache.commons.lang.NotImplementedException
 import org.internetrt.sdk.util.HttpHelper
+import org.internetrt.sdk.util.RoutingInstanceXmlParser
 
 object SignalAPI extends Controller {
   def init(signalname: String) = Action {
@@ -86,17 +87,17 @@ object SignalAPI extends Controller {
   }
   private def getRedirectUrl(request: play.api.mvc.Request[play.api.mvc.AnyContent], response: org.internetrt.core.signalsystem.SignalResponse): String = {
 
-    val parser = new RoutingXmlParser(response.getResponse)
+    val parser = new RoutingInstanceXmlParser(response.getResponse)
     val config = parser.getRequestListener()
 
-    if (parser.getEventListeners().size > 0 || parser.getReqType() != "httpget")
+    if (parser.getEventListeners().size > 0 || parser.getRequestType() != "httpget")
       throw new NotImplementedException("It's only possible when all event listeners are handled and requestListener is httpget")
     else {
-      val baseurl = RoutingXmlParser.getListenerUrl(config);
-      val urlanchor = RoutingXmlParser.getRequiredFormats(config)
+      val baseurl = RoutingInstanceXmlParser.getListenerUrl(config);
+      val urlanchor = RoutingInstanceXmlParser.getRequiredFormats(config)
         .filter(f => f.kind == "anchor")
         .headOption 
-      val params = RoutingXmlParser.getRequiredFormats(config)
+      val params = RoutingInstanceXmlParser.getRequiredFormats(config)
         .filter(f => f.kind == "params")
         .headOption 
 		System.out.println("[SignalAPI params format]"+params);
