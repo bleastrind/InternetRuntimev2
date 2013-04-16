@@ -56,7 +56,8 @@ object Client extends Controller {
 			//import net.liftweb.json.Printer._;
 	System.out.println(uid);
     implicit val timeout = Timeout(5.seconds)
-    SiteUserInterface.sendEvent(uid, compact(JsonAST.render(Xml.toJson(<value><name>u.c"ontent</name><query>u.query</query><data>msg</data></value>))), ClientStatus.All map( _.toString()))
+    SiteUserInterface.sendEvent(uid, compact(JsonAST.render(Xml.toJson(<value><name>u.c"ontent</name><query>u.query</query><data>msg</data></value>))), Seq(ClientStatus.Active.toString()))
+    // SiteUserInterface.sendEvent(uid, compact(JsonAST.render(Xml.toJson(<value><name>u.c"ontent</name><query>u.query</query><data>msg</data></value>))), Seq(ClientStatus.Dead.toString()))
    
     import play.api.templates.Html
     Ok(Html("""<a href="http://www.baidu.com">"""+uid+"""</a>"""))
@@ -107,15 +108,18 @@ object Client extends Controller {
       getLongPollingResult(request,i => Ok(callback + "(" + i + ")"))
   }
 }
-class PageJavaScriptSlimClientDriver(cid:String) extends ClientDriver{
-	var channel:ActorRef = null
+class PageJavaScriptSlimClientDriver(cid:String,channel:ActorRef) extends ClientDriver{
+	//var channel:ActorRef = null
 	
 	def response(data:String, msgID:Option[String]){
 	  channel ! "{cid:\""+cid+"\",data:"+data+ (msgID match {
 	    case Some(id)=>","+CONSTS.MSGID+":"+id
 	    case _=>""
 	  })+"}"
+	  
 	}
+	
+	override def isValid() = !channel.isTerminated
 }
 
 class ClientMessageActor extends Actor {
@@ -130,22 +134,22 @@ class ClientMessageActor extends Actor {
     case Join(uid,cid,clientStatus) => {
         
     	//get the unique channel
-      val clientDriver = new PageJavaScriptSlimClientDriver(cid)//pagedrivers.get(cid) match{
-     //   case Some(c)=> c
-     //   case None=>{
+      val clientDriver = new PageJavaScriptSlimClientDriver(cid,sender)/*pagedrivers.get(cid) match{
+        case Some(c)=> c
+        case None=>{
            //create new one
-    	//  val c = new PageJavaScriptSlimClientDriver(cid)
-    	 // pagedrivers += (cid -> c)
+    	  val c = new PageJavaScriptSlimClientDriver(cid)
+    	  //pagedrivers += (cid -> c)
     	  
-    	  //register the channel as one of the users("uid")
+    	  //register the channel as one of the users("uid")*/
     	  clientsManager.join(uid,clientDriver)
     	  
-    //	  c // return the newly created driver         
-    //    }
+    	 // c // return the newly created driver         
+      //  }
      // }
        //reset the actor to response
         /**TODO CHECK IF THIS IS CHANGED IN CLIENTSMANAGER's USERCONNECTOR*/
-    	clientDriver.channel = sender
+    	//clientDriver.channel = sender
       
     	/**TODO CHECK IF THIS IS CHANGED IN CLIENTSMANAGER's USERCONNECTOR*/
     	//reset the status of the channel
