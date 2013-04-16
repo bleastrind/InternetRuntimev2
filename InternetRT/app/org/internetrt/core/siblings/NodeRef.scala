@@ -9,7 +9,7 @@ import java.net.URLEncoder
 class NodeRef(ip: String, port:String = "80") {
   
 
-  def IP = ip + ":" + port  
+  def IP = ip
   def response(uid: String, msg: String, msgID: String) {
 
       HttpHelper.httpClientGet(construct("/siblings/response", List("uid" -> uid, "msg" -> msg, "msgID" -> msgID)))
@@ -36,7 +36,7 @@ class NodeRef(ip: String, port:String = "80") {
 
   private def construct(action: String, params: List[(String, String)]) = {
     val parmstrs = ((CONSTS.FROMIP, CONSTS.ThisIP) :: params).map(pair => pair._1 + "=" + pair._2)
-    "http://" + IP  + action + "?" + URLEncoder.encode(parmstrs.mkString("&"),"UTF-8")
+    "http://" + IP + ":" + port    + action + "?" + URLEncoder.encode(parmstrs.mkString("&"),"UTF-8")
   }
 }
 
