@@ -56,7 +56,8 @@ object Client extends Controller {
 			//import net.liftweb.json.Printer._;
 	System.out.println(uid);
     implicit val timeout = Timeout(5.seconds)
-    ClientMessageActor.ref ! Message(uid, compact(JsonAST.render(Xml.toJson(<value><name>u.c"ontent</name><query>u.query</query><data>msg</data></value>))));
+    SiteUserInterface.sendEvent(uid, compact(JsonAST.render(Xml.toJson(<value><name>u.c"ontent</name><query>u.query</query><data>msg</data></value>))), ClientStatus.All map( _.toString()))
+   
     import play.api.templates.Html
     Ok(Html("""<a href="http://www.baidu.com">"""+uid+"""</a>"""))
   }
@@ -121,7 +122,7 @@ class ClientMessageActor extends Actor {
 	import scala.collection.mutable
 	import ClientStatus._
 
-  val pagedrivers = mutable.Map.empty[String,PageJavaScriptSlimClientDriver]
+  //val pagedrivers = mutable.Map.empty[String,PageJavaScriptSlimClientDriver]
   
 
   def receive = {
@@ -129,19 +130,19 @@ class ClientMessageActor extends Actor {
     case Join(uid,cid,clientStatus) => {
         
     	//get the unique channel
-      val clientDriver = pagedrivers.get(cid) match{
-        case Some(c)=> c
-        case None=>{
+      val clientDriver = new PageJavaScriptSlimClientDriver(cid)//pagedrivers.get(cid) match{
+     //   case Some(c)=> c
+     //   case None=>{
            //create new one
-    	  val c = new PageJavaScriptSlimClientDriver(cid)
-    	  pagedrivers += (cid -> c)
+    	//  val c = new PageJavaScriptSlimClientDriver(cid)
+    	 // pagedrivers += (cid -> c)
     	  
     	  //register the channel as one of the users("uid")
-    	  clientsManager.join(uid,c)
+    	  clientsManager.join(uid,clientDriver)
     	  
-    	  c // return the newly created driver         
-        }
-      }
+    //	  c // return the newly created driver         
+    //    }
+     // }
        //reset the actor to response
         /**TODO CHECK IF THIS IS CHANGED IN CLIENTSMANAGER's USERCONNECTOR*/
     	clientDriver.channel = sender
@@ -152,7 +153,7 @@ class ClientMessageActor extends Actor {
     	clientDriver.setStatus(clientStatus);
     	
       Logger.info("New member joined:"+sender)
-      Logger.info("size:"+pagedrivers.size)
+      //Logger.info("size:"+pagedrivers.size)
 
     }
 

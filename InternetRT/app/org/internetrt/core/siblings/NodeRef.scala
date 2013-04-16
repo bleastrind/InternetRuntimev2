@@ -4,11 +4,12 @@ import scala.concurrent.Future
 import scala.concurrent.future
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.internetrt.CONSTS
+import java.net.URLEncoder
 
-class NodeRef(ip: String) {
+class NodeRef(ip: String, port:String = "80") {
   
-  def IP = ip
-  
+
+  def IP = ip + ":" + port  
   def response(uid: String, msg: String, msgID: String) {
 
       HttpHelper.httpClientGet(construct("/siblings/response", List("uid" -> uid, "msg" -> msg, "msgID" -> msgID)))
@@ -35,7 +36,7 @@ class NodeRef(ip: String) {
 
   private def construct(action: String, params: List[(String, String)]) = {
     val parmstrs = ((CONSTS.FROMIP, CONSTS.ThisIP) :: params).map(pair => pair._1 + "=" + pair._2)
-    "http://" + ip + action + "?" + parmstrs.mkString("&")
+    "http://" + IP  + action + "?" + URLEncoder.encode(parmstrs.mkString("&"),"UTF-8")
   }
 }
 
@@ -45,7 +46,7 @@ object NodeRef {
     nodeCache.get(ip) match {
       case Some(node) => node
       case None => {
-        val node = new NodeRef(ip)
+        val node = new NodeRef(ip,"9000")
         nodeCache += (ip -> node)
         node
       }
