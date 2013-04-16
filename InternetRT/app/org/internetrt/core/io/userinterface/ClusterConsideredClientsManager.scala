@@ -20,6 +20,7 @@ trait ClusterConsideredClientsManager extends ClientsManager{
      // Choice the right node
       global.clusterManager.getNodeRef(uid) match {
         case Some(node) => {
+          System.out.println("[ClusterConsideredClientsManager:sendevent]:sendevent to other node for uid:"+uid);
           node.sendevent(uid, msg, allowedStatus)
         }
         case None =>super.sendevent(uid, msg, allowedStatus)

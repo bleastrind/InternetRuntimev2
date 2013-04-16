@@ -71,4 +71,4 @@ GET		/siblings/response		org.internetrt.driver.siblings.NodeRefReceiver.response
 GET		/siblings/join			org.internetrt.driver.siblings.NodeRefReceiver.join
 GET		/siblings/sendevent			org.internetrt.driver.siblings.NodeRefReceiver.sendevent
 GET		/siblings/ask			org.internetrt.driver.siblings.NodeRefReceiver.ask
-
+GET		/siblings/joincallback			org.internetrt.driver.siblings.NodeRefReceiver.joincallback

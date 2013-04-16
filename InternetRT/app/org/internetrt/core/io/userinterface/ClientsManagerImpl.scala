@@ -32,6 +32,10 @@ abstract class ClientsManagerImpl extends ClientsManager {
 
     connector.register(driver);
   }
+  
+  def joincallback(uid: String, msg: String, allowedStatus: Seq[String]) {
+    sendevent(uid,msg,allowedStatus)
+  }
 
   def sendevent(uid: String, msg: String, allowedStatus: Seq[String]) {
     try {

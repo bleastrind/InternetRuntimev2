@@ -17,15 +17,19 @@ class NodeRef(ip: String, port:String = "80") {
   }
 
   def join(uid: String,status: String) {
-  
       HttpHelper.httpClientGet(construct("/siblings/join", List(CONSTS.SESSIONUID -> uid, CONSTS.CLIENTSTATUS -> status)))
-    
+  }
+  
+  def joincallback(uid:String, msg:String, allowedStatus:Seq[String]){
+    HttpHelper.httpClientGet(
+        construct("/siblings/joincallback", List(CONSTS.SESSIONUID -> uid, CONSTS.MSG -> msg) ++ allowedStatus.map((CONSTS.ALLOWEDSTATUS, _)))
+    )
   }
 
   def sendevent(uid: String, msg: String, allowedStatus: Seq[String]) {
 
       HttpHelper.httpClientGet(
-        construct("/siblings/sendevent", List(CONSTS.SESSIONUID -> uid, CONSTS.MSG -> msg) ::: allowedStatus.map((CONSTS.ALLOWEDSTATUS, _)).toList))
+        construct("/siblings/sendevent", List(CONSTS.SESSIONUID -> uid, CONSTS.MSG -> msg) ++ allowedStatus.map((CONSTS.ALLOWEDSTATUS, _))))
     
   }
   def ask(uid: String, msg: String, allowedStatus: Seq[String]):Future[String] = {

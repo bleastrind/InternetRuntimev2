@@ -7,6 +7,7 @@ trait ClientsManager {
   val global:InternetRuntime
   
   def join(uid: String, driver: ClientDriver);
+  def joincallback(uid: String, msg: String, allowedStatus: Seq[String]); 
 
   def sendevent(uid: String, msg: String, allowedStatus: Seq[String]);
   

@@ -87,17 +87,38 @@ object NodeRefReceiver extends Controller {
         case Some(list) => list.head //get the first status
         case None => ClientStatus.Active.toString()
       }
-      val fromip = request.queryString.get(CONSTS.FROMIP) match {
-        case Some(list) => list.head //get the first status
-        case None => ClientStatus.Active.toString()
+      val fromIP = request.queryString.get(CONSTS.FROMIP) match {
+        case Some(list) => list.head
+        case None => throw new Exception("The First node should not be joined by other node")
       }
       val driver = new SiblingDriver(uid,
         (msg: String, msgID: Option[String]) => {
-          val requireNode = SiteInternetRuntime.clusterManager.getNodeRefByIP(fromip)
-          requireNode.sendevent(uid, msg, ClientStatus.All.map(_ toString))
+          val requireNode = SiteInternetRuntime.clusterManager.getNodeRefByIP(fromIP)
+          requireNode.joincallback( uid, msg, Seq(status))
         }, status)
 
       SiteUserInterface.clientsManager.join(uid, driver)
+
+      Ok
+  }
+  
+  def joincallback = Action{
+    request=>
+      val uid = request.queryString.get(CONSTS.SESSIONUID) match {
+        case Some(list) => list.head
+        case None => CONSTS.ANONYMOUS
+      }
+      val msg = request.queryString.get(CONSTS.MSG) match {
+        case Some(list) => list.head
+        case None => ""
+      }
+      val status = request.queryString.get(CONSTS.ALLOWEDSTATUS) match {
+        case Some(list) => list //get the first status
+        case None => Seq(ClientStatus.Active.toString())
+      }
+     
+      SiteUserInterface.clientsManager.joincallback(uid,msg,status)
+      
 
       Ok
   }
