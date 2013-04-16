@@ -33,12 +33,13 @@ trait ClientDriver {
   }
   
 
-  def status:String = {
-    if( System.currentTimeMillis() - lasttime > ClientStatus.TimeOut.toMillis )
+  def status():String = {
+    if( !isValid || System.currentTimeMillis() - lasttime > ClientStatus.TimeOut.toMillis )
       clientstatus = ClientStatus.Dead.toString()
 
     clientstatus
   }
   def response(data: String, msgID: Option[String] = None)
-
+  
+  def isValid():Boolean = true
 }

@@ -8,6 +8,8 @@ trait ClusterConsideredClientsManager extends ClientsManager{
 	  super.join(uid, driver)    
 	  global.clusterManager.getNodeRef(uid) match {
 	      case Some(node) => {
+	        
+	    	System.out.println("[ClusterConsideredClientsManager:join]:join other node for uid:"+uid);
 	        node.join(uid, driver.status)
 	      }
 	      case None => None

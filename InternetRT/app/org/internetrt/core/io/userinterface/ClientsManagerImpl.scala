@@ -102,8 +102,9 @@ class UserConnector(id: String, cluster: ClusterManager) {
 
   def output(msg: String, allowedStatus: Seq[String], msgID: Option[String] = None) {
 
-    for (c <- clients) {
-      if (allowedStatus.contains(c.status))
+    val validclients = clients.filter(c => allowedStatus.contains(c.status))
+    System.out.println("ClientsManager:output  validclients:"+validclients.size);
+    for (c <- validclients) {
         c.response(msg, msgID)
     }
 
