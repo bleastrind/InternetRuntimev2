@@ -36,7 +36,7 @@ import org.internetrt.core.io.userinterface.ClientsManagerImpl
 	       u.protocal.toLowerCase() match{
 	         case "http" => HttpHelper.httpClientGet(url)
 	         case "osclient" => sendToClient(uid,
-	             (Printer.pretty(JsonAST.render(Xml.toJson(<name>{u.content}</name><query>{u.query}</query><data>{msg}</data>)))),
+	             (Printer.pretty(JsonAST.render(Xml.toJson(<value><type>{u.content}</type><query>{u.query}</query><data>{msg}</data></value>)))),
 	             Seq(ClientStatus.Active.toString()))
 	         case _ => throw new NotImplementedException()
 	       }

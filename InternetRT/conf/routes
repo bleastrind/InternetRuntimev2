@@ -22,6 +22,7 @@ GET		/clients/longpollingjsonp	org.internetrt.driver.userinterface.Client.longpo
 GET		/clients/longpolling	org.internetrt.driver.userinterface.Client.longpolling
 #reponse a question
 GET		/clients/response		org.internetrt.driver.userinterface.Client.response
+GET		/clients/test		org.internetrt.driver.userinterface.Client.test
 
 # Client API
 

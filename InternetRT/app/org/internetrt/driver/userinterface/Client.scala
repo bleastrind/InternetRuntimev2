@@ -51,9 +51,12 @@ object Client extends Controller {
   def test = Action {
     request=>
     val uid = request.session.get(CONSTS.SESSIONUID).getOrElse(CONSTS.ANONYMOUS);
-    
+    	        import net.liftweb.json._;
+	        import net.liftweb.json.JsonAST._;
+			//import net.liftweb.json.Printer._;
+	System.out.println(uid);
     implicit val timeout = Timeout(5.seconds)
-    ClientMessageActor.ref ! Message(uid, "test");
+    ClientMessageActor.ref ! Message(uid, compact(JsonAST.render(Xml.toJson(<value><name>u.c"ontent</name><query>u.query</query><data>msg</data></value>))));
     import play.api.templates.Html
     Ok(Html("""<a href="http://www.baidu.com">"""+uid+"""</a>"""))
   }
