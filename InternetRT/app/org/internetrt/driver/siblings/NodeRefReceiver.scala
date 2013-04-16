@@ -15,13 +15,13 @@ object NodeRefReceiver extends Controller {
 
   def sendevent = Action {
     request =>
-      val uid = request.queryString.get(CONSTS.SESSIONUID) match {
-        case Some(x :: xs) => x
-        case _ => CONSTS.ANONYMOUS
+	  val uid = request.queryString.get(CONSTS.SESSIONUID) match {
+        case Some(list) => list.head
+        case None => CONSTS.ANONYMOUS
       }
       val msg = request.queryString.get(CONSTS.MSG) match {
-        case Some(x :: xs) => x
-        case _ => ""
+        case Some(list) => list.head
+        case None => ""
       }
       val allowedStatus = request.queryString.get(CONSTS.ALLOWEDSTATUS).getOrElse(ClientStatus.All.map(_ toString))
 
@@ -33,12 +33,12 @@ object NodeRefReceiver extends Controller {
   def response = Action {
     request =>
       val uid = request.queryString.get(CONSTS.SESSIONUID) match {
-        case Some(x :: xs) => x
-        case _ => CONSTS.ANONYMOUS
+        case Some(list) => list.head
+        case None => CONSTS.ANONYMOUS
       }
       val msg = request.queryString.get(CONSTS.MSG) match {
-        case Some(x :: xs) => x
-        case _ => ""
+        case Some(list) => list.head
+        case None => ""
       }
       val fromip = request.queryString.get(CONSTS.FROMIP) match {
         case Some(list) => list.head //get the first status
@@ -46,8 +46,8 @@ object NodeRefReceiver extends Controller {
       }
 
       val success = request.queryString.get(CONSTS.MSGID) match {
-        case Some(x :: xs) => SiteUserInterface.clientsManager.response(uid, msg, x)
-        case _ => false
+        case Some(list) => SiteUserInterface.clientsManager.response(uid, msg, list.head)
+        case None => false
       }
 
       Ok(success.toString())
@@ -56,12 +56,12 @@ object NodeRefReceiver extends Controller {
   def ask = Action {
     request =>
       val uid = request.queryString.get(CONSTS.SESSIONUID) match {
-        case Some(x :: xs) => x
-        case _ => CONSTS.ANONYMOUS
+        case Some(list) => list.head
+        case None => CONSTS.ANONYMOUS
       }
       val msg = request.queryString.get(CONSTS.MSG) match {
-        case Some(x :: xs) => x
-        case _ => ""
+        case Some(list) => list.head
+        case None => ""
       }
 
       val allowedStatus = request.queryString.get(CONSTS.ALLOWEDSTATUS).getOrElse(ClientStatus.All.map(_ toString))

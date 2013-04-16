@@ -8,7 +8,8 @@ import akka.actor._
 import akka.actor.Actor._
 import play.api.libs.iteratee._
 import play.api.libs.concurrent._
-import scala.concurrent.duration._
+import scala.concurrent.
+duration._
 import play.api._
 import play.api.mvc._
 import play.api.libs._
@@ -42,8 +43,8 @@ object Client extends Controller {
       val uid = request.session.get(CONSTS.SESSIONUID).getOrElse(CONSTS.ANONYMOUS);
       val msg = request.body.asText.getOrElse("")
       val success = request.queryString.get(CONSTS.MSGID) match{ 
-        case Some(x::xs) => ClientMessageActor.clientsManager.response(uid,msg,x)
-        case _ => false
+        case Some(list)=> ClientMessageActor.clientsManager.response(uid,msg,list.head)
+        case None => false
       }
       
       Ok(success.toString())      
