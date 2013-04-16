@@ -5,11 +5,7 @@ abstract class ClusterManagerImpl extends ClusterManager {
 
   val DHTRing = List(
     (0, NodeRef.getNode("192.168.3.145")),
-    (10768, NodeRef.getNode("192.168.3.155")),
-    (2754673, NodeRef.getNode("192.168.3.234")),
-    (275467373, NodeRef.getNode("192.168.3.123")),
-    (1725467373, NodeRef.getNode("192.168.3.122")),
-    (2054636373, NodeRef.getNode("192.168.3.121"))
+    (275467373, NodeRef.getNode("192.168.3.160"))
     );
 
   def getNodeRef(uid: String): Option[NodeRef] = {
