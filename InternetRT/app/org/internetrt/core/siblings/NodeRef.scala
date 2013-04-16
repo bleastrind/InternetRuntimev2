@@ -35,8 +35,8 @@ class NodeRef(ip: String, port:String = "80") {
   }
 
   private def construct(action: String, params: List[(String, String)]) = {
-    val parmstrs = ((CONSTS.FROMIP, CONSTS.ThisIP) :: params).map(pair => pair._1 + "=" + pair._2)
-    "http://" + IP + ":" + port    + action + "?" + URLEncoder.encode(parmstrs.mkString("&"),"UTF-8")
+    val parmstrs = ((CONSTS.FROMIP, CONSTS.ThisIP) :: params).map(pair => pair._1 + "=" +URLEncoder.encode( pair._2, "UTF-8"))
+    "http://" + IP + ":" + port    + action + "?" + parmstrs.mkString("&")
   }
 }
 
