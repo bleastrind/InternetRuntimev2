@@ -471,7 +471,8 @@ window.InternetRuntime.Client.Core = new function()
 			
 			"default":function(data,mid)
 			{
-				alert(data.data);
+				if ((data) && (data.data))
+					alert(data.data);
 			}
 		}
 		
