@@ -135,8 +135,7 @@ object CONSTS {
   val ANONYMOUS = "Anonymous";
 
   val ACCESSTOKEN = "access_token";
-
   val FROMIP = "fromip";
   
-  val ThisIP = "192.168.3.160";
+  val ThisIP = "192.168.3.145";
 }
