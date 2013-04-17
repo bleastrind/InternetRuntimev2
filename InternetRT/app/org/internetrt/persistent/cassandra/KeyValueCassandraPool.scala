@@ -10,6 +10,7 @@ import java.util.Arrays
 import me.prettyprint.cassandra.service.template.ThriftColumnFamilyTemplate
 import me.prettyprint.cassandra.serializers.StringSerializer
 import me.prettyprint.hector.api.exceptions.HectorException
+import org.internetrt.util.Debuger
 abstract class KeyValueCassandraPool[K, V](cluster: Cluster, keyspacename: String, cfname: String) extends KeyValueResourcePool[K, V] {
 
   def KeySerializer: Serializer[K]
@@ -31,7 +32,7 @@ abstract class KeyValueCassandraPool[K, V](cluster: Cluster, keyspacename: Strin
         KeySerializer,
         StringSerializer.get());
     } catch {
-      case e: Exception => System.out.println(e)
+      case e: Exception =>Debuger.error("[KeyValueCasandraPool]ConnectionFailed"+e)
     }
   }
 

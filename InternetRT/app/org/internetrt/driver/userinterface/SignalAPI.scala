@@ -100,7 +100,7 @@ object SignalAPI extends Controller {
       val params = RoutingInstanceXmlParser.getRequiredFormats(config)
         .filter(f => f.kind == "params")
         .headOption 
-		System.out.println("[SignalAPI params format]"+params);
+		org.internetrt.util.Debuger.debug("[SignalAPI params format]"+params);
 	  val paramstr = params match {
           case Some(format) => "?" + HttpHelper.generatorParamString( ListenerRequestGenerator.generateDataByFormat(
             request.queryString,

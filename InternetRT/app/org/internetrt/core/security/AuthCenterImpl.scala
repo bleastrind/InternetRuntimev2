@@ -54,8 +54,8 @@ abstract class AuthCenterImpl extends AnyRef
 
   def checkApp(appID: String, appSecret: String): Unit = {
     val realEncryptedAppsecret = appOwnerPool.get(appID).getOrElse("");
-    System.out.println("[AuthCenterImpl:checkApp] realEncrypted pass:"+realEncryptedAppsecret)
-    System.out.println("[AuthCenterImpl:checkApp] inputEncrypted pass:"+appSecret)
+    org.internetrt.util.Debuger.debug("[AuthCenterImpl:checkApp] realEncrypted pass:"+realEncryptedAppsecret)
+    org.internetrt.util.Debuger.debug("[AuthCenterImpl:checkApp] inputEncrypted pass:"+appSecret)
     if (realEncryptedAppsecret != Encrypt.encrypt(appSecret))
       throw new AuthDelayException("App Secret don't Match!")
   }
@@ -80,7 +80,7 @@ abstract class AuthCenterImpl extends AnyRef
    * code can be auth token
    */
   def genAccessTokenByAuthToken(authtoken: String, appID: String, appSecret: String): AccessToken = {
-	System.out.println("[AuthCenterImpl:genAccessTokenByAuthToken]authtoken:"+authtoken+" appID:"+appID+" appSecret:"+appSecret)
+	org.internetrt.util.Debuger.debug("[AuthCenterImpl:genAccessTokenByAuthToken]authtoken:"+authtoken+" appID:"+appID+" appSecret:"+appSecret)
     authCodePool.get(authtoken) match {
       case Some((appID, userID)) => {
 

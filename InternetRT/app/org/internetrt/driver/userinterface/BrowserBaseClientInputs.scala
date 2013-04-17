@@ -24,7 +24,7 @@ object BrowserBaseClientInputs extends Controller {
   }
   def login() = Action {
     implicit request =>
-      System.out.println("Before Login:" + request.session)
+      org.internetrt.util.Debuger.debug("Before Login:" + request.session)
 
       val mainpage = controllers.routes.Application.index().absoluteURL(false)
       if (request.method == "GET") {
@@ -38,8 +38,8 @@ object BrowserBaseClientInputs extends Controller {
         try {
           val uid = SiteUserInterface.login(username.get, password.get);
 
-          System.out.println("UID in login" + uid);
-          System.out.println("oldurl:" + oldurl);
+          org.internetrt.util.Debuger.debug("UID in login" + uid);
+          org.internetrt.util.Debuger.debug("oldurl:" + oldurl);
           Redirect(oldurl).withSession(request.session +
             (CONSTS.SESSIONUID -> uid) + ("username" -> username.get));
         } catch {
@@ -74,15 +74,15 @@ object BrowserBaseClientInputs extends Controller {
   def installRootApp() = Action {
     implicit request =>
 
-      System.out.println("Install root app" + request.session)
+      org.internetrt.util.Debuger.debug("Install root app" + request.session)
 
       if (request.method == "GET") Ok(views.html.installRootApp())
       else request.session.get(CONSTS.SESSIONUID) match {
         case Some(uid) => {
           request.body.asFormUrlEncoded.get("xml") match {
             case Seq(xml) => {
-              System.out.println("UID" + uid);
-              System.out.println("XML" + xml);
+              org.internetrt.util.Debuger.debug("UID" + uid);
+              org.internetrt.util.Debuger.debug("XML" + xml);
 
               val success = SiteUserInterface.installRootApp(uid, xml);
 			  

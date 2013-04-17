@@ -30,6 +30,7 @@ import org.internetrt.core.io.userinterface.ClientStatus
 import org.internetrt.core.io.userinterface.ClientDriver
 import org.internetrt.SiteUserInterface
 import java.util.concurrent.Executors
+import org.internetrt.util.Debuger
 
 object Client extends Controller {
   //  var clients = Map.empty[String, PushEnumerator[String]]
@@ -58,7 +59,7 @@ object Client extends Controller {
       import net.liftweb.json._;
       import net.liftweb.json.JsonAST._;
       //import net.liftweb.json.Printer._;
-      System.out.println(uid);
+      org.internetrt.util.Debuger.debug(uid);
       implicit val timeout = Timeout(5.seconds)
       SiteUserInterface.sendEvent(uid, compact(JsonAST.render(Xml.toJson(<value><name>u.c"ontent</name><query>u.query</query><data>msg</data></value>))), Seq(ClientStatus.Active.toString()))
       //SiteUserInterface.sendEvent(uid, compact(JsonAST.render(Xml.toJson(<value><name>u.c"ontent</name><query>u.query</query><data>msg</data></value>))), Seq(ClientStatus.Dead.toString()))
@@ -116,7 +117,8 @@ class PageJavaScriptSlimClientDriver(cid: String, channel: ActorRef) extends Cli
   //var channel:ActorRef = null
 
   def response(data: String, msgID: Option[String]) {
-    System.out.println("[Client] Ready To Output :"+ data+ "  channel terminated:"+channel.isTerminated);
+    Debuger.debug("[Client] Ready To Output :"+ data+ "  channel :"+channel)
+    Debuger.assert(!channel.isTerminated, "[Client] Ready To Output :"+ data+ "  channel terminated:"+channel.isTerminated);
 
     channel ! "{cid:\"" + cid + "\",data:" + data + (msgID match {
       case Some(id) => "," + CONSTS.MSGID + ":" + id
@@ -143,18 +145,21 @@ class ClientMessageActor extends Actor {
   def receive = {
 
     case Join(uid, cid, clientStatus) => {
-
-      //async {
+    	val channel = sender;
+      async {
         //get the unique channel
-        val clientDriver = new PageJavaScriptSlimClientDriver(cid, sender)
+        val clientDriver = new PageJavaScriptSlimClientDriver(cid, channel)
 
+
+        Debuger.assert(clientDriver.isValid,"*[Warning:Client] new join clientDriver is not valid");
         clientsManager.join(uid, clientDriver)
 
-        clientDriver.touch();
-        clientDriver.setStatus(clientStatus);
+        //clientDriver.touch();
+        //clientDriver.setStatus(clientStatus);
 
-        Logger.info("New member joined:" + sender + "  Clientstatus:"+ clientDriver.isValid)
-      //}
+        Debuger.debug("[Client:Actor Receive]New member joined:" + channel + "  Clientstatus:"+ clientDriver.isValid)
+        
+      }
     }
 
     case Message(uid, msg) => {
@@ -167,7 +172,7 @@ class ClientMessageActor extends Actor {
     case Test() => {
       //Damn!! No Parallel, MessageQueue onebyone!
       async {
-        System.out.println("Test");
+        org.internetrt.util.Debuger.debug("Test");
         Thread.sleep(10000);
       }
     }

@@ -1,16 +1,17 @@
 package org.internetrt.core.io.userinterface
 
 import scala.concurrent.Future
+import org.internetrt.util.Debuger
 
 trait ClusterConsideredClientsManager extends ClientsManager{
   
   abstract override def join(uid: String, driver: ClientDriver) {
 	  super.join(uid, driver)    
-	  System.out.println("[ClusterConsideredClientsMananger:join] Driver joined:"+driver);
+	  //org.internetrt.util.Debuger.debug("[ClusterConsideredClientsMananger:join] Driver joined:"+driver);
 	  global.clusterManager.getNodeRef(uid) match {
 	      case Some(node) => {
 	        
-	    	System.out.println("[ClusterConsideredClientsManager:join]:join other node for uid:"+uid);
+	    	Debuger.debug("[ClusterConsideredClientsManager:join]:join other node for uid:"+uid);
 	        node.join(uid, driver.status)
 	      }
 	      case None => None
@@ -19,10 +20,10 @@ trait ClusterConsideredClientsManager extends ClientsManager{
   
   abstract override def sendevent(uid: String, msg: String, allowedStatus: Seq[String]) {
      // Choice the right node
-    System.out.println("[ClusterConsideredClientsManager:sendevent]"+uid);
+	  Debuger.debug("[ClusterConsideredClientsManager:sendevent]"+uid);
       global.clusterManager.getNodeRef(uid) match {
         case Some(node) => {
-          System.out.println("[ClusterConsideredClientsManager:sendevent]:sendevent to other node for uid:"+uid);
+          Debuger.debug("[ClusterConsideredClientsManager:sendevent]:sendevent to other node for uid:"+uid);
           node.sendevent(uid, msg, allowedStatus)
         }
         case None =>super.sendevent(uid, msg, allowedStatus)

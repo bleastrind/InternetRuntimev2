@@ -30,11 +30,11 @@ abstract class SignalSystemImpl extends SignalSystem {
     workflowEngine.checkStatus(getRouting(s), options) match {
       case OptionMissingState(s) => s
       case OkState(_,node) =>{
-        System.out.println("[SignalSystemImpl:initActionOptions]:"+"already OK")
+        org.internetrt.util.Debuger.debug("[SignalSystemImpl:initActionOptions]:"+"already OK")
         Map("uniqueListener" -> node)
       }
       case NoRequestListener(_) => {
-        System.out.println("[SignalSystemImpl:initActionOptions]:"+"No requestListener,no need")
+        org.internetrt.util.Debuger.debug("[SignalSystemImpl:initActionOptions]:"+"No requestListener,no need")
         Map.empty
       }
     }
@@ -43,7 +43,7 @@ abstract class SignalSystemImpl extends SignalSystem {
   def initAction(s: Signal, options: Map[String, String]): SignalResponse = {
     try {
       val ins = workflowEngine.initWorkflow(s.user, s.vars, getRouting(s), options)
-    		 System.out.println("xml"+ins.toString())
+    		 org.internetrt.util.Debuger.debug("xml"+ins.toString())
       return new ObjectResponse(ins.xml)
     } catch {
       case e:ConfigNotPreparedException => {
@@ -62,8 +62,8 @@ abstract class SignalSystemImpl extends SignalSystem {
   private def getRouting(s: Signal) = {
     assert(s != null)
     val routings = confSystem.getRoutingsBySignal(s)
-    System.out.println("[SignalSystemImpl:getRouting]:"+routings)
-    System.out.println("[SignalSystemImpl:getRouting]:"+s)
+    org.internetrt.util.Debuger.debug("[SignalSystemImpl:getRouting]:"+routings)
+    org.internetrt.util.Debuger.debug("[SignalSystemImpl:getRouting]:"+s)
     if(routings == null || routings.size < 1)
       throw new ConfigNotPreparedException("Signal:" + s);
     routings

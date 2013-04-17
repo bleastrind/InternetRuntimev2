@@ -13,7 +13,7 @@ object OAuthAPI extends Controller {
   def install() = Action {
     request =>
       try {
-        System.out.println("[OAuthAPI:install]:" + request.session)
+        org.internetrt.util.Debuger.debug("[OAuthAPI:install]:" + request.session)
 
         request.session.get(CONSTS.SESSIONUID) match {
           case Some(userID) => {
@@ -40,7 +40,7 @@ object OAuthAPI extends Controller {
   def authorize() = Action {
     request =>
       try {
-        System.out.println("[OAuthAPI:authorize]:" + request.session)
+        org.internetrt.util.Debuger.debug("[OAuthAPI:authorize]:" + request.session)
 
         request.session.get(CONSTS.SESSIONUID) match {
           case Some(userID) => {
@@ -49,7 +49,7 @@ object OAuthAPI extends Controller {
             val redirect_uri = request.queryString.get("redirect_uri").get.head;
             try {
               val code = SiteUserInterface.getAuthcodeForServerFlow(appID, userID, redirect_uri);
-              System.out.println("Redirect URL:" + redirect_uri);
+              org.internetrt.util.Debuger.debug("Redirect URL:" + redirect_uri);
               Redirect(redirect_uri + "?code=" + code + "&msg=success");
               //Ok(Html("<a href='http://localhost:9001'>back to old url</a>"))
             } catch {

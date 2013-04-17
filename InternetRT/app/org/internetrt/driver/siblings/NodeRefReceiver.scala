@@ -10,6 +10,7 @@ import org.internetrt.core.io.userinterface.ClientStatus
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.internetrt._
 import org.internetrt.core.siblings.NodeRef
+import org.internetrt.util.Debuger
 
 object NodeRefReceiver extends Controller {
 
@@ -27,6 +28,7 @@ object NodeRefReceiver extends Controller {
 	  System.out.println("[NodeRef:sendevent] uid="+ uid);
       val allowedStatus = request.queryString.get(CONSTS.ALLOWEDSTATUS).getOrElse(ClientStatus.All.map(_ toString))
 
+      Debuger.debug("[NodeRefReciever:sendevent]uid="+uid);
       SiteUserInterface.clientsManager.sendevent(uid, msg, allowedStatus)
 
       Ok
@@ -51,7 +53,6 @@ object NodeRefReceiver extends Controller {
         case Some(list) => SiteUserInterface.clientsManager.response(uid, msg, list.head)
         case None => false
       }
-
       Ok(success.toString())
   }
 
@@ -100,6 +101,7 @@ object NodeRefReceiver extends Controller {
           requireNode.joincallback( uid, msg, Seq(status))
         }, status)
 
+      Debuger.debug("[NodeRefReciever:join]uid="+uid);
       SiteUserInterface.clientsManager.join(uid, driver)
 
       Ok
@@ -120,7 +122,7 @@ object NodeRefReceiver extends Controller {
         case None => Seq(ClientStatus.Active.toString())
       }
      
-      System.out.println("[NodeRef:joincallback+]uid="+uid);
+      Debuger.debug("[NodeRefReciever:joincallback]uid="+uid);
       SiteUserInterface.clientsManager.joincallback(uid,msg,status)
       
 
