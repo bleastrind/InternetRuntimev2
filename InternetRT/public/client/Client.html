@@ -7,7 +7,7 @@ window.InternetRuntime.Client.Core = new function()
 	//	Global Consts
 	var CONST = 
 	{	
-		BASE_URL: 'http://localhost:9000',
+		BASE_URL: 'http://192.168.3.145:9000',
 		GET_USERNAME_URL: '/clients/getName',
 		LOGIN_URL: '/clients/login',
 		REGISTER_URL: '/clients/register',
@@ -431,25 +431,33 @@ window.InternetRuntime.Client.Core = new function()
 			}
 			function handleLongpolling(request)
 			{
-				var response = request.responseText;
-				var resJsonObj;
-				eval("resJsonObj = " + response);
-				if (CId == null)
-					CId = resJsonObj.cid;
-				if (resJsonObj.data)
-					eventHandlers[resJsonObj.data[0]](resJsonObj.data[1]);
+
+					var response = request.responseText;
+					
+					var resJsonObj;
+					eval("resJsonObj = " + response);
+					var msgID = resJsonObj.msgID;
+					
+					if (CId == null)
+						CId = resJsonObj.cid;
+					
 				
-				//why get cid instead of {cid:cid}????
-				/*if (response.data)
-					switch (response.type)
+					//	eventHandlers[resJsonObj.data[0]](resJsonObj.data[1]);
+					if(resJsonObj.data)
+						resJsonObj = resJsonObj.data.value;
+					//why get cid instead of {cid:cid}????\
+					if (resJsonObj)
+							if(resJsonObj.type)
+								eventHandlers[resJsonObj.type](resJsonObj,msgID);
+							else
+								eventHandlers["default"](resJsonObj,msgID);
+
+					
+					if (Status == 'Active' || Status == 'Background')
 					{
-					default:	eventHandler["default"](msgId, response.data);
+						tick();
 					}
-				*/
-				if (Status == 'Active' || Status == 'Background')
-				{
-					tick();
-				}
+
 			}
 		}
 		
@@ -458,7 +466,13 @@ window.InternetRuntime.Client.Core = new function()
 		{
 			"loadscript": function(data)
 			{
-				CORS.eval(unescape(data).substr(18));		
+				CORS.eval(unescape(data.data).substr(18));		
+			},
+			
+			"default":function(data,mid)
+			{
+				if(data && data.data)
+					alert(data.data);
 			}
 		}
 		

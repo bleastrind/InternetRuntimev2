@@ -55,41 +55,41 @@
 //    public static void main(String[] args) throws TException, InvalidRequestException, UnavailableException, UnsupportedEncodingException, NotFoundException, TimedOutException {
 //        Cassandra.Client client = setupConnection();
 //
-//        System.out.println("Remove all the authors we might have created before.\n");
+//        org.internetrt.util.Debuger.debug("Remove all the authors we might have created before.\n");
 //        removeAuthor(client, "Eric Long");
 //        removeAuthor(client, "Ronald Mathies");
 //        removeAuthor(client, "John Steward");
 //
-//        System.out.println("Create the authors.\n");
+//        org.internetrt.util.Debuger.debug("Create the authors.\n");
 //        createAuthor(client, "Eric Long", "eric (at) long.com", "United Kingdom", "01/01/2002");
 //        createAuthor(client, "Ronald Mathies", "ronald (at) sodeso.nl", "Netherlands, The", "01/01/2010");
 //        createAuthor(client, "John Steward", "john.steward (at) somedomain.com", "Australia", "01/01/2009");
 //
-//        System.out.println("Select Eric Long.\n");
+//        org.internetrt.util.Debuger.debug("Select Eric Long.\n");
 //        selectSingleAuthorWithAllColumns(client, "Eric Long");
 //
-//        System.out.println("Select Ronald Mathies.\n");
+//        org.internetrt.util.Debuger.debug("Select Ronald Mathies.\n");
 //        selectSingleAuthorWithAllColumns(client, "Ronald Mathies");
 //
-//        System.out.println("Select John Steward.\n");
+//        org.internetrt.util.Debuger.debug("Select John Steward.\n");
 //        selectSingleAuthorWithAllColumns(client, "John Steward");
 //
-//        System.out.println("Select all authors with all columns.\n");
+//        org.internetrt.util.Debuger.debug("Select all authors with all columns.\n");
 //        selectAllAuthorsWithAllColumns(client);
 //
-//        System.out.println("Select all authors with only the email column.\n");
+//        org.internetrt.util.Debuger.debug("Select all authors with only the email column.\n");
 //        selectAllAuthorsWithOnlyTheEmailColumn(client);
 //
-//        System.out.println("Update John Steward.\n");
+//        org.internetrt.util.Debuger.debug("Update John Steward.\n");
 //        updateJohnStewardAuthor(client);
 //
-//        System.out.println("Select John Steward.\n");
+//        org.internetrt.util.Debuger.debug("Select John Steward.\n");
 //        selectSingleAuthorWithAllColumns(client, "John Steward");
 //
-//        System.out.println("Remove email address and birthday from John Steward.\n");
+//        org.internetrt.util.Debuger.debug("Remove email address and birthday from John Steward.\n");
 //        deleteEmailAndBirthdayFromJohnSteward(client);
 //
-//        System.out.println("Select John Steward.\n");
+//        org.internetrt.util.Debuger.debug("Select John Steward.\n");
 //        selectSingleAuthorWithAllColumns(client, "John Steward");
 //
 //        closeConnection();
@@ -359,13 +359,13 @@
 //     */
 //    private static void printToConsole(String key, List<ColumnOrSuperColumn> result) {
 //        try {
-//            System.out.println("Key: '" + key + "'");
+//            org.internetrt.util.Debuger.debug("Key: '" + key + "'");
 //            for (ColumnOrSuperColumn c : result) {
 //                if (c.getColumn() != null) {
 //                    String name = new String(c.getColumn().getName(), ENCODING);
 //                    String value = new String(c.getColumn().getValue(), ENCODING);
 //                    long timestamp = c.getColumn().getTimestamp();
-//                    System.out.println("  name: '" + name + "', value: '" + value + "', timestamp: " + timestamp);
+//                    org.internetrt.util.Debuger.debug("  name: '" + name + "', value: '" + value + "', timestamp: " + timestamp);
 //                } else {
 //
 //                }

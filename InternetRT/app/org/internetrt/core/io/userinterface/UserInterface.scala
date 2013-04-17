@@ -12,12 +12,13 @@ import org.internetrt.exceptions.ApplicationNotInstalledException
 abstract class UserInterface {
   
   val global:InternetRuntime
+  val clientsManager: ClientsManager
+  
   import global.authCenter
   import global.aclSystem
   import global.confSystem
-  import global.signalSystem
-  
-  val clientManager = ClientsManager
+  import global.signalSystem  
+
   
   def register(username: String, password: String): String = {
     if (authCenter.registerUser(username, password)){
@@ -33,14 +34,14 @@ abstract class UserInterface {
   }
 
   def sendEvent(uid: String, msg: String,allowedStatus:Seq[String]) = {
-    clientManager.sendevent(uid,msg,allowedStatus);
+    clientsManager.sendevent(uid,msg,allowedStatus);
   }
   def response(uid: String, msg: String, msgID: String) = {
-    clientManager.response(uid, msg, msgID)
+    clientsManager.response(uid, msg, msgID)
   }
 
   def join(uid: String, driver: ClientDriver) = {
-    clientManager.join(uid, driver)
+    clientsManager.join(uid, driver)
   }
   
   def getAuthcodeForServerFlow(appID: String, userID: String, redirect_uri: String): String = {

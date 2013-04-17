@@ -52,7 +52,7 @@ class RoutingCassandraPool(cluster: Cluster)
 
   def getRoutingsBySignal(signal: Signal): Seq[Routing] = {
     val key = getKey(signal)
-    System.out.println("[RoutingCassandraPool:get]"+key)
+    org.internetrt.util.Debuger.debug("[RoutingCassandraPool:get]"+key)
     val query = HFactory.createSliceQuery(keyspace, StringSerializer.get(), StringSerializer.get(), StringSerializer.get())
       .setKey(key)
       .setColumnFamily(cfname)
@@ -64,7 +64,7 @@ class RoutingCassandraPool(cluster: Cluster)
   }
   def saveRouting(r: Routing) = {
     val key = getKey(r)
-    System.out.println("[RoutingCassandraPool:save]"+key);
+    org.internetrt.util.Debuger.debug("[RoutingCassandraPool:save]"+key);
     val updater = compTemplate.createUpdater(key);
 
     updater.setValue(RoutingSerializer.toString(r), "", StringSerializer.get())
@@ -73,7 +73,7 @@ class RoutingCassandraPool(cluster: Cluster)
       true
     } catch {
       case e: HectorException => false //TODO handle exception ...
-      case _ => false
+      case _:Throwable => false
     }
   }
 
@@ -93,7 +93,7 @@ class RoutingCassandraPool(cluster: Cluster)
         val xmlstr = xml \ "Routing" toString;
         Routing(uid, scala.xml.XML.loadString(xmlstr))
       } catch {
-        case e => {
+        case e:Throwable => {
           e.printStackTrace()
           throw e
         }

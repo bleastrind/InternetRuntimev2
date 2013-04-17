@@ -18,7 +18,7 @@ import org.internetrt.sdk.exceptions.ServerSideException;
 import org.internetrt.sdk.util.*;
 
 /**
- * @author sinaWeibo
+ * @author 
  * 
  */
 public class InternetRT {
@@ -127,7 +127,7 @@ public class InternetRT {
 
 		String xml = initActionFromThirdPart(accesstoken, signalName, null);
 		System.out.println(xml);
-		RoutingXmlParser parser = new RoutingXmlParser(xml);
+		RoutingInstanceXmlParser parser = new RoutingInstanceXmlParser(xml);
 
 		//Event signals
 		for(ListenerConfig config: parser.getEventListeners()){

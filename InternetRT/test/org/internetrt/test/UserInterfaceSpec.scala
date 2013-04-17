@@ -21,8 +21,8 @@ import org.internetrt.persistent.StubAccessTokenPool
 import org.internetrt.persistent.StubAuthCodePool
 import org.internetrt.core.io.userinterface.UserInterface
 import org.internetrt.core.io.userinterface.ClientDriver
-import akka.dispatch.Future
-import akka.dispatch.Await
+import scala.concurrent.Future
+import scala.concurrent.Await
 import org.internetrt.persistent.StubAppOwnerPool
 
 @RunWith(classOf[JUnitRunner])
@@ -33,7 +33,7 @@ class UserInterfaceSpec extends Specification with Mockito {
       "Login with username and password" ^ login ^
       "Then keep the connection which will give answer to server directly" ^ connect ^ end ^
       "Somebody ask from internal system" ^ ask ^
-      "And it receive the answer"^	check ^end
+      "And it receive the answer" ^	check ^end
 
   object TestEnvironment extends InternetRuntime {
     val signalSystem = mock[SignalSystem]
@@ -95,7 +95,7 @@ class UserInterfaceSpec extends Specification with Mockito {
   
   object check extends Then[Future[String]]{
     def extract(s: Future[String], text:String) = {
-      Await.result(s,akka.util.Duration.Inf) === "received"
+      Await.result(s,scala.concurrent.duration.Duration.Inf) === "received"
     }
   }
 }

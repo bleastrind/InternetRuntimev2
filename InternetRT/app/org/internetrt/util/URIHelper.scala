@@ -13,7 +13,7 @@ class URI(uri:String){
     content = leftparts(0)
     query = if (leftparts.length > 1) leftparts(1) else ""
   }catch{
-    case e =>e.printStackTrace(); throw new Exception("Bad Formated URI!"+uri)
+    case e:Throwable =>e.printStackTrace(); throw new Exception("Bad Formated URI!"+uri)
   }
   
 }

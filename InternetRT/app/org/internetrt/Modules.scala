@@ -15,6 +15,9 @@ import org.internetrt.core.io.userinterface.UserInterface
 import me.prettyprint.hector.api.Cluster
 import me.prettyprint.hector.api.factory.HFactory
 import org.internetrt.persistent.cassandra._
+import org.internetrt.core.io.userinterface.ClientsManagerImpl
+import org.internetrt.core.siblings.ClusterManagerImpl
+import org.internetrt.core.io.userinterface.ClusterConsideredClientsManager
 
 /**
  * This object control all the connections in the website
@@ -31,7 +34,7 @@ object SiteInternetRuntime extends InternetRuntime {
 
   object ioManager extends {
     val global = SiteInternetRuntime.this
-  } with IOManagerImpl
+  } with StandardManager
 
   object confSystem extends {
     val global = SiteInternetRuntime.this
@@ -41,8 +44,19 @@ object SiteInternetRuntime extends InternetRuntime {
     val global = SiteInternetRuntime.this
   } with CassandraAccessControlSystem
 
+  object clusterManager extends ClusterManagerImpl{
+    val global = SiteInternetRuntime.this
+  } 
 }
+
+trait StandardManager extends IOManagerImpl{
+  object clientsManager extends ClientsManagerImpl with ClusterConsideredClientsManager {
+    val global = SiteInternetRuntime
+  }
+}
+
 trait MemoryConfigurationSystem extends ConfigurationSystemImpl {
+  object globalAppPool extends StubGlobalAppPool
   object appPool extends StubAppPool
   object routingResourcePool extends MemoryRoutingResourcePool
 }
@@ -90,8 +104,9 @@ trait CassandraAccessControlSystem extends AccessControlSystemImpl{
 }
 
 object Cassandra{
-	val testCluster = HFactory.getOrCreateCluster("Test Cluster", "127.0.0.1:9160")
-	
+
+	val testCluster = HFactory.getOrCreateCluster("Test Cluster", "192.168.3.123:9160")
+
 	val accessTokenPool = new AccessTokenCassandraPool(testCluster)
 	val applicationAccessPool = new ApplicationAccessCassandraPool(testCluster)
 	val appOwnerPool = new AppOwnerCassandraPool(testCluster)
@@ -106,16 +121,21 @@ object Cassandra{
 
 object SiteUserInterface extends UserInterface {
   val global = SiteInternetRuntime
+  val clientsManager = global.ioManager.clientsManager
 }
 
 object CONSTS {
   val SESSIONUID = "UID";
   val CLIENTID = "CID";
   val MSGID = "msgID";
+  val MSG = "msg";
+  val ALLOWEDSTATUS = "allowedStatus";
 
   val CLIENTSTATUS = "CLIENTSTATUS";
   val ANONYMOUS = "Anonymous";
 
   val ACCESSTOKEN = "access_token";
-
+  val FROMIP = "fromip";
+  
+  val ThisIP = "192.168.3.145";
 }

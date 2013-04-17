@@ -16,7 +16,7 @@ import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import org.internetrt.sdk.util.HttpHelper
 import org.internetrt.exceptions.InputFormatErrorException
-
+import org.internetrt.sdk.util.RoutingInstanceXmlParser
 
 abstract class WorkflowEngineImpl extends WorkflowEngine {
 
@@ -28,7 +28,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
     try {
 
       val newinstance = generateInstanceByRouting(userID, vars, routings, options)
-      System.out.println("The Routing Instance:" + newinstance)
+      org.internetrt.util.Debuger.debug("The Routing Instance:" + newinstance)
       routingInstancePool.put(newinstance.id, newinstance)
       newinstance
     } catch {
@@ -37,16 +37,18 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
   }
 
   def checkStatus(routings: Seq[Routing], options: Map[String, String]) = {
-    case class RoutingListenerLocator(routingIndex:Int ,routing:Routing, listenerIndex:Int, listenernode:scala.xml.Node);
-    val routingListenerLocators = routings.zipWithIndex.map{
-    	routingIndexpair => (routingIndexpair._1.xml \\ "RequestListener" zipWithIndex) map{
-    	  listenerIndexpair => RoutingListenerLocator(
-    	      routingIndexpair._2, 
-    	      routingIndexpair._1, 
-    	      listenerIndexpair._2, 
-    	      listenerIndexpair._1 ) 
-    	} 
-      }.flatten
+    case class RoutingListenerLocator(routingIndex: Int, routing: Routing, listenerIndex: Int, listenernode: scala.xml.Node);
+    val routingListenerLocators = routings.zipWithIndex.map {
+      routingIndexpair =>
+        (routingIndexpair._1.xml \\ "RequestListener" zipWithIndex) map {
+          listenerIndexpair =>
+            RoutingListenerLocator(
+              routingIndexpair._2,
+              routingIndexpair._1,
+              listenerIndexpair._2,
+              listenerIndexpair._1)
+        }
+    }.flatten
     if (routingListenerLocators.length == 0)
       NoRequestListener(routings.head.xml \ "Signal" head)
     else if (routingListenerLocators.length == 1) {
@@ -61,16 +63,16 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
       if (options == null || options.get("requestListenerIndex") == None)
         OptionMissingState(Map("requestListenerIndex" -> conflicts));
       else {
-        try{
-        val conflictChoiece = scala.xml.XML.loadString(options("requestListenerIndex"))
-        val routingIndex = (conflictChoiece \ "RoutingId" text).toInt
-        val listenerIndex = (conflictChoiece \ "RequestListenerId" text).toInt
-        
-        val selectedRouting = routings(routingIndex)
-        	OkState(selectedRouting, (selectedRouting.xml \ "RequestListener")(listenerIndex))
-        }catch{
-          case e:IndexOutOfBoundsException => throw new InputFormatErrorException("Index is not consistency with the request")
-          case _ => throw new InputFormatErrorException("requestListenerIndex Received:"+options("requestListenerIndex")+"\nBut Need format like:<Choice><RoutingId>1</RoutingId><RequestListenerId>0</RequestListenerId></Choice>")
+        try {
+          val conflictChoiece = scala.xml.XML.loadString(options("requestListenerIndex"))
+          val routingIndex = (conflictChoiece \ "RoutingId" text).toInt
+          val listenerIndex = (conflictChoiece \ "RequestListenerId" text).toInt
+
+          val selectedRouting = routings(routingIndex)
+          OkState(selectedRouting, (selectedRouting.xml \ "RequestListener")(listenerIndex))
+        } catch {
+          case e: IndexOutOfBoundsException => throw new InputFormatErrorException("Index is not consistency with the request")
+          case _:Throwable => throw new InputFormatErrorException("requestListenerIndex Received:"+options("requestListenerIndex")+"\nBut Need format like:<Choice><RoutingId>1</RoutingId><RequestListenerId>0</RequestListenerId></Choice>")
         }
       }
     }
@@ -84,21 +86,21 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
     routingInstancePool.get(workflowID)
   }
 
-  def tryEventListener(workflowID: String, vars: Map[String, Seq[String]], uid: String, config: ListenerConfig):Option[ListenerConfig] = {
+  def tryEventListener(workflowID: String, vars: Map[String, Seq[String]], uid: String, config: ListenerConfig): Option[ListenerConfig] = {
     try {
-      System.out.println("ConfigXML:"+config.node)
-      val formats:Seq[ListenerDataFormat] = RoutingXmlParser.getRequiredFormats(config)
-      
-      val paramdata = formats.map(format =>{
-        if(format.kind == "params" || format.map.size == 0)
-        	ListenerRequestGenerator.generateDataByFormat(vars,format,GlobalData(Map(RoutingXmlParser.ROUTING_INSTANCE_ID_KEY -> workflowID)))
+      org.internetrt.util.Debuger.debug("ConfigXML:" + config.node)
+      val formats: Seq[ListenerDataFormat] = RoutingXmlParser.getRequiredFormats(config)
+
+      val paramdata = formats.map(format => {
+        if (format.kind == "params" || format.map.size == 0)
+          ListenerRequestGenerator.generateDataByFormat(vars, format, GlobalData(Map(RoutingInstanceXmlParser.ROUTING_INSTANCE_ID_KEY -> workflowID)))
         else
           return Some(config)
-      }).headOption.getOrElse(Map.empty[String,String]);
-      
+      }).headOption.getOrElse(Map.empty[String, String]);
+
       val params = HttpHelper.generatorParamString(scala.collection.JavaConversions.mapAsJavaMap(paramdata));
       val url = RoutingXmlParser.getListenerUrl(config) + "?" + params;
-      
+
       ioManager.sendToUrl(uid, url, null)
       None
     } catch {
@@ -107,7 +109,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
   }
 
   def dispatchEvents(workflowID: String, vars: Map[String, Seq[String]], userID: String, routings: Seq[Routing]) = {
-    System.out.println("Dispatching");
+    org.internetrt.util.Debuger.debug("Dispatching");
     val eventListenerNodes = routings map (r => r.xml \ "EventListener" toSeq) flatten;
     val eventListenerConfigs = eventListenerNodes map (node => ListenerConfig(node));
     val leftEventHandlers = eventListenerConfigs map (config => tryEventListener(workflowID, vars, userID, config)) flatten;
@@ -118,17 +120,16 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
     val actualRoutings = if (routings == null) Seq.empty else routings
 
     val workflowID = UUID.randomUUID().toString()
-    
+
     val (requestRouting, requestListenerID) = checkStatus(actualRoutings, options) match {
       case OkState(r, id) => (r, id)
       case OptionMissingState(options) => throw new RoutingInstanceInitException(options)
-      case NoRequestListener(r) => {
-        val routingInstance =
-          <RoutingInstance>
-            <id>{ workflowID }</id>
-            {r}
-            { scala.xml.NodeSeq.fromSeq(dispatchEvents(workflowID, vars, userID, routings)) }
-          </RoutingInstance>
+      case NoRequestListener(signal) => {
+        val routingInstance = RoutingInstanceXmlParser.createXml(
+            workflowID,
+            signal,
+            scala.xml.NodeSeq.fromSeq(dispatchEvents(workflowID, vars, userID, routings)))
+ 
 
         return new RoutingInstance(userID, routingInstance)
       }

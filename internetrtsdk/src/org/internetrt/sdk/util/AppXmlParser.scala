@@ -129,6 +129,7 @@ class AppXmlParser (xml:String){
             throwFormatException(result, "AppID")
         }
     }
+    
     return result
   }
   

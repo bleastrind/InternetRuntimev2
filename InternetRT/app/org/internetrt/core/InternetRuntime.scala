@@ -16,7 +16,8 @@ import org.internetrt.core.model.Routing
 import org.internetrt.core.security.AccessControlSystem
 import org.internetrt.exceptions.AccessRequestNotGrantedException
 import org.internetrt.exceptions.ApplicationNotInstalledException
-import userinterface.ClientsManager
+import org.internetrt.core.io.userinterface._
+import org.internetrt.core.siblings.ClusterManager
 
 /**
  * The Facade of the logical system
@@ -37,7 +38,7 @@ abstract class InternetRuntime {
   val aclSystem: AccessControlSystem
   val ioManager: IOManager
   val confSystem: ConfigurationSystem
-
+  val clusterManager: ClusterManager
   /**
    * ***********************************************************************
    * ---------------------------- security management-----------------------*
@@ -79,7 +80,7 @@ abstract class InternetRuntime {
     try {
       signalSystem.registerSignal(name, scala.xml.XML.loadString(xml))
     } catch {
-      case _ => false
+      case _:Throwable => false
     }
   }
   
@@ -160,12 +161,12 @@ abstract class InternetRuntime {
   def sendEvent(accessToken: String, msg: String,allowedStatus:Seq[String]) = {
     val (userID, appID) = authCenter.getUserIDAppIDPair(accessToken)
     aclSystem.checkAccess(userID, appID, "communicateUser")
-    ClientsManager.sendevent(userID,msg,allowedStatus);
+    ioManager.sendToClient(userID,msg,allowedStatus);
   }
   def sendEventToActive(accessToken: String, msg: String) = {
     val (userID, appID) = authCenter.getUserIDAppIDPair(accessToken)
     aclSystem.checkAccess(userID, appID, "communicateUser")
-    ClientsManager.sendevent(userID,msg,Seq(ClientStatus.Active.toString()));
+    ioManager.sendToClient(userID,msg,Seq(ClientStatus.Active.toString()));
   }
 }
 
