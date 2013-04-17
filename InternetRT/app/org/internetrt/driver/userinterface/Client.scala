@@ -145,10 +145,10 @@ class ClientMessageActor extends Actor {
   def receive = {
 
     case Join(uid, cid, clientStatus) => {
-
-      //async {
+    	val channel = sender;
+      async {
         //get the unique channel
-        val clientDriver = new PageJavaScriptSlimClientDriver(cid, sender)
+        val clientDriver = new PageJavaScriptSlimClientDriver(cid, channel)
 
 
         Debuger.assert(clientDriver.isValid,"*[Warning:Client] new join clientDriver is not valid");
@@ -157,9 +157,9 @@ class ClientMessageActor extends Actor {
         //clientDriver.touch();
         //clientDriver.setStatus(clientStatus);
 
-        Debuger.debug("[Client:Actor Receive]New member joined:" + sender + "  Clientstatus:"+ clientDriver.isValid)
+        Debuger.debug("[Client:Actor Receive]New member joined:" + channel + "  Clientstatus:"+ clientDriver.isValid)
         
-      //}
+      }
     }
 
     case Message(uid, msg) => {
