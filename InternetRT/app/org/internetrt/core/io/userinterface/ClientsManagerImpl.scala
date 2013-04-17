@@ -13,6 +13,7 @@ import org.internetrt.exceptions.InvalidStatusException
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.mutable.Queue
 import org.internetrt.core.siblings.ClusterManager
+import org.internetrt.util.Debuger
 
 abstract class ClientsManagerImpl extends ClientsManager {
   import global.clusterManager
@@ -35,6 +36,7 @@ abstract class ClientsManagerImpl extends ClientsManager {
   
   def joincallback(uid: String, msg: String, allowedStatus: Seq[String]) {
     try {
+      Debuger.debug("[ClientsManager:joincallback]");
       val connector = clients.get(uid).get;
       connector.output(msg, allowedStatus);
     } catch {
@@ -44,6 +46,7 @@ abstract class ClientsManagerImpl extends ClientsManager {
 
   def sendevent(uid: String, msg: String, allowedStatus: Seq[String]) {
     try {
+      Debuger.debug("[ClientsManager:sendevent]");
       val connector = clients.get(uid).get;
       connector.output(msg, allowedStatus);
     } catch {
@@ -69,7 +72,7 @@ abstract class ClientsManagerImpl extends ClientsManager {
 
     } catch {
       case e: Throwable => {
-        System.out.println("[ClientsManager:response] Error on response!:" + uid);
+        Debuger.error("[ClientsManager:response] Error on response!:" + uid);
       }
     }
   }
@@ -100,7 +103,10 @@ class UserConnector(id: String, cluster: ClusterManager) {
   def register(client: ClientDriver) {
     clients += client;
     delayedMessages.dequeueFirst(x => true) match {
-      case Some((msg, allowedStatus, msgID)) => output(msg, allowedStatus, msgID)
+      case Some((msg, allowedStatus, msgID)) =>{
+        Debuger.debug("[ClientsManagerImpl] DelayedMessage Sent")
+        output(msg, allowedStatus, msgID)
+      }
       case None => Unit
     }
 
@@ -111,16 +117,18 @@ class UserConnector(id: String, cluster: ClusterManager) {
 
   def output(msg: String, allowedStatus: Seq[String], msgID: Option[String] = None) {
 
-    val validclients = clients.filter(c => allowedStatus.contains(c.status))
-    System.out.println("ClientsManager:output  validclients:"+validclients.size);
-    for (c <- validclients) {
-        c.response(msg, msgID)
-    }
-
+    Debuger.debug("[ClientsManagerImpl]total clients:"+clients.size);
     // clear the dead clients here
     clients --= clients.filter(_.status == ClientStatus.Dead.toString())
     if (clients.size == 0)
       delayedMessages += ((msg, allowedStatus, msgID))
+      
+    val validclients = clients.filter(c => allowedStatus.contains(c.status))
+    Debuger.debug("[ClientsManagerImpl]output  validclients:"+validclients.size);
+    for (c <- validclients) {
+        c.response(msg, msgID)
+    }
+
 
   }
 }

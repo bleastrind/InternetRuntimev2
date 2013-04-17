@@ -31,7 +31,7 @@ import org.internetrt.core.io.userinterface.ClientsManagerImpl
 	     def sendToUrl(uid:String,url:String,msg:String){
 	        import net.liftweb.json._;
 	        import net.liftweb.json.JsonAST._;
-	        System.out.println("[IOManagerImpl:sendToUrl]:" + url)
+	        org.internetrt.util.Debuger.debug("[IOManagerImpl:sendToUrl]:" + url)
 	       val u = new URI(url); 
 	       u.protocal.toLowerCase() match{
 	         case "http" => HttpHelper.httpClientGet(url)

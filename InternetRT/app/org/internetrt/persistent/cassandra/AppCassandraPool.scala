@@ -12,6 +12,7 @@ import java.util.Arrays
 import java.nio.ByteBuffer
 import me.prettyprint.hector.api.exceptions.HectorException
 import me.prettyprint.cassandra.service.template.ThriftColumnFamilyTemplate
+import org.internetrt.util.Debuger
 
 class AppCassandraPool(cluster: Cluster) extends AppPool {
   val keyspacename = "InternetRT_Personal"
@@ -32,7 +33,7 @@ class AppCassandraPool(cluster: Cluster) extends AppPool {
         StringSerializer.get(),
         StringSerializer.get());
     } catch {
-      case e: Exception => System.out.println(e)
+      case e: Exception => Debuger.error("[AppCasandraPool]ConnectionFailed"+e)
     }
   }
 
@@ -59,6 +60,7 @@ class AppCassandraPool(cluster: Cluster) extends AppPool {
       true
     } catch {
       case e: HectorException => {
+        Debuger.error("[AppCassandraPool]Connection Failed!"+e)
         e.printStackTrace()
         false //TODO handle exception ...
       }

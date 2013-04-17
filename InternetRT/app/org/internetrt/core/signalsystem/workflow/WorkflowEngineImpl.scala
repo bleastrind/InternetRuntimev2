@@ -28,7 +28,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
     try {
 
       val newinstance = generateInstanceByRouting(userID, vars, routings, options)
-      System.out.println("The Routing Instance:" + newinstance)
+      org.internetrt.util.Debuger.debug("The Routing Instance:" + newinstance)
       routingInstancePool.put(newinstance.id, newinstance)
       newinstance
     } catch {
@@ -88,7 +88,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
 
   def tryEventListener(workflowID: String, vars: Map[String, Seq[String]], uid: String, config: ListenerConfig): Option[ListenerConfig] = {
     try {
-      System.out.println("ConfigXML:" + config.node)
+      org.internetrt.util.Debuger.debug("ConfigXML:" + config.node)
       val formats: Seq[ListenerDataFormat] = RoutingXmlParser.getRequiredFormats(config)
 
       val paramdata = formats.map(format => {
@@ -109,7 +109,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
   }
 
   def dispatchEvents(workflowID: String, vars: Map[String, Seq[String]], userID: String, routings: Seq[Routing]) = {
-    System.out.println("Dispatching");
+    org.internetrt.util.Debuger.debug("Dispatching");
     val eventListenerNodes = routings map (r => r.xml \ "EventListener" toSeq) flatten;
     val eventListenerConfigs = eventListenerNodes map (node => ListenerConfig(node));
     val leftEventHandlers = eventListenerConfigs map (config => tryEventListener(workflowID, vars, userID, config)) flatten;
