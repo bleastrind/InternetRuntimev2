@@ -23,6 +23,8 @@ object NodeRefReceiver extends Controller {
         case Some(list) => list.head
         case None => ""
       }
+	  
+	  System.out.println("[NodeRef:sendevent] uid="+ uid);
       val allowedStatus = request.queryString.get(CONSTS.ALLOWEDSTATUS).getOrElse(ClientStatus.All.map(_ toString))
 
       SiteUserInterface.clientsManager.sendevent(uid, msg, allowedStatus)
@@ -91,6 +93,7 @@ object NodeRefReceiver extends Controller {
         case Some(list) => list.head
         case None => throw new Exception("The First node should not be joined by other node")
       }
+	  System.out.println("[NodeRef:join] uid="+ uid + "  status="+status);
       val driver = new SiblingDriver(uid,
         (msg: String, msgID: Option[String]) => {
           val requireNode = SiteInternetRuntime.clusterManager.getNodeRefByIP(fromIP)

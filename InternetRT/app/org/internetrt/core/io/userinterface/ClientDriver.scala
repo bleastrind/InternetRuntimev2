@@ -34,6 +34,7 @@ trait ClientDriver {
   
 
   def status():String = {
+	System.out.println("[ClientDriver:status]"+ clientstatus)
     if( !isValid || System.currentTimeMillis() - lasttime > ClientStatus.TimeOut.toMillis )
       clientstatus = ClientStatus.Dead.toString()
 
