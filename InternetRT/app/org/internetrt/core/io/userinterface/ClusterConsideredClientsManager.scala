@@ -6,6 +6,7 @@ trait ClusterConsideredClientsManager extends ClientsManager{
   
   abstract override def join(uid: String, driver: ClientDriver) {
 	  super.join(uid, driver)    
+	  System.out.println("[ClusterConsideredClientsMananger:join] Driver joined:"+driver);
 	  global.clusterManager.getNodeRef(uid) match {
 	      case Some(node) => {
 	        
@@ -18,6 +19,7 @@ trait ClusterConsideredClientsManager extends ClientsManager{
   
   abstract override def sendevent(uid: String, msg: String, allowedStatus: Seq[String]) {
      // Choice the right node
+    System.out.println("[ClusterConsideredClientsManager:sendevent]"+uid);
       global.clusterManager.getNodeRef(uid) match {
         case Some(node) => {
           System.out.println("[ClusterConsideredClientsManager:sendevent]:sendevent to other node for uid:"+uid);

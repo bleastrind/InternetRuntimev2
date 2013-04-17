@@ -52,7 +52,7 @@ object Client extends Controller {
   def test = Action {
     request =>
 
-      ClientMessageActor.ref ! Test()
+      //ClientMessageActor.ref ! Test()
 
       val uid = request.session.get(CONSTS.SESSIONUID).getOrElse(CONSTS.ANONYMOUS);
       import net.liftweb.json._;
@@ -60,8 +60,8 @@ object Client extends Controller {
       //import net.liftweb.json.Printer._;
       System.out.println(uid);
       implicit val timeout = Timeout(5.seconds)
-      //SiteUserInterface.sendEvent(uid, compact(JsonAST.render(Xml.toJson(<value><name>u.c"ontent</name><query>u.query</query><data>msg</data></value>))), Seq(ClientStatus.Active.toString()))
-      // SiteUserInterface.sendEvent(uid, compact(JsonAST.render(Xml.toJson(<value><name>u.c"ontent</name><query>u.query</query><data>msg</data></value>))), Seq(ClientStatus.Dead.toString()))
+      SiteUserInterface.sendEvent(uid, compact(JsonAST.render(Xml.toJson(<value><name>u.c"ontent</name><query>u.query</query><data>msg</data></value>))), Seq(ClientStatus.Active.toString()))
+      //SiteUserInterface.sendEvent(uid, compact(JsonAST.render(Xml.toJson(<value><name>u.c"ontent</name><query>u.query</query><data>msg</data></value>))), Seq(ClientStatus.Dead.toString()))
 
       import play.api.templates.Html
       Ok(Html("""<a href="http://www.baidu.com">""" + uid + """</a>"""))
@@ -116,6 +116,8 @@ class PageJavaScriptSlimClientDriver(cid: String, channel: ActorRef) extends Cli
   //var channel:ActorRef = null
 
   def response(data: String, msgID: Option[String]) {
+    System.out.println("[Client] Ready To Output :"+ data+ "  channel terminated:"+channel.isTerminated);
+
     channel ! "{cid:\"" + cid + "\",data:" + data + (msgID match {
       case Some(id) => "," + CONSTS.MSGID + ":" + id
       case _ => ""
@@ -142,7 +144,7 @@ class ClientMessageActor extends Actor {
 
     case Join(uid, cid, clientStatus) => {
 
-      async {
+      //async {
         //get the unique channel
         val clientDriver = new PageJavaScriptSlimClientDriver(cid, sender)
 
@@ -151,8 +153,8 @@ class ClientMessageActor extends Actor {
         clientDriver.touch();
         clientDriver.setStatus(clientStatus);
 
-        Logger.info("New member joined:" + sender)
-      }
+        Logger.info("New member joined:" + sender + "  Clientstatus:"+ clientDriver.isValid)
+      //}
     }
 
     case Message(uid, msg) => {
