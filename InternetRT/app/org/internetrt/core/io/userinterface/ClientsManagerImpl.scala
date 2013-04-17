@@ -34,7 +34,12 @@ abstract class ClientsManagerImpl extends ClientsManager {
   }
   
   def joincallback(uid: String, msg: String, allowedStatus: Seq[String]) {
-    sendevent(uid,msg,allowedStatus)
+    try {
+      val connector = clients.get(uid).get;
+      connector.output(msg, allowedStatus);
+    } catch {
+      case e: NoSuchElementException => throw new InvalidStatusException("User " + uid + " don't have alive clients")
+    }
   }
 
   def sendevent(uid: String, msg: String, allowedStatus: Seq[String]) {

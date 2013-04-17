@@ -117,6 +117,7 @@ object NodeRefReceiver extends Controller {
         case None => Seq(ClientStatus.Active.toString())
       }
      
+      System.out.println("[NodeRef:joincallback+]uid="+uid);
       SiteUserInterface.clientsManager.joincallback(uid,msg,status)
       
 
