@@ -4,7 +4,7 @@ import org.internetrt.core.InternetRuntime
 
 trait ClusterManager {
   val global: InternetRuntime
-  
+  val nodeRefFactory:NodeRefFactory
   /**
    * Return None if uid below to the machine itself
    */

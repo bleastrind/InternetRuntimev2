@@ -39,6 +39,7 @@ abstract class InternetRuntime {
   val ioManager: IOManager
   val confSystem: ConfigurationSystem
   val clusterManager: ClusterManager
+  
   /**
    * ***********************************************************************
    * ---------------------------- security management-----------------------*
