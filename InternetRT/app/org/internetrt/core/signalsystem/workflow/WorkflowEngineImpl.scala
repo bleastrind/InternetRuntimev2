@@ -17,6 +17,7 @@ import scala.collection.JavaConverters._
 import org.internetrt.sdk.util.HttpHelper
 import org.internetrt.exceptions.InputFormatErrorException
 import org.internetrt.sdk.util.RoutingInstanceXmlParser
+import org.internetrt.exceptions.ConflictRequestWithOutOption
 
 abstract class WorkflowEngineImpl extends WorkflowEngine {
 
@@ -25,15 +26,10 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
   val routingInstancePool: RoutingInstancePool
 
   def initWorkflow(userID: String, vars: Map[String, Seq[String]], routings: Seq[Routing], options: Map[String, String]): RoutingInstance = {
-    try {
-
-      val newinstance = generateInstanceByRouting(userID, vars, routings, options)
+	  val newinstance = generateInstanceByRouting(userID, vars, routings, options)
       org.internetrt.util.Debuger.debug("The Routing Instance:" + newinstance)
       routingInstancePool.put(newinstance.id, newinstance)
       newinstance
-    } catch {
-      case e: RoutingInstanceInitException => null;
-    }
   }
 
   def checkStatus(routings: Seq[Routing], options: Map[String, String]) = {
@@ -88,30 +84,35 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
 
   def tryEventListener(workflowID: String, vars: Map[String, Seq[String]], uid: String, config: ListenerConfig): Option[ListenerConfig] = {
     try {
-      org.internetrt.util.Debuger.debug("ConfigXML:" + config.node)
+      org.internetrt.util.Debuger.debug("[WorkflowEngineImpl]ConfigXML:" + config.node)
       val formats: Seq[ListenerDataFormat] = RoutingXmlParser.getRequiredFormats(config)
-
       val paramdata = formats.map(format => {
         if (format.kind == "params" || format.map.size == 0)
           ListenerRequestGenerator.generateDataByFormat(vars, format, GlobalData(Map(RoutingInstanceXmlParser.ROUTING_INSTANCE_ID_KEY -> workflowID)))
-        else
+        else{
+          org.internetrt.util.Debuger.debug("[WorkflowEngineImpl]Dispatching:format does not support dispatch directly, format kind is" + format.kind)
           return Some(config)
+        }
       }).headOption.getOrElse(Map.empty[String, String]);
 
       val params = HttpHelper.generatorParamString(scala.collection.JavaConversions.mapAsJavaMap(paramdata));
       val url = RoutingXmlParser.getListenerUrl(config) + "?" + params;
-
+      
       ioManager.sendToUrl(uid, url, null)
       None
     } catch {
-      case e: DataNotEnoughException => Some(config)
+      
+      case e:DataNotEnoughException => {
+        org.internetrt.util.Debuger.debug("[WorkflowEngineImpl]DataNotEnough:" + e.getMessage())
+        Some(config)
+      }
     }
   }
 
   def dispatchEvents(workflowID: String, vars: Map[String, Seq[String]], userID: String, routings: Seq[Routing]) = {
     org.internetrt.util.Debuger.debug("Dispatching");
     val eventListenerNodes = routings map (r => r.xml \ "EventListener" toSeq) flatten;
-    val eventListenerConfigs = eventListenerNodes map (node => ListenerConfig(node));
+    val eventListenerConfigs = eventListenerNodes map (node => new ListenerConfig(node));
     val leftEventHandlers = eventListenerConfigs map (config => tryEventListener(workflowID, vars, userID, config)) flatten;
     leftEventHandlers map (config => config.node)
   }
@@ -123,7 +124,7 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
 
     val (requestRouting, requestListenerID) = checkStatus(actualRoutings, options) match {
       case OkState(r, id) => (r, id)
-      case OptionMissingState(options) => throw new RoutingInstanceInitException(options)
+      case OptionMissingState(options) => throw new ConflictRequestWithOutOption()
       case NoRequestListener(signal) => {
         val routingInstance = RoutingInstanceXmlParser.createXml(
             workflowID,
@@ -133,7 +134,10 @@ abstract class WorkflowEngineImpl extends WorkflowEngine {
 
         return new RoutingInstance(userID, routingInstance)
       }
-      case _ => return null
+      case _ => {
+        org.internetrt.util.Debuger.debug("[WorkflowEngineImpl]generateInstanceByRouting:noRouting")
+        return null
+      }
     }
 
     val routingInstance =

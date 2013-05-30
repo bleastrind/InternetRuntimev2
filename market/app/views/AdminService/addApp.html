@@ -18,8 +18,8 @@
     <link type="text/css" rel="stylesheet" href="/public/css/smoothness/jquery-ui-1.8.22.custom.css">
     <script>
         try{
-            var irturl = "http://internetrt.org:9000";
-            var marketurl ="http://market.internetrt.org:9001";
+            var irturl = "http://localhost:9000";
+            var marketurl ="http://localhost:9001";
 
             function param(obj,value){
                 if (value=="key") {
@@ -179,10 +179,12 @@
                             xml+= '<param><key>'+key+'</key><value>'+value+'</value></param>'
                         })
 
-                        xml+='</params> '+
-								'<anchor><value>'+$(ele).find("div.anchor").find("input[name='expression']").val()
-								+'</value></anchor>'+
-                                '</Adapter>'+
+                        xml+='</params> '
+						anchor = $(ele).find("div.anchor").find("input[name='expression']").val()
+						if (anchor){
+								xml+= '<anchor><value>'+anchor +'</value></anchor>'
+						}
+						xml+= '</Adapter>'+
                                 '</'+$(ele).find("select[name='listener']").val()+'>';
                         ;
 

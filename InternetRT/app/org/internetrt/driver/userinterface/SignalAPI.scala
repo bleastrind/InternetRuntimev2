@@ -39,7 +39,10 @@ object SignalAPI extends Controller {
             Ok(response.getResponse)
         }
       } catch {
-        case e => BadRequest(e.getMessage())
+        case e => {
+          e.printStackTrace();
+          BadRequest(e.getMessage())
+        }
       }
   }
 

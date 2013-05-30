@@ -9,7 +9,7 @@ object ListenerRequestGenerator{
   val parser = RoutingXmlParser;
   
   def generateDataByFormat(signalData: java.util.Map[String, String], format:ListenerDataFormat, extData:GlobalData):java.util.Map[String,String]={
-    val data = scala.collection.JavaConversions.asMap(signalData).mapValues(v => Seq(v)) 
+    val data = scala.collection.JavaConversions.asScalaMap(signalData).mapValues(v => Seq(v)) 
     val result = generateDataByFormat(data, format.map, extData)
     scala.collection.JavaConversions.mapAsJavaMap(result)
   }

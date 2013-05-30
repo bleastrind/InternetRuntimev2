@@ -134,14 +134,14 @@ class RoutingXmlParser(xml:String)  {
 
 	   def getRequestListener():ListenerConfig = {
 	   try{
-	     ListenerConfig(xmlFile\ "RequestListener" head)
+	     new ListenerConfig(xmlFile\ "RequestListener" head)
 	     }catch{
-	        case _ => null
+	        case _:Throwable => null
 	     }
 	   }
 	   
 	   def getEventListeners():java.util.List[ListenerConfig] = {
-	     val listeners = xmlFile\ "EventListener" map (node => ListenerConfig(node));
+	     val listeners = xmlFile\ "EventListener" map (node => new ListenerConfig(node));
 	     scala.collection.JavaConversions.seqAsJavaList(listeners)
 	   }
 
