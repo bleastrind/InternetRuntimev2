@@ -4,7 +4,7 @@ import org.internetrt.CONSTS;
 abstract class ClusterManagerImpl extends ClusterManager {
 
   val DHTRing = List(
-    (0, NodeRef.getNode("192.168.3.145")),
+    (0, NodeRef.getNode("192.168.3.160")),
     (493379200, NodeRef.getNode("192.168.3.160"))
     );
 
