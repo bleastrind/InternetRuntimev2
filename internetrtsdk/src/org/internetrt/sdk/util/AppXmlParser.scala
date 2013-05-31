@@ -81,7 +81,7 @@ class AppXmlParser (xml:String){
   }
   
   def getSignals():java.util.List[Signal]={
-    scala.collection.JavaConversions.asList[Signal](_getSignals) 
+    scala.collection.JavaConversions.asJavaList[Signal](_getSignals) 
   }
   
   def getMatchedRequestSignals(config:ListenerConfig) = {
@@ -90,13 +90,13 @@ class AppXmlParser (xml:String){
     val Signals = _getSignals() filter(
       signal =>signalName == signal.name
    )
-    scala.collection.JavaConversions.asList[Signal](Signals)
+    scala.collection.JavaConversions.asJavaList[Signal](Signals)
   }
   
   def getMatchedListeners(signalName:String) = {
 	 assert(signalName != null&&signalName!="")
      val appName = xmlFile \ "Name" text;
-     scala.collection.JavaConversions.asList[DescribedListenerConfig](
+     scala.collection.JavaConversions.asJavaList[DescribedListenerConfig](
         xmlFile \ "SignalHanlders" \ "RequestListener" ++ xmlFile \ "SignalHanlders" \ "EventListener" 
            map(signalListener => DescribedListenerConfig(appName,signalListener \ "Description" text,signalListener))
 	  	   filter ( config =>  (config.node \\ "Adapter" \ "Signalname").text == (signalName))
@@ -105,14 +105,14 @@ class AppXmlParser (xml:String){
   
   def getListeners() = {
      val appName = xmlFile \ "Name" text;
-     scala.collection.JavaConversions.asList[DescribedListenerConfig](
+     scala.collection.JavaConversions.asJavaList[DescribedListenerConfig](
       xmlFile \ "SignalHanlders" \ "RequestListener" ++ xmlFile \ "SignalHanlders" \ "EventListener" 
            map(signalListener => DescribedListenerConfig(appName,signalListener \ "Description" text,signalListener))
 	  	)
   }
   
   def getExceptedSignals() = {
-     scala.collection.JavaConversions.asList[String](
+     scala.collection.JavaConversions.asJavaList[String](
         xmlFile \"SignalHanlders" \\ "Adapter" \ "Signalname" map (node => node text)
      )
   }
@@ -135,7 +135,7 @@ class AppXmlParser (xml:String){
   
   def getSignalNameBaseRunat(runatAppId : String) = {
      assert(runatAppId!=null && runatAppId!="")
-    scala.collection.JavaConversions.asList[String]((xmlFile \ "SignalHanlders"\ "RequestListener" map{
+    scala.collection.JavaConversions.asJavaList[String]((xmlFile \ "SignalHanlders"\ "RequestListener" map{
 	  	  (requestListener) =>
 	  	      val runat = (requestListener \ "@runat").text
         throwFormatException(runat, "requestListener.@runat")

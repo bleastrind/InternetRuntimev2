@@ -50,6 +50,10 @@ abstract class SignalSystemImpl extends SignalSystem {
         //e.printStackTrace()
         new RejectResponse(I18n.REJECT+":" + e + " " + e.getMessage())
       }
+      case e:Throwable =>{
+        org.internetrt.util.Debuger.debug("[SignalSystemImpl]InitAction:"+e.toString())
+        new RejectResponse(I18n.REJECT+":" + e + " " + e.getMessage())
+      }
     }
   }
   def triggerEvent(t: Signal) = null

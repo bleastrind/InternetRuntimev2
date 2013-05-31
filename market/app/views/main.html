@@ -15,7 +15,7 @@
         
         <div id="header">
             <h1>Welcome to the AppMarket</h1>
-            #{if (session.get("token")!=null || !"".equals(session.get("token"))}
+            #{if (session.get("token")!=null || !"".equals(session.get("token")))}
                 <div id="options">
                     
                     <a href="@{Application.logout()}">Logout</a>

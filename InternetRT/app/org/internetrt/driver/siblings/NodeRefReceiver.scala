@@ -92,7 +92,8 @@ object NodeRefReceiver extends Controller {
         case Some(list) => list.head
         case None => throw new Exception("The First node should not be joined by other node")
       }
-      val driver = SiblingDriver.activeNewNode(uid,
+	  Debuger.debug("[NodeRef:join] uid="+ uid + "  status="+status);
+      val driver = new SiblingDriver(uid,
         (msg: String, msgID: Option[String]) => {
           val requireNode = SiteInternetRuntime.clusterManager.getNodeRefByIP(fromIP)
           requireNode.joincallback( uid, msg, Seq(status))

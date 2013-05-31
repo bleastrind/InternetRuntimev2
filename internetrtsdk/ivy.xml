@@ -7,6 +7,6 @@
 		 <dependency org="commons-httpclient" name="commons-httpclient" rev="3.1"/>
          <dependency org="commons-codec" name="commons-codec" rev="1.6"/>
          <dependency org="log4j" name="log4j" rev="1.2.17"/>     
-		 <dependency org="org.scala-lang" name="scala-library" rev="2.9.2"/>  
+		 <dependency org="org.scala-lang" name="scala-library" rev="2.10.1"/>  
      </dependencies> 
 </ivy-module>

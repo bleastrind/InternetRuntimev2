@@ -3,7 +3,9 @@ package org.internetrt.sdk.util
 case class DescribedListenerConfig(appName:String,description:String,override val node:scala.xml.Node) extends ListenerConfig(node){
   
 }
-case class ListenerConfig(node:scala.xml.Node){}
+class ListenerConfig(pnode:scala.xml.Node){
+  def node = pnode
+}
 case class GlobalData(map:Map[String,String]){}
 case class DataAdapter(node:scala.xml.Node){}
 
