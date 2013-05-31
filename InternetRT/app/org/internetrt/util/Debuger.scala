@@ -3,6 +3,9 @@ package org.internetrt.util
 object Debuger {
 	var pattern = java.util.regex.Pattern.compile(".*");
 	var ignorepattern = java.util.regex.Pattern.compile("\\[ClusterConsider.*");
+	def info(msg:String){
+	  System.out.println(msg)
+	}
 	def debug(msg:String){
 	  if(pattern.matcher(msg).matches() && !ignorepattern.matcher(msg).matches())
 	    System.out.println(msg)

@@ -1,5 +1,6 @@
 package org.internetrt.core.siblings
 import org.internetrt.driver.siblings.SocketNodeRefReceiver
+import org.internetrt.util.Debuger
 
 trait NodeRefFactory extends ClientPusingNodeRefFactory with ClusterSignalingNodeRefFactory{
    init()
@@ -31,6 +32,7 @@ trait ClientPusingNodeRefFactoryImpl extends ClientPusingNodeRefFactory{
 trait ClusterSignalingNodeRefFactoryImpl extends ClusterSignalingNodeRefFactory{
   val manager:TwoTierClusterManagerImpl
   def init() = {
+    Debuger.info("[Init]ClusterSignalingNodeRefFactory is initing");
     new SocketNodeRefReceiver().start(manager)
   }
   var ClusterSignalingNodeCache: Map[String, SocketNodeRef] = Map.empty
