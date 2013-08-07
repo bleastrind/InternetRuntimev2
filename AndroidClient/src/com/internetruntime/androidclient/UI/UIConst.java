@@ -13,12 +13,15 @@ public class UIConst {
 	static public int SCREEN_HEIGHT;
 	static public int SCREEN_WIDTH;
 	
+	static public final int EDIT_TEXT_WIDTH = 300;
+	static public final int LABEL_TEXT_HEIGHT = 90;
+	
 
 	static public final int LIST_MENU_CHANGE_INTERVAL = 500;
 	
-	static public final int BTN_WIDTH = 300;
+	static public final int BTN_WIDTH = 500;
 	static public final int BTN_HEIGHT = 120;
-	static public final int BTN_FADE_IN_START_X = 0 - BTN_WIDTH;	
+	static public final int BTN_FADE_IN_START_X = 0 - BTN_WIDTH - 200;	
 	static public final int BTN_X = 0;
 	static public int BTN_FADE_OUT_END_X;
 	

@@ -9,6 +9,7 @@ import com.internetruntime.androidclient.MainActivity;
 import com.internetruntime.androidclient.DeviceManager.CameraDriver;
 import com.internetruntime.androidclient.DeviceManager.PicCompresser;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -38,18 +39,34 @@ public class SocketHandler {
 		
 		if (type.equals("getPic"))
 		{
-			String token = query.split("&")[0].split("=")[1];
-			int reqWidth = Integer.parseInt(query.split("&")[1].split("=")[1]);
-			int reqHeight = Integer.parseInt(query.split("&")[2].split("=")[1]);
+			final String token = query.split("&")[0].split("=")[1];
+			final int reqWidth = Integer.parseInt(query.split("&")[1].split("=")[1]);
+			final int reqHeight = Integer.parseInt(query.split("&")[2].split("=")[1]);
 
 			Log.d("comm", token);
 			Log.d("comm", String.valueOf(reqWidth));
 			Log.d("comm", String.valueOf(reqHeight));
 			
-			
-			MainActivity.dm.takePicture(token, reqWidth, reqHeight);
-			
+			((MainActivity)context).runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					MainActivity.askForPic(token, reqWidth, reqHeight);
+				}
+			});
 		}
+		else if (type.equals("getAddress"))
+		{
+			final String token = query.split("&")[0].split("=")[1];
+			((MainActivity)context).runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					MainActivity.askForAddress(token);
+				}
+			});
+		}
+			
 		
 	}
 	

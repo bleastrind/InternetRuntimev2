@@ -22,12 +22,17 @@ public class UIActivity extends Activity{
 	
 	public ListMenu popBackMenuStack()
 	{
-		return BackMenuStack.pop();
+		CurrentMenu = BackMenuStack.pop();
+		Log.d("menu", "Pop: " + CurrentMenu.getSize());
+		return CurrentMenu;
 	}
 	
 	public void setCurrentMenu(ListMenu CurrentMenu) {
 		if (this.CurrentMenu != null)
+		{
 			BackMenuStack.push(this.CurrentMenu);
+			Log.d("menu", "Push: " + this.CurrentMenu.getSize());
+		}
 		this.CurrentMenu = CurrentMenu;
 	}
 	

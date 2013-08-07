@@ -50,6 +50,18 @@ public class DeviceManager extends Service{
 		this.picUri = cameraDriver.takePicture();		
 	}
 	
+	public void takeAddress(String token)
+	{
+		this.token = token;
+		GPSDriver gpsDriver = new GPSDriver(context);
+		String address = gpsDriver.getAddress();
+		
+		Log.d("loc", address);
+		
+		HttpDriver httpDriver = new HttpDriver("http://192.168.3.160:9003/uploadAddress?token=" + token);
+		httpDriver.postString(token, address);
+	}
+	
 	
 	//new picture
 	public boolean NewPicHandler(Intent intent) {

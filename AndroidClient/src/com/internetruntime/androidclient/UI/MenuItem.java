@@ -21,7 +21,7 @@ public class MenuItem extends RelativeLayout
 	private int id;
 	
 	private Context context;
-	private TextView textView;
+	public TextView textView;
 	
 	private ImageView shadowCover;
 	
@@ -40,13 +40,16 @@ public class MenuItem extends RelativeLayout
 		textView = new TextView(context);
 		textView.setBackgroundColor(UIConst.BTN_BACKGROUNG_UP);
 		textView.setTextColor(UIConst.BTN_TEXT_UP_UNVISIBLE);	
-		textView.setLayoutParams(new LayoutParams(UIConst.BTN_WIDTH, UIConst.BTN_HEIGHT));
+		LayoutParams layoutParams = new LayoutParams(UIConst.BTN_WIDTH, UIConst.BTN_HEIGHT);
+		layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		
+		textView.setLayoutParams(layoutParams);
 		this.addView(textView);
 		
 		shadowCover = new ImageView(context);
 		shadowCover.setImageResource(R.drawable.button_shadow);
-		shadowCover.setLayoutParams(new LayoutParams(UIConst.BTN_WIDTH, UIConst.BTN_HEIGHT));
-		this.addView(shadowCover);
+		shadowCover.setLayoutParams(layoutParams);
+//		this.addView(shadowCover);
 		
 		this.setVisibility(GONE);
 		
@@ -80,6 +83,19 @@ public class MenuItem extends RelativeLayout
 		textView.setGravity(Gravity.CENTER);
 	}
 	
+	public void setLabelText(String text)
+	{		
+		textView.setText(text);
+		textView.setTextSize(UIConst.BTN_TEXT_SIZE);
+		textView.getPaint().setFakeBoldText(true);
+		textView.setGravity(Gravity.CENTER_VERTICAL);
+	}
+	
+	public void setMenuVisibility(int v)
+	{
+		setVisibility(VISIBLE);
+	}
+	
 	
 	public void setSubMenu(ListMenu subMenu)
 	{
@@ -88,35 +104,35 @@ public class MenuItem extends RelativeLayout
 	
 	public void flyInLeft(int delay)
 	{
-		setVisibility(VISIBLE);
+		setMenuVisibility(VISIBLE);
 		buttonFlyInInitLeft.start();
-		UIAnimeSet animatorSet = new UIAnimeSet(buttonTextFadeInAnime, buttonFlyInAnime);
+		UIAnimeSet animatorSet = new UIAnimeSet(buttonTextFadeInAnime, buttonFlyInLeftAnime);
 		animatorSet.setStartDelay(delay);
 		animatorSet.start();
 	}
 	
 	public void flyInRight(int delay)
 	{
-		setVisibility(VISIBLE);
+		setMenuVisibility(VISIBLE);
 		buttonFlyInInitRight.start();
-		buttonFlyOutAnime.setStartDelay(delay);
-		buttonFlyOutAnime.reverse();
+		buttonFlyOutRightAnime.setStartDelay(delay);
+		buttonFlyOutRightAnime.reverse();
 	}
 	
 	public void flyOutLeft(int delay)
 	{
-		buttonFlyInAnime.setStartDelay(delay);
-		buttonFlyInAnime.removeAllListeners();
-		buttonFlyInAnime.addListener(new ClearItemListener(this));
-		buttonFlyInAnime.reverse();
+		buttonFlyInRightAnime.setStartDelay(delay);
+		buttonFlyInRightAnime.removeAllListeners();
+		buttonFlyInRightAnime.addListener(new ClearItemListener(this));
+		buttonFlyInRightAnime.reverse();
 	}
 	
 	public void flyOutRight(int delay)
 	{
-		buttonFlyOutAnime.setStartDelay(delay);
-		buttonFlyOutAnime.removeAllListeners();
-		buttonFlyOutAnime.addListener(new ClearItemListener(this));
-		buttonFlyOutAnime.start();
+		buttonFlyOutLeftAnime.setStartDelay(delay);
+		buttonFlyOutLeftAnime.removeAllListeners();
+		buttonFlyOutLeftAnime.addListener(new ClearItemListener(this));
+		buttonFlyOutLeftAnime.start();
 	}
 	
 	//button up
@@ -130,11 +146,14 @@ public class MenuItem extends RelativeLayout
 	private ObjectAnimator buttonFlyInInitLeft;
 	private ObjectAnimator buttonFlyInInitRight;
 	
-	//fly-in left
-	private ObjectAnimator buttonFlyInAnime;
+	//fly-in
+	private ObjectAnimator buttonFlyInLeftAnime;
+	private ObjectAnimator buttonFlyInRightAnime;
 	
 	//fly-out
-	private ObjectAnimator buttonFlyOutAnime;
+	private ObjectAnimator buttonFlyOutLeftAnime;
+	private ObjectAnimator buttonFlyOutRightAnime;
+	
 	
 	public void genAnimes()
 	{
@@ -150,44 +169,63 @@ public class MenuItem extends RelativeLayout
 		buttonFlyInInitRight = AnimeGenerator.genButtonFlyInInitRight(this);
 		
 		//fly-in 
-		buttonFlyInAnime = AnimeGenerator.genButtonFlyInAnime(this);
+		buttonFlyInLeftAnime = AnimeGenerator.genButtonFlyInAnime(this);
+		buttonFlyInRightAnime = AnimeGenerator.genButtonFlyInAnime(this);
 		
 		//fly-out
-		buttonFlyOutAnime = AnimeGenerator.genButtonFlyOutAnime(this);
+		buttonFlyOutLeftAnime = AnimeGenerator.genButtonFlyOutAnime(this);
+		buttonFlyOutRightAnime = AnimeGenerator.genButtonFlyOutAnime(this);
 		
 		
+		
+	}
+	
+	public class ClickListener implements OnClickListener{
+
+		@Override
+		public void onClick(View v)
+		{
+			if (subMenu != null)
+			{
+					parentMenu.goToMenu(subMenu, parentMenuIndex);
+			}
+		}
+		
+	}
+	
+	public class TapListner implements OnTouchListener{
+		private int flagEvent = -1;
+	
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			if (event.getAction() == MotionEvent.ACTION_DOWN)
+			{
+				//Touch down: no anime for fast react
+				Log.d("ui", "action downnnnnn");
+				textView.setBackgroundColor(UIConst.BTN_BACKGROUNG_DOWN);
+				textView.setTextColor(UIConst.BTN_TEXT_DOWN);
+			}
+			else if (event.getAction() == MotionEvent.ACTION_UP) 
+			{
+				Log.d("ui", "action uppppppp");
+				AnimatorSet set = new AnimatorSet();
+				set.playTogether(buttonBackgroundColorUpAnime, buttonTextColorUpAnime);
+				set.setDuration(UIConst.BTN_COLOR_FADE_DURATION);
+				set.start();
+			}
+			
+			return false;
+		}
 		
 		
 	}
 	
 	public void setTapAnime()
 	{
-		this.setOnTouchListener(new OnTouchListener() {			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN)
-				{
-					//Touch down: no anime for fast react
-					Log.d("ui", "action downnnnnn");
-					textView.setBackgroundColor(UIConst.BTN_BACKGROUNG_DOWN);
-					textView.setTextColor(UIConst.BTN_TEXT_DOWN);
-				}
-				else if (event.getAction() == MotionEvent.ACTION_UP) 
-				{
-					Log.d("ui", "action uppppppp");
-					AnimatorSet set = new AnimatorSet();
-					set.playTogether(buttonBackgroundColorUpAnime, buttonTextColorUpAnime);
-					set.setDuration(UIConst.BTN_COLOR_FADE_DURATION);
-					set.start();
-				}
-				if (subMenu != null)
-				{
-					parentMenu.goToMenu(subMenu, parentMenuIndex);
-				}
-				
-				return true;
-			}
-		});
+		
+		textView.setOnTouchListener(new TapListner());
+		textView.setOnClickListener(new ClickListener());
 	}
 
 }

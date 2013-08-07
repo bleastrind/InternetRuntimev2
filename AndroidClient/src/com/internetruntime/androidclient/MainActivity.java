@@ -1,6 +1,9 @@
 package com.internetruntime.androidclient;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,8 +18,12 @@ import com.internetruntime.androidclient.DeviceManager.PhoneReceiver;
 import com.internetruntime.androidclient.DeviceManager.PicCompresser;
 import com.internetruntime.androidclient.DeviceManager.SMSObserver;
 import com.internetruntime.androidclient.DeviceManager.SMSReceiver;
+import com.internetruntime.androidclient.UI.CheckBoxItem;
+import com.internetruntime.androidclient.UI.EditTextItem;
+import com.internetruntime.androidclient.UI.LableTextItem;
 import com.internetruntime.androidclient.UI.ListMenu;
 import com.internetruntime.androidclient.UI.MenuItem;
+import com.internetruntime.androidclient.UI.RadioTextItem;
 import com.internetruntime.androidclient.UI.UIActivity;
 import com.internetruntime.androidclient.UI.UIConsole;
 import com.internetruntime.androidclient.UI.UIConst;
@@ -25,14 +32,29 @@ import com.internetruntime.androidclient.UI.UIMenu;
 import com.internetruntime.androidclient.UI.UIMenuButtonItem;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.app.TaskStackBuilder;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -40,8 +62,10 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 public class MainActivity extends UIActivity {
@@ -49,6 +73,9 @@ public class MainActivity extends UIActivity {
 	public static DeviceManager dm;
 	public static SocketDriver socketClient;
 	public static EventHandler eventHandler;
+	
+	public static Context mainContext;
+	
 	
 	
 	@Override
@@ -60,12 +87,18 @@ public class MainActivity extends UIActivity {
 			if (requestCode == CameraDriver.CAMERA_REQUEST_CODE)
 			{
 				Log.d("comm", "Activity Result!");
-				dm.handlePicture();
+				((MainActivity)mainContext).runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						MainActivity.dm.handlePicture();
+					}
+				});
+				
 			}
 			
 		}
 	}
-	
 	
 	
 	
@@ -83,7 +116,9 @@ public class MainActivity extends UIActivity {
 		regDeviceReceiversAndOberservers();
 		
 		
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER);
 		
+		MainActivity.mainContext = this;
 		
 		Log.d("tag", "after clock");
 		
@@ -92,39 +127,120 @@ public class MainActivity extends UIActivity {
 		
 		
 		
-		
-		
 		ListMenu menu1 = new ListMenu(this);
 		
 		MenuItem item1 = new MenuItem(this);
-		item1.setText("test1");
+		item1.setText("Sign in");
 		MenuItem item2 = new MenuItem(this);
-		item2.setText("test2");
+		item2.setText("Settings");
 		MenuItem item3 = new MenuItem(this);
-		item3.setText("test2");
-		MenuItem item5 = new MenuItem(this);
-		item5.setText("test2");
-		MenuItem item4 = new MenuItem(this);
-		item4.setText("test2");
+		item3.setText("About");
+		
+		
+		
+		
+		
+		
 		
 		menu1.addItem(item1);
 		menu1.addItem(item2);
 		menu1.addItem(item3);
-		menu1.addItem(item4);
-		menu1.addItem(item5);
+		
 		start(menu1);
-		getMainLayout().addView(menu1);
+		
+		LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+//		layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+		getMainLayout().addView(menu1, layoutParams);
 		
 		ListMenu menu2 = new ListMenu(this);
-		MenuItem item21 = new MenuItem(this);
-		item21.setText("test1");
-		MenuItem item22 = new MenuItem(this);
-		item22.setText("test2");
+		MenuItem item21 = new LableTextItem(this);
+		item21.setText("UserName");
+		MenuItem item22 = new EditTextItem(this);
+		MenuItem item23 = new LableTextItem(this);
+		item23.setText("PassWord");
+		EditTextItem item24 = new EditTextItem(this);
+		item24.setPassword();
+		MenuItem item25 = new MenuItem(this);
+		item25.setText("Sign in");
+		
 		menu2.addItem(item21);
 		menu2.addItem(item22);
-		getMainLayout().addView(menu2);
+		menu2.addItem(item23);
+		menu2.addItem(item24);
+		menu2.addItem(item25);
 		
+		getMainLayout().addView(menu2);		
 		item1.setSubMenu(menu2);
+		
+		ListMenu settingMenu = new ListMenu(this);
+		
+		MenuItem permission = new MenuItem(this);
+		permission.setText("Permissions");
+		MenuItem launch = new MenuItem(this);
+		launch.setText("LaunchMode");
+		MenuItem network = new MenuItem(this);
+		network.setText("NetworkMode");
+		
+		settingMenu.addItem(permission);
+		settingMenu.addItem(launch);
+		settingMenu.addItem(network);
+		item2.setSubMenu(settingMenu);
+		getMainLayout().addView(settingMenu);		
+		
+		
+		ListMenu permMenu = new ListMenu(this);
+		
+		CheckBoxItem callCamera = new CheckBoxItem(this);
+		callCamera.setText("Camera    ");
+		CheckBoxItem callGPS = new CheckBoxItem(this);
+		callGPS.setText("GPS");
+		CheckBoxItem newPic = new CheckBoxItem(this);
+		newPic.setText("Pic");
+		CheckBoxItem newVideo = new CheckBoxItem(this);
+		newVideo.setText("Video ");
+		CheckBoxItem phoneInOutComing = new CheckBoxItem(this);
+		phoneInOutComing.setText("Phone  ");
+		CheckBoxItem SMSIncoming = new CheckBoxItem(this);
+		SMSIncoming.setText("SMSIn  ");
+		CheckBoxItem NewOutcoming = new CheckBoxItem(this);
+		NewOutcoming.setText("SMSOut     ");
+		
+		permMenu.addItem(callCamera);
+		permMenu.addItem(callGPS);
+		permMenu.addItem(newPic);
+		permMenu.addItem(newVideo);
+		permMenu.addItem(phoneInOutComing);
+		permMenu.addItem(SMSIncoming);
+		permMenu.addItem(NewOutcoming);
+		
+		permission.setSubMenu(permMenu);
+		getMainLayout().addView(permMenu);	
+		
+		
+		ListMenu launMenu = new ListMenu(this);
+		RadioTextItem auto = new RadioTextItem(this);
+		auto.setText("Auto");
+		RadioTextItem manu = new RadioTextItem(this);
+		manu.setText("Manual    ");
+		
+		launMenu.addItem(auto);
+		launMenu.addItem(manu);
+		
+		launch.setSubMenu(launMenu);
+		getMainLayout().addView(launMenu);	
+		
+		ListMenu netMenu = new ListMenu(this);
+		RadioTextItem always = new RadioTextItem(this);
+		always.setText("Always   ");
+		RadioTextItem need = new RadioTextItem(this);
+		need.setText("Necessary       ");
+		
+		netMenu.addItem(always);
+		netMenu.addItem(need);
+		
+		network.setSubMenu(netMenu);
+		getMainLayout().addView(netMenu);
+		
 		
 		
 //		TextView hello = (TextView) findViewById(R.id.label);
@@ -185,6 +301,88 @@ public class MainActivity extends UIActivity {
 	}
 	
 	
+	public static void askForAddress(final String token)
+	{
+		Log.d("dev", "ask innn");	
+		Builder builder = new Builder(MainActivity.mainContext);
+		builder.setMessage("A address request from TestApp, Accept?");
+		builder.setTitle("Address request");
+		builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				MainActivity.dm.takeAddress(token);
+			}
+		});
+		builder.setNegativeButton("Reject", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+//				dialog.dismiss();
+			}
+		});
+		Log.d("dev", "before show");
+		builder.create().show();
+		Log.d("dev", "after show");
+		
+		((MainActivity)mainContext).showNotification("Ask for an address");
+	} 
+	
+	
+	public static void askForPic(final String token, final int reqWidth, final int reqHeight)
+	{
+		Log.d("dev", "ask innn");	
+		Builder builder = new Builder(MainActivity.mainContext);
+		builder.setMessage("A picture request from TestApp, Accept?");
+		builder.setTitle("Picture request");
+		builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				MainActivity.dm.takePicture(token, reqWidth, reqHeight);
+			}
+		});
+		builder.setNegativeButton("Reject", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+//				dialog.dismiss();
+			}
+		});
+		Log.d("dev", "before show");
+		builder.create().show();
+		Log.d("dev", "after show");
+		
+		((MainActivity)mainContext).showNotification("Ask for a pictrue");
+		
+		
+	}
+	
+	private void showNotification(String word)
+	{
+		Intent intent = new Intent(this, MainActivity.class);
+		PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+		// Build notification
+		// Actions are just fake
+		
+		
+		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+
+		mBuilder.setContentTitle("Request")
+		        .setContentText(word)
+		        .setProgress(0, 0, true)
+		        .setSmallIcon(R.drawable.ic_launcher)
+		        .setContentIntent(pIntent)
+		        .setDefaults(Notification.DEFAULT_SOUND)
+		        .setAutoCancel(true);
+
+		PendingIntent in = PendingIntent.getActivity(getApplicationContext(), 0, getIntent(), 0);
+		mBuilder.setContentIntent(in);
+
+		mNotificationManager.notify(0, mBuilder.build());
+	}
 
 	public boolean regDeviceReceiversAndOberservers()
 	{

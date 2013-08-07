@@ -17,15 +17,17 @@ import com.codebutler.android_websockets.WebSocketClient;
 public class SocketDriver {
 	private Context context;
 	WebSocketClient client = null; 
+	private SocketHandler dataHandler;
 	
-	public SocketDriver(String username, String password, final Context context) {
+	public SocketDriver(String username, String password, Context context) {
 		this.context = context;
+		dataHandler = new SocketHandler(context);
 		List<BasicNameValuePair> extraHeaders = new ArrayList<BasicNameValuePair>();
 		extraHeaders.add(new BasicNameValuePair("username", username));
 		extraHeaders.add(new BasicNameValuePair("password", password));
 		client = new WebSocketClient(URI.create(URIList.SOCKET_URI),
 				new WebSocketClient.Listener() {
-					private SocketHandler dataHandler = new SocketHandler(context);
+					
 			
 					@Override
 					public void onMessage(byte[] data) {

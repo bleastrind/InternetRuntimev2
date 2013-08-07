@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.util.Log;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 
 public class ListMenu extends RelativeLayout
 {
@@ -44,8 +45,13 @@ public class ListMenu extends RelativeLayout
 		params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
 		if (items.size() > 1)
 		{
-			params.addRule(RelativeLayout.BELOW, items.get(items.size() - 2).getId());
+			params.addRule(RelativeLayout.BELOW, items.get(items.size() - 2).getId());			
 		}
+//		params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		if (item.getClass() == EditTextItem.class)
+			params.setMargins(0, 0, 0, 0);
+		else
+			params.setMargins(0, 3, 0, 0);
 		item.setLayoutParams(params);
 		addView(item);
 		item.setParentMenu(this);
@@ -70,8 +76,8 @@ public class ListMenu extends RelativeLayout
 		int n = Math.max(getSize(), newMenu.getSize());
 		RandomSeqGenerator generator = new RandomSeqGenerator(n);
 		RandomSeq seq = generator.getRandomSeq();
-		newMenu.showFlyLeft(UIConst.LIST_MENU_CHANGE_INTERVAL, seq);
-		hideFlyRight(0, seq);
+		newMenu.showFlyRight(UIConst.LIST_MENU_CHANGE_INTERVAL, seq);
+		hideFlyLeft(0, seq);
 	}
 	
 	
@@ -99,6 +105,25 @@ public class ListMenu extends RelativeLayout
 		show(delay, seq, LEFT);
 	}
 	
+	//show fly right
+	
+	public void showFlyRight(int delay)
+	{
+		show(delay, null, RIGHT);
+	}
+	
+	public void showFlyRight(int delay, int first)
+	{
+		RandomSeqGenerator generator = new RandomSeqGenerator(items.size());
+		RandomSeq seq = generator.getRandomSeqStartWith(first);
+		show(delay, seq, RIGHT);
+	}
+	
+	public void showFlyRight(int delay, RandomSeq seq)
+	{
+		show(delay, seq, RIGHT);
+	}
+	
 	//hide fly right
 	
 	public void hideFlyRight(int delay)
@@ -118,7 +143,25 @@ public class ListMenu extends RelativeLayout
 		hide(delay, seq, RIGHT);
 	}
 	
+	//hide fly left
 	
+	public void hideFlyLeft(int delay)
+	{
+		hide(delay, null, LEFT);
+	}
+	
+	public void hideFlyLeft(int delay, int first)
+	{
+		RandomSeqGenerator generator = new RandomSeqGenerator(items.size());
+		RandomSeq seq = generator.getRandomSeqStartWith(first);
+		hide(delay, seq, LEFT);
+	}
+	
+	public void hideFlyLeft(int delay, RandomSeq seq)
+	{
+		hide(delay, seq, LEFT);
+	}
+		
 	
 	private void show(int pubDelay, RandomSeq seq, int orient)
 	{
