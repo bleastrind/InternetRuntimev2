@@ -24,7 +24,7 @@ abstract class UserInterface {
     if (authCenter.registerUser(username, password)){
 	
 		val uid = authCenter.login(username, password)
-		installRootApp(uid, <Application><Name>jsslimclient</Name><AppID>userinterface</AppID><AppOwner>system</AppOwner><Signals><Request runat="userinterface"><Signalname>extendsignal</Signalname><Description>Find apps a signal</Description></Request><Request runat="userinterface"><Signalname>open</Signalname><Description>Open a document</Description></Request><Request runat="userinterface"><Signalname>share</Signalname><Description>Share a url</Description></Request><Event runat="userinterface"><Signalname>clients/pageload</Signalname><Description>Client page load.</Description></Event></Signals><SignalHanlders></SignalHanlders></Application> toString)
+		installRootApp(uid, <Application><Name>jsslimclient</Name><AppID>userinterface</AppID><AppOwner>system</AppOwner><Signals><Request runat="userinterface"><Signalname>extendsignal</Signalname><Description>Find apps a signal</Description></Request><Request runat="userinterface"><Signalname>open</Signalname><Description>Open a document</Description></Request><Request runat="userinterface"><Signalname>share</Signalname><Description>Share a url</Description></Request><Event runat="userinterface"><Signalname>clients/pageload</Signalname><Description>Client page load.</Description></Event><Event runat="userinterface"><Signalname>getPic</Signalname><Description>Get a pic.</Description></Event></Signals><SignalHanlders></SignalHanlders></Application> toString)
 		"success" 
 	}
 		else "failed"
