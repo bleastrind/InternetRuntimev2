@@ -22,7 +22,7 @@ object MobileAppBaseClientInputs {
       println("Disconnected")
       driver.setStatus(ClientStatus.Dead.toString)
     }
-    SiteUserInterface.clientsManager.join(UserID, driver)
+    SiteUserInterface.join(UserID, driver)
 
     (in, out)
   }
