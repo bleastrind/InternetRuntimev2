@@ -1,11 +1,12 @@
 package org.internetrt.core.siblings
 
 import org.internetrt.CONSTS;
+import org.internetrt.Prop
 abstract class ClusterManagerImpl extends ClusterManager {
 
   val DHTRing = List(
-    (0, NodeRef.getNode("192.168.3.145")),
-    (493379200, NodeRef.getNode("192.168.3.160"))
+    (0, nodeRefFactory.getNodeRef("192.168.3.145")),
+    (493379200, nodeRefFactory.getNodeRef("192.168.3.160"))
     );
 
   def getNodeRef(uid: String): Option[NodeRef] = {
@@ -14,14 +15,14 @@ abstract class ClusterManagerImpl extends ClusterManager {
       case None => DHTRing.head._2
     }
 
-    if (CONSTS.ThisIP == desiredNode.IP)
+    if (Prop.ThisIP == desiredNode.IP)
       None
     else
       Some(desiredNode)
   }
 
   def getNodeRefByIP(ip: String): NodeRef = {
-    NodeRef.getNode(ip)
+    nodeRefFactory.getNodeRef(ip)
   }
 }
 

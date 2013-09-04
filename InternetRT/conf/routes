@@ -24,8 +24,11 @@ GET		/clients/longpolling	org.internetrt.driver.userinterface.Client.longpolling
 GET		/clients/response		org.internetrt.driver.userinterface.Client.response
 GET		/clients/test		org.internetrt.driver.userinterface.Client.test
 
+
 # Client API
 
+#login(MobileClient)
+GET			/mobile/login			org.internetrt.driver.userinterface.MobileAppBaseClientInputs.login(username, password)
 #login
 POST		/clients/login			org.internetrt.driver.userinterface.BrowserBaseClientInputs.login
 #register

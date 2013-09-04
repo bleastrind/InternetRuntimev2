@@ -18,6 +18,15 @@ import org.internetrt.persistent.cassandra._
 import org.internetrt.core.io.userinterface.ClientsManagerImpl
 import org.internetrt.core.siblings.ClusterManagerImpl
 import org.internetrt.core.io.userinterface.ClusterConsideredClientsManager
+import org.internetrt.persistent.cassandra.LocalSiblingCassandraPool
+import scala.io.Source
+import org.internetrt.core.siblings.TwoTierClusterManagerImpl
+import java.util.Properties
+import java.io.FileInputStream
+import java.io.IOException
+import org.internetrt.core.siblings.ClientPusingNodeRefFactoryImpl
+import org.internetrt.core.siblings.ClusterSignalingNodeRefFactoryImpl
+import org.internetrt.core.siblings.NodeRefFactory
 
 /**
  * This object control all the connections in the website
@@ -44,10 +53,13 @@ object SiteInternetRuntime extends InternetRuntime {
     val global = SiteInternetRuntime.this
   } with CassandraAccessControlSystem
 
-  object clusterManager extends ClusterManagerImpl{
+  //test database should change MemoryClusterManagerSystem into CassandraClusterManagerSystem
+  object clusterManager extends{
     val global = SiteInternetRuntime.this
-  } 
+  } with MemoryClusterManagerSystem
+  
 }
+
 
 trait StandardManager extends IOManagerImpl{
   object clientsManager extends ClientsManagerImpl with ClusterConsideredClientsManager {
@@ -79,6 +91,25 @@ trait MemoryAccessControlSystem extends AccessControlSystemImpl{
   object applicationAccessPool extends StubApplicationAccessPool
 }
 
+
+trait RealNodeRefFactoryImpl extends ClientPusingNodeRefFactoryImpl with ClusterSignalingNodeRefFactoryImpl with NodeRefFactory{}
+
+trait MemoryClusterManagerSystem extends TwoTierClusterManagerImpl{
+  val localSiblingPool = new StubLocalSiblingPool()
+  val globalSiblingPool = new StubGlobalSiblingPool()
+  val nodeRefFactory = new{
+      val manager = MemoryClusterManagerSystem.this
+  } with RealNodeRefFactoryImpl
+}
+
+trait CassandraClusterManagerSystem extends TwoTierClusterManagerImpl{
+  val localSiblingPool = LocalNodeCassandra.localSiblingPool
+  val globalSiblingPool = GlobalNodeCassandra.globalSiblingPool
+  val nodeRefFactory = new{
+      val manager = CassandraClusterManagerSystem.this
+  } with RealNodeRefFactoryImpl
+}
+
 trait CassandraConfigurationSystem extends ConfigurationSystemImpl {
   val appPool = Cassandra.appPool
   val routingResourcePool = Cassandra.routingPool
@@ -102,6 +133,17 @@ trait CassandraSignalSystem extends SignalSystemImpl {
 trait CassandraAccessControlSystem extends AccessControlSystemImpl{
   val applicationAccessPool = Cassandra.applicationAccessPool
 }
+
+object LocalNodeCassandra{
+  val localCluster = HFactory.getOrCreateCluster("Local Cluster", "127.0.0.1:9162")
+  val localSiblingPool = new LocalSiblingCassandraPool(localCluster)
+}
+
+object GlobalNodeCassandra{
+  val globalCluster = HFactory.getOrCreateCluster("Global Cluster", "127.0.0.1:9161")
+  val globalSiblingPool = new GlobalSiblingCassandraPool(globalCluster)
+}
+
 
 object Cassandra{
 
@@ -137,5 +179,24 @@ object CONSTS {
   val ACCESSTOKEN = "access_token";
   val FROMIP = "fromip";
   
-  val ThisIP = "192.168.3.145";
+  
+}
+
+object Prop{
+  val prop = new Properties(); 
+    try {
+        //load a properties file from class path, inside static method
+      val stream = new FileInputStream("../../conf/config.properties")
+        prop.load(stream)
+
+        } 
+   catch{
+     case ex:Exception => ex.printStackTrace()
+    }
+  
+  val ThisIP = prop.getProperty("LocalIP")
+  val NodeType = prop.getProperty("NodeType")
+  val AgentNode = prop.getProperty("AgentNode")
+  val GlobalPort = prop.getProperty("GlobalPort").toInt
+  val LocalPort = prop.getProperty("LocalPort").toInt
 }
